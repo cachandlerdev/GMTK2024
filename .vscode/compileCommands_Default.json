@@ -1,0 +1,58 @@
+[
+	{
+		"file": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Source/GMTK2024/GMTK2024.Build.cs",
+		"arguments": [
+			"/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v22_clang-16.0.6-centos7/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/.vscode/compileCommands_Default/GMTK2024.1.rsp"
+		],
+		"directory": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Source"
+	},
+	{
+		"file": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Source/GMTK2024/GMTK2024.cpp",
+		"arguments": [
+			"/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v22_clang-16.0.6-centos7/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/.vscode/compileCommands_Default/GMTK2024.1.rsp"
+		],
+		"directory": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Source"
+	},
+	{
+		"file": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Source/GMTK2024/GMTK2024.h",
+		"arguments": [
+			"/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v22_clang-16.0.6-centos7/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/.vscode/compileCommands_Default/GMTK2024.1.rsp"
+		],
+		"directory": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Source"
+	},
+	{
+		"file": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Source/GMTK2024/GMTK2024Character.cpp",
+		"arguments": [
+			"/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v22_clang-16.0.6-centos7/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/.vscode/compileCommands_Default/GMTK2024.1.rsp"
+		],
+		"directory": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Source"
+	},
+	{
+		"file": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Source/GMTK2024/GMTK2024Character.h",
+		"arguments": [
+			"/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v22_clang-16.0.6-centos7/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/.vscode/compileCommands_Default/GMTK2024.1.rsp"
+		],
+		"directory": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Source"
+	},
+	{
+		"file": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Source/GMTK2024/GMTK2024GameMode.cpp",
+		"arguments": [
+			"/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v22_clang-16.0.6-centos7/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/.vscode/compileCommands_Default/GMTK2024.1.rsp"
+		],
+		"directory": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Source"
+	},
+	{
+		"file": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Source/GMTK2024/GMTK2024GameMode.h",
+		"arguments": [
+			"/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v22_clang-16.0.6-centos7/x86_64-unknown-linux-gnu/bin/clang++",
+			"@/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/.vscode/compileCommands_Default/GMTK2024.1.rsp"
+		],
+		"directory": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Source"
+	}
+]

@@ -1,0 +1,865 @@
+{
+	"folders": [
+		{
+			"name": "GMTK2024",
+			"path": "."
+		},
+		{
+			"name": "UE5",
+			"path": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+		}
+	],
+	"settings": {
+		"typescript.tsc.autoDetect": "off",
+		"npm.autoDetect": "off"
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-vscode.cpptools",
+			"ms-dotnettools.csharp"
+		]
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "GMTK2024 Linux Debug Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Debug",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux Debug Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Debug",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024 Linux Debug Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux Debug Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Debug",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux DebugGame Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"DebugGame",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux DebugGame Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"DebugGame",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024 Linux DebugGame Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux DebugGame Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"DebugGame",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux Development Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Development",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux Development Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Development",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024 Linux Development Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux Development Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Development",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux Test Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Test",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux Test Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Test",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024 Linux Test Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux Test Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Test",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux Shipping Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Shipping",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux Shipping Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Shipping",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024 Linux Shipping Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 Linux Shipping Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"Linux",
+					"Shipping",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Debug Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Debug",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Debug Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Debug",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024 LinuxArm64 Debug Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Debug Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Debug",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 DebugGame Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"DebugGame",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 DebugGame Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"DebugGame",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024 LinuxArm64 DebugGame Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 DebugGame Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"DebugGame",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Development Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Development",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Development Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Development",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024 LinuxArm64 Development Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Development Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Development",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Test Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Test",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Test Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Test",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024 LinuxArm64 Test Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Test Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Test",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Shipping Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Shipping",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Shipping Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Shipping",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024 LinuxArm64 Shipping Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024 LinuxArm64 Shipping Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024",
+					"LinuxArm64",
+					"Shipping",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024Editor Linux Debug Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024Editor",
+					"Linux",
+					"Debug",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024Editor Linux Debug Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024Editor",
+					"Linux",
+					"Debug",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024Editor Linux Debug Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024Editor Linux Debug Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024Editor",
+					"Linux",
+					"Debug",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024Editor Linux DebugGame Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024Editor",
+					"Linux",
+					"DebugGame",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024Editor Linux DebugGame Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024Editor",
+					"Linux",
+					"DebugGame",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024Editor Linux DebugGame Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024Editor Linux DebugGame Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024Editor",
+					"Linux",
+					"DebugGame",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024Editor Linux Development Build",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024Editor",
+					"Linux",
+					"Development",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024Editor Linux Development Rebuild",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024Editor",
+					"Linux",
+					"Development",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex"
+				],
+				"problemMatcher": "$msCompile",
+				"dependsOn": [
+					"GMTK2024Editor Linux Development Clean"
+				],
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			},
+			{
+				"label": "GMTK2024Editor Linux Development Clean",
+				"group": "build",
+				"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+				"args": [
+					"GMTK2024Editor",
+					"Linux",
+					"Development",
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-waitmutex",
+					"-clean"
+				],
+				"problemMatcher": "$msCompile",
+				"type": "shell",
+				"options": {
+					"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+				}
+			}
+		]
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "Launch GMTK2024 (Debug)",
+				"request": "launch",
+				"program": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Binaries/Linux/UnrealGame-Linux-Debug",
+				"preLaunchTask": "GMTK2024 Linux Debug Build",
+				"args": [
+				],
+				"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3",
+				"type": "cppdbg",
+				"visualizerFile": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch GMTK2024 (DebugGame)",
+				"request": "launch",
+				"program": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Binaries/Linux/UnrealGame-Linux-DebugGame",
+				"preLaunchTask": "GMTK2024 Linux DebugGame Build",
+				"args": [
+				],
+				"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3",
+				"type": "cppdbg",
+				"visualizerFile": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch GMTK2024 (Development)",
+				"request": "launch",
+				"program": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Binaries/Linux/UnrealGame",
+				"preLaunchTask": "GMTK2024 Linux Development Build",
+				"args": [
+				],
+				"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3",
+				"type": "cppdbg",
+				"visualizerFile": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch GMTK2024 (Test)",
+				"request": "launch",
+				"program": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Binaries/Linux/UnrealGame-Linux-Test",
+				"preLaunchTask": "GMTK2024 Linux Test Build",
+				"args": [
+				],
+				"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3",
+				"type": "cppdbg",
+				"visualizerFile": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch GMTK2024 (Shipping)",
+				"request": "launch",
+				"program": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/Binaries/Linux/UnrealGame-Linux-Shipping",
+				"preLaunchTask": "GMTK2024 Linux Shipping Build",
+				"args": [
+				],
+				"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3",
+				"type": "cppdbg",
+				"visualizerFile": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch GMTK2024Editor (Debug)",
+				"request": "launch",
+				"program": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Binaries/Linux/UnrealEditor-Linux-Debug",
+				"preLaunchTask": "GMTK2024Editor Linux Debug Build",
+				"args": [
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject"
+				],
+				"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3",
+				"type": "cppdbg",
+				"visualizerFile": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch GMTK2024Editor (DebugGame)",
+				"request": "launch",
+				"program": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Binaries/Linux/UnrealEditor-Linux-DebugGame",
+				"preLaunchTask": "GMTK2024Editor Linux DebugGame Build",
+				"args": [
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject"
+				],
+				"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3",
+				"type": "cppdbg",
+				"visualizerFile": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Launch GMTK2024Editor (Development)",
+				"request": "launch",
+				"program": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Binaries/Linux/UnrealEditor",
+				"preLaunchTask": "GMTK2024Editor Linux Development Build",
+				"args": [
+					"/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject"
+				],
+				"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3",
+				"type": "cppdbg",
+				"visualizerFile": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/VisualStudioDebugging/Unreal.natvis",
+				"showDisplayString": true
+			},
+			{
+				"name": "Generate Project Files",
+				"type": "coreclr",
+				"request": "launch",
+				"preLaunchTask": "UnrealBuildTool Linux Development Build",
+				"program": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Build/BatchFiles/RunUBT.bat",
+				"args": [
+					"-projectfiles",
+					"-vscode",
+					"-project=/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/GMTK2024.uproject",
+					"-game",
+					"-engine",
+					"-dotnet"
+				],
+				"console": "internalConsole",
+				"internalConsoleOptions": "openOnSessionStart",
+				"stopAtEntry": false,
+				"cwd": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3"
+			}
+		]
+	}
+}

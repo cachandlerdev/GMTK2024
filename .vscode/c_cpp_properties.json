@@ -1,0 +1,28 @@
+{
+	"configurations": [
+		{
+			"name": "GMTK2024Editor Editor Linux Development (GMTK2024)",
+			"compilerPath": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v22_clang-16.0.6-centos7/x86_64-unknown-linux-gnu/bin/clang++",
+			"compilerArgs": [
+				"-isysroot",
+				"/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v22_clang-16.0.6-centos7/x86_64-unknown-linux-gnu"
+			],
+			"cStandard": "c17",
+			"cppStandard": "c++20",
+			"intelliSenseMode": "clang-x64",
+			"compileCommands": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/.vscode/compileCommands_GMTK2024.json"
+		},
+		{
+			"name": "Linux",
+			"compilerPath": "/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v22_clang-16.0.6-centos7/x86_64-unknown-linux-gnu/bin/clang++",
+			"compilerArgs": [
+				"-isysroot",
+				"/mnt/primary-storage/Productivity/Development/Unreal/Engine/Linux_Unreal_Engine_5.4.3/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v22_clang-16.0.6-centos7/x86_64-unknown-linux-gnu"
+			],
+			"cStandard": "c17",
+			"cppStandard": "c++20",
+			"intelliSenseMode": "clang-x64",
+			"compileCommands": "/mnt/primary-storage/Productivity/Development/Unreal/Projects/GMTK2024/.vscode/compileCommands_Default.json"
+		}
+	]
+}
