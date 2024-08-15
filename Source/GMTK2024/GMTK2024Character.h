@@ -20,6 +20,11 @@ class AGMTK2024Character : public ACharacter
 {
 	GENERATED_BODY()
 
+public:
+
+	
+
+
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -44,8 +49,14 @@ class AGMTK2024Character : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
-public:
+
 	AGMTK2024Character();
+
+
+	UPROPERTY(BlueprintReadWrite)
+		FString pushTest;
+
+
 	
 
 protected:
