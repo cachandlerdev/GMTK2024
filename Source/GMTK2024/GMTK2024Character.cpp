@@ -58,6 +58,12 @@ void AGMTK2024Character::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+
+
+	pushTest = "braden test";
+
+
 }
 
 //////////////////////////////////////////////////////////////////////////
