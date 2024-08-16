@@ -3,12 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+
 
 #include "GameplayTags.h"
 
 #include "InputAction.h"
-
 #include "Components/BoxComponent.h"
 
 #include "PlayerCharacter.generated.h"
@@ -29,6 +28,8 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter(const FObjectInitializer& ObjectInitializer);
 
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* BoxCollider;
 
 	UPROPERTY(BlueprintReadOnly)
 		APlayerController* playerController;
@@ -40,21 +41,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		float lookSensitivity = 0.5f;
-
-
-
-
-
-
-
-
-	UPROPERTY(BlueprintReadOnly)
-		UBoxComponent* boxCollider;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		USkeletalMeshComponent* tempWheelMesh;
-
-
 
 
 
