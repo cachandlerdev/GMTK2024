@@ -47,6 +47,7 @@ void UMyGameInstance::PlayMusicTrack(USoundBase* Track)
 	}
 	CurrentAudioComponent = UGameplayStatics::CreateSound2D(GetWorld(), Track,
 		MusicVolume, 1, 0.0, nullptr, true);
+	CurrentAudioComponent->Play(0.0);
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Some debug message!"));
 }
 

@@ -11,7 +11,7 @@
 
 #include "PlayerCharacter.generated.h"
 
-
+class UEnhancedInputComponent;
 class UInputAction;
 class UInputMappingContext;
 class USoundBase;
