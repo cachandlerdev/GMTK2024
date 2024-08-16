@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+
 
 #include "GameplayTags.h"
 
 #include "InputAction.h"
+#include "Components/BoxComponent.h"
 
 #include "PlayerCharacter.generated.h"
 
@@ -19,7 +20,7 @@ class USoundCue;
 
 
 UCLASS()
-class GMTK2024_API APlayerCharacter : public ACharacter, public IGameplayTagAssetInterface
+class GMTK2024_API APlayerCharacter : public APawn, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
@@ -27,6 +28,8 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter(const FObjectInitializer& ObjectInitializer);
 
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* BoxCollider;
 
 	UPROPERTY(BlueprintReadOnly)
 		APlayerController* playerController;

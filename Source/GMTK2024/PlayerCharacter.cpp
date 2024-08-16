@@ -22,7 +22,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) 
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	BoxCollider = CreateDefaultSubobject<UBoxComponent>("BoxCollider");
+	SetRootComponent(BoxCollider);
 }
 
 // Called when the game starts or when spawned
@@ -216,7 +217,6 @@ void APlayerCharacter::sprintInput(const FInputActionValue& value) {
 
 void APlayerCharacter::jumpInput(const FInputActionValue& value) {
 
-	Jump();
 
 
 

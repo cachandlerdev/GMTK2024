@@ -3,3 +3,6 @@
 
 #include "PartComponent_Base.h"
 
+void UPartComponent_Base::UsePart()
+{
+}
