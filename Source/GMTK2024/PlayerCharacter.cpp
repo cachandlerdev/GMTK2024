@@ -23,6 +23,15 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) 
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+
+	boxCollider = CreateDefaultSubobject<UBoxComponent>("Collision");
+
+	SetRootComponent(boxCollider);
+
+
+	tempWheelMesh = CreateDefaultSubobject<USkeletalMeshComponent>("Test Wheel");
+	
+
 }
 
 // Called when the game starts or when spawned
@@ -32,6 +41,10 @@ void APlayerCharacter::BeginPlay()
 	
 
 	DeferSetupMovementSystem();
+
+	boxCollider->SetSimulatePhysics(true);
+
+
 
 }
 
@@ -216,7 +229,7 @@ void APlayerCharacter::sprintInput(const FInputActionValue& value) {
 
 void APlayerCharacter::jumpInput(const FInputActionValue& value) {
 
-	Jump();
+	//Jump();
 
 
 

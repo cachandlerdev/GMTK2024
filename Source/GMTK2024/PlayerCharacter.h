@@ -9,6 +9,8 @@
 
 #include "InputAction.h"
 
+#include "Components/BoxComponent.h"
+
 #include "PlayerCharacter.generated.h"
 
 class UEnhancedInputComponent;
@@ -19,7 +21,7 @@ class USoundCue;
 
 
 UCLASS()
-class GMTK2024_API APlayerCharacter : public ACharacter, public IGameplayTagAssetInterface
+class GMTK2024_API APlayerCharacter : public APawn, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
@@ -38,6 +40,21 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		float lookSensitivity = 0.5f;
+
+
+
+
+
+
+
+
+	UPROPERTY(BlueprintReadOnly)
+		UBoxComponent* boxCollider;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		USkeletalMeshComponent* tempWheelMesh;
+
+
 
 
 
