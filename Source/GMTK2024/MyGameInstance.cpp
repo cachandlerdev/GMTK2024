@@ -43,10 +43,14 @@ void UMyGameInstance::PlayMusicTrack(USoundBase* Track)
 	if (CurrentAudioComponent != nullptr)
 	{
 		CurrentAudioComponent->Stop();
-		//CurrentAudioComponent->OnAudioFinished.Remove(TrackFinished);
+		CurrentAudioComponent->OnAudioFinished.Remove(TrackFinished);
 	}
 	CurrentAudioComponent = UGameplayStatics::CreateSound2D(GetWorld(), Track,
 		MusicVolume, 1, 0.0, nullptr, true);
+	TrackFinished.BindUFunction(this, "GoToNextMusicTrack");
+	CurrentAudioComponent->OnAudioFinished.Add(TrackFinished);
+
+	CurrentAudioComponent->Activate();
 	CurrentAudioComponent->Play(0.0);
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Some debug message!"));
 }

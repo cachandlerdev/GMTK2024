@@ -66,5 +66,5 @@ private:
 	UAudioComponent* CurrentAudioComponent;
 
 	// Used to start the next track after this one finishes.
-	//TScriptDelegate<FWeakObjectPtr> TrackFinished;
+	TScriptDelegate<FWeakObjectPtr> TrackFinished;
 };
