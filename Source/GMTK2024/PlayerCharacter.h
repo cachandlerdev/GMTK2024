@@ -79,6 +79,8 @@ private:
 	int NumOfJumps;
 	int DefaultGravityScale;
 
+	FVector DefaultMaxVelocity;
+
 	// Used to handle the wall run update
 	FTimerHandle WallrunTimerHandle;
 	// How frequently we update the wallrun status
