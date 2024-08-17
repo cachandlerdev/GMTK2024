@@ -23,8 +23,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) 
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-    BoxCollider = CreateDefaultSubobject<UBoxComponent>("BoxCollider");
-    SetRootComponent(BoxCollider);
+   
 
 }
 
@@ -133,7 +132,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			//playerEnhancedInput->BindAction(zoomAction, ETriggerEvent::Triggered, this, &APlayerCharacter::zoomInput);
 
 			//playerEnhancedInput->BindAction(sprintAction, ETriggerEvent::Triggered, this, &APlayerCharacter::sprintInput);
-			//playerEnhancedInput->BindAction(jumpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::jumpInput);
+			playerEnhancedInput->BindAction(jumpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::jumpInput);
 
 			//playerEnhancedInput->BindAction(crouchAction, ETriggerEvent::Triggered, this, &APlayerCharacter::crouchInput);
 
@@ -219,8 +218,8 @@ void APlayerCharacter::sprintInput(const FInputActionValue& value) {
 
 void APlayerCharacter::jumpInput(const FInputActionValue& value) {
 
+	
 	Jump();
-
 
 
 }

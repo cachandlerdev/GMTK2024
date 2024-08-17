@@ -3,6 +3,19 @@
 
 #include "PartComponent_Base.h"
 
+
+
+
 void UPartComponent_Base::UsePart()
 {
+}
+
+
+
+
+
+void UPartComponent_Base::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+
 }
