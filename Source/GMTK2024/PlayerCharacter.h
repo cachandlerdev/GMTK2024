@@ -58,7 +58,7 @@ private:
 	bool crouching = false;
 	float slideTimer = 0.0f;
 	FTimerHandle slideJumpRechargeTimerHandle;
-	int NumOfJumps = 2;
+	int NumOfJumps;
 public:
 
 	//INPUT STUFF
