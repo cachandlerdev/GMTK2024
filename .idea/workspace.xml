@@ -2,13 +2,31 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="37f2d12a-7bc6-407e-a8b2-2be732d9c409" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Blueprints/Env/PartSelectorKioskBP.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Blueprints/Parts/SmallChasisPartBP.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Input/Actions/scrollAction.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Models/Parts/SmallChasis/ChassisLightDraft.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Models/Parts/SmallChasis/ChassisLightDraft_PhysicsAsset.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Models/Parts/SmallChasis/ChassisLightDraft_Skeleton.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Models/Parts/SmallChasis/Material.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/2/GH/H7V4ZRVJHW4E35JJP6N0TV.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/DataTypes.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/DataTypes.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/PartBase.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/PartBase.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/PartSelectorKiosk.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/PartSelectorKiosk.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/SmallChasisPart.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/SmallChasisPart.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Player/PlayerCharacterBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Player/PlayerCharacterBP.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Input/Actions/moveAction.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Input/Actions/moveAction.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Input/Mappings/CharacterInputMapping.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Input/Mappings/CharacterInputMapping.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Maps/ThirdPersonMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ThirdPerson/Maps/ThirdPersonMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GMTK2024.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/GMTK2024.uproject" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/GMTK2024.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/GMTK2024.Build.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/GMTK2024Character.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/GMTK2024Character.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
