@@ -80,6 +80,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float SprintFovIncrease = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float DashStrength = 1000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float DashCooldown = 5.0f;
 	
 private:
 	bool sprinting = false;
@@ -115,6 +121,12 @@ private:
 	
 	// Used to make sure the FOV doesn't go too high when sprinting
 	float MaxFov;
+
+	// Whether the player is dashing
+	bool bIsOnDashCooldown = false;
+
+	// used to track the dash cooldown reset.
+	FTimerHandle DashCooldownHandle;
 	
 public:
 
@@ -124,9 +136,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* movementAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* airStrafeAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* lookAction;
@@ -141,38 +150,19 @@ public:
 		UInputAction* fireAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* heavyFireAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* scrollAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* zoomAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* forwardAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* crouchAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* dodgeAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* menuAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* swapWeaponAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* aimAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* ability1Action;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* targetLockAction;
-
+	UInputAction* DashAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control Mappings")
 		UInputMappingContext* baseControls;
@@ -228,6 +218,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsWallRunning();
 
+	// Returns whether the player is on a dash cooldown
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsOnDashCooldown();
+
 	// Inputs
 	
 	UFUNCTION()
@@ -235,10 +229,7 @@ public:
 
 	UFUNCTION()
 		virtual void fireInput(const FInputActionValue& value);
-
-	UFUNCTION()
-		virtual void heavyFireInput(const FInputActionValue& value);
-
+	
 	UFUNCTION()
 		virtual void moveInput(const FInputActionValue& value);
 
@@ -255,16 +246,7 @@ public:
 		virtual void crouchInput(const FInputActionValue& value);
 
 	UFUNCTION()
-		virtual void dodgeInput(const FInputActionValue& value);
-
-	UFUNCTION()
 		virtual void jumpInput(const FInputActionValue& value);
-
-	UFUNCTION()
-		virtual void ability1Input(const FInputActionValue& value);
-
-	UFUNCTION()
-		virtual void targetLockInput(const FInputActionValue& value);
 
 	// A blueprint implementable event that can be run when the player crouches. Optional
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
@@ -277,6 +259,9 @@ public:
 	// A blueprint implementable event that runs after the player has stopped sprinting.
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void DoWhenSprintingOver();
+
+	UFUNCTION(BlueprintCallable)
+	void Dash();
 
 	UFUNCTION()
 		float CalcHillSlideBoost();
@@ -317,5 +302,13 @@ private:
 
 	// Lets the player jump off of a wallrun.
 	void WallRunJump();
+
+	// Dash
+
+	// Perform the actual dash
+	void PerformDash();
+
+	// Allows the player to dash again
+	void SetDashCooldownOver();
 	
 };
