@@ -7,7 +7,15 @@
 
 #include "DataTypes.h"
 
+
+#include "Sound/SoundCue.h"
+
+#include "Sound/SoundBase.h"
+
 #include "MyGameMode.generated.h"
+
+class USoundCue;
+class USoundBase;
 
 /**
  * 
@@ -33,11 +41,29 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		UOrderDataSheet* orderSheet;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USoundCue* ShiftStartAlarm;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USoundBase* ShiftStartSoundBase;
+
 
 
 
 	UPROPERTY(BlueprintReadWrite)
 		AActor* currentShip;
+
+
+
+
+	UPROPERTY()
+		FTimerHandle shiftStatTimerHandle;
+
+	UPROPERTY()
+		FTimerHandle addOrderTimerHandle;
+
+
+
 
 
 protected:
@@ -56,5 +82,14 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void SpawnShipChasisBP();
+
+
+
+
+	UFUNCTION()
+		void ShiftStartCallback();
+
+	//UFUNCTION()
+		//void AddOrderCallback();
 
 };
