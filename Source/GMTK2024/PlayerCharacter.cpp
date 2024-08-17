@@ -232,9 +232,8 @@ void APlayerCharacter::jumpInput(const FInputActionValue& value)
 		}
 		else
 		{
-			NumOfJumps--;
-			
 			Jump();
+			NumOfJumps--;
 			if (sliding && !GetCharacterMovement()->IsFalling())
 			{
 				//apply slide jump boost
@@ -357,6 +356,7 @@ bool APlayerCharacter::WallRunMovement(FVector Start, FVector End, float WallRun
 
 		// Restore the two jumps
 		NumOfJumps = 2;
+		this->JumpCurrentCount = 0;
 
 		// Return true because he's on the wall
 		return true;
@@ -564,6 +564,7 @@ void APlayerCharacter::Landed(const FHitResult& hit)
 
 	// Restore jumps and end wallrun
 	NumOfJumps = 2;
+	this->JumpCurrentCount = 0;
 	EndWallRun(0.0f);
 	bIsWallrunSuppressed = false;
 
@@ -583,7 +584,8 @@ void APlayerCharacter::Landed(const FHitResult& hit)
 
 
 		//change velocity based on the hill steepness and direction
-		GetCharacterMovement()->Velocity *= (CalcHillSlideBoost() + 1.1f);
+		//GetCharacterMovement()->Velocity *= (CalcHillSlideBoost() + 1.1f);
+		GetCharacterMovement()->Velocity *= (CalcHillSlideBoost());
 	}
 }
 
