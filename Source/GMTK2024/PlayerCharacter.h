@@ -57,7 +57,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float jogSpeed = 400.0f;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float slideJumpBoost = 0.2f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")

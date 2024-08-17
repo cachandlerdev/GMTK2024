@@ -249,7 +249,8 @@ void APlayerCharacter::ToggleSprint(const FInputActionValue& value)
 {
 	// i want to have a release check on the input
 	//(maybe for later, might change to only pressed tho) but I only want this to be sprinting if true
-	if (value.Get<bool>())
+	bool isMoving = GetVelocity().Length() > 10.0f;
+	if (value.Get<bool>() && isMoving)
 	{
 		SetSprinting(true);
 		DoWhileSprinting();
