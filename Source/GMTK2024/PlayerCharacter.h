@@ -51,6 +51,21 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	float slideJumpBoost = 0.2f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float WallRunSpeed = 850.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	bool bWallrunHasGravity = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float WallrunTargetGravity = 0.25f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float WallRunJumpHeight = 400.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float WallRunJumpOffForce = 300.0f;
 	
 private:
 	bool sprinting = false;
@@ -59,6 +74,26 @@ private:
 	float slideTimer = 0.0f;
 	FTimerHandle slideJumpRechargeTimerHandle;
 	int NumOfJumps;
+	int DefaultGravityScale;
+
+	// Used to handle the wall run update
+	FTimerHandle WallrunTimerHandle;
+	// How frequently we update the wallrun status
+	float WallrunUpdateTime = 0.02f;
+
+	// True if the player is wall running on the right wall
+	bool bIsWallRunningRight = false;
+	// True if the player is wall running on the left wall
+	bool bIsWallRunningLeft = false;
+
+	// True if the wallrun is suppressed.
+	bool bIsWallrunSuppressed = false;
+	// Used to un-suppress the wall run
+	FTimerHandle ResetSuppressWallrunTimerHandle;
+
+	// The normal vector of the wall we're running on.
+	FVector WallRunNormal;
+	
 public:
 
 	//INPUT STUFF
@@ -167,6 +202,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void EndCrouch();
 
+	// Returns whether the player is wall running.
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsWallRunning();
+
 	// Inputs
 	
 	UFUNCTION()
@@ -222,4 +261,31 @@ public:
 
 	UFUNCTION()
 		void TryRechargeSlideJumpBoost();
+
+private:
+	// Runs repeatedly to update wall running
+	void WallRunUpdate();
+
+	// Performs a line trace and launches the character to help him stick to the wall if need be.
+	// Returns true if he is on the wall
+	bool WallRunMovement(FVector Start, FVector End, float WallRunDirection);
+
+	// Resets the wallrun status and the player's gravity.
+	void EndWallRun(float ResetTime);
+
+	// Suppresses the wallrun for a specified amount of time.
+	void SuppressWallRun(float Delay);
+
+	// Disables wall run suppression.
+	void ResetWallRunSuppression();
+
+	// Tilts the camera depending on whether we're wallrunning left/right
+	void CameraTick();
+
+	// Tilt the camera a specific direction.
+	void TiltCamera(float Roll);
+
+	// Lets the player jump off of a wallrun.
+	void WallRunJump();
+	
 };

@@ -9,6 +9,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 #include "UObject/UObjectGlobals.h"
 
@@ -31,9 +32,12 @@ void APlayerCharacter::BeginPlay()
 
 	GetCharacterMovement()->MaxWalkSpeed = jogSpeed;
 	NumOfJumps = 2;
+	DefaultGravityScale = GetCharacterMovement()->GravityScale;
 
 	TryRechargeSlideJumpBoost();
 	DeferSetupMovementSystem();
+
+	GetWorld()->GetTimerManager().SetTimer(WallrunTimerHandle, this, &APlayerCharacter::WallRunUpdate, WallrunUpdateTime, true);
 }
 
 
@@ -146,6 +150,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 			GetCharacterMovement()->Velocity *= (((CalcHillSlideBoost() - .9f) * DeltaTime * 10.0f) + 1.0f);
 		}
 	}
+	CameraTick();
 }
 
 
@@ -194,6 +199,11 @@ void APlayerCharacter::moveInput(const FInputActionValue& value)
 }
 
 
+bool APlayerCharacter::IsWallRunning()
+{
+	return bIsWallRunningLeft || bIsWallRunningRight;
+}
+
 void APlayerCharacter::lookInput(const FInputActionValue& value)
 {
 	AddControllerPitchInput(-1.0f * value.Get<FVector2D>().Y * lookSensitivity);
@@ -214,18 +224,26 @@ void APlayerCharacter::ToggleSprint(const FInputActionValue& value)
 
 void APlayerCharacter::jumpInput(const FInputActionValue& value)
 {
-	if (NumOfJumps != 0)
+	if (NumOfJumps > 0)
 	{
-		NumOfJumps--;
-		Jump();
-		if (sliding && !GetCharacterMovement()->IsFalling())
+		if (IsWallRunning())
 		{
-			//apply slide jump boost
-			GetCharacterMovement()->Velocity *= (1.0f + slideJumpBoost);
+			WallRunJump();
+		}
+		else
+		{
+			NumOfJumps--;
+			
+			Jump();
+			if (sliding && !GetCharacterMovement()->IsFalling())
+			{
+				//apply slide jump boost
+				GetCharacterMovement()->Velocity *= (1.0f + slideJumpBoost);
 
-			//max slide boost is 0.2 so after 2 jumps no more boost
-			//and after 3 jumps they start loosing speed so they cant slide forever
-			slideJumpBoost -= 0.1f;
+				//max slide boost is 0.2 so after 2 jumps no more boost
+				//and after 3 jumps they start loosing speed so they cant slide forever
+				slideJumpBoost -= 0.1f;
+			}
 		}
 	}
 }
@@ -258,6 +276,160 @@ void APlayerCharacter::TryRechargeSlideJumpBoost()
 	                                0.8f);
 }
 
+void APlayerCharacter::WallRunUpdate()
+{
+	if (bIsWallrunSuppressed)
+	{
+		// Ignore if the wallrun is suppressed.
+		return;
+	}
+	
+	// Get right end point
+	FVector location = GetActorLocation();
+	FVector rightVector = GetActorRightVector();
+	FVector forwardVector = GetActorForwardVector();
+	FVector rightEndPoint = location + (rightVector * 75.0f) + (forwardVector * -35.0f);
+	FVector leftEndPoint = location + (rightVector * -75.0f) + (forwardVector * -35.0f);
+
+	bool bShouldDropGravity = false;
+
+	// Run the right wall run movement check + wall stick + boost
+	if (WallRunMovement(location, rightEndPoint, -1.0f))
+	{
+		// Is running on right wall
+		bIsWallRunningRight = true;
+		bIsWallRunningLeft = false;
+		bShouldDropGravity = true;
+	}
+	else if (bIsWallRunningRight)
+	{
+		// We're ending the right wall run
+		EndWallRun(1.0f);
+	}
+	else if (WallRunMovement(location, leftEndPoint, 1.0f))
+	{
+		// Is running on left wall
+		bIsWallRunningLeft = true;
+		bIsWallRunningRight = false;
+		bShouldDropGravity = true;
+	}
+	else if (bIsWallRunningLeft)
+	{
+		EndWallRun(1.0f);
+	}
+
+	if (bShouldDropGravity)
+	{
+		// Drop gravity
+		float currentGravity = GetCharacterMovement()->GravityScale;
+		float deltaTime = GetWorld()->GetDeltaSeconds();
+		float interpSpeed = 10.0f;
+		float newGravityScale = FMath::FInterpTo(currentGravity, WallrunTargetGravity, deltaTime, interpSpeed);
+		GetCharacterMovement()->GravityScale = newGravityScale;
+	}
+}
+
+bool APlayerCharacter::WallRunMovement(FVector Start, FVector End, float WallRunDirection)
+{
+	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
+	FHitResult Hit;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	
+	GetWorld()->LineTraceSingleByChannel(Hit, Start, End, TraceChannelProperty, QueryParams);
+
+	bool bIsValidWallVector = (Hit.Normal.Z > -0.52f && Hit.Normal.Z < 0.52f);
+	if (Hit.bBlockingHit && bIsValidWallVector && GetCharacterMovement()->IsFalling())
+	{
+		WallRunNormal = Hit.Normal;
+		
+		// Stick the character to the wall
+		float length = (Hit.Normal - GetActorLocation()).Length();
+		FVector wallLaunchVelocity = Hit.Normal * length;
+		LaunchCharacter(wallLaunchVelocity, false, false);
+
+		// Move the character forward
+		FVector upVector = FVector(0.0f, 0.0f, 1.0f);
+		FVector forwardVector = UKismetMathLibrary::Cross_VectorVector(Hit.Normal, upVector);
+		float multiplier = WallRunSpeed * WallRunDirection;
+		FVector forwardLaunchVelocity = forwardVector * multiplier;
+		LaunchCharacter(forwardLaunchVelocity, true, !bWallrunHasGravity);
+
+		// Restore the two jumps
+		NumOfJumps = 2;
+
+		// Return true because he's on the wall
+		return true;
+	}
+	// He's not on a wall
+	return false;
+}
+
+void APlayerCharacter::EndWallRun(float ResetTime)
+{
+	if (IsWallRunning())
+	{
+		bIsWallRunningLeft = false;
+		bIsWallRunningRight = false;
+		GetCharacterMovement()->GravityScale = DefaultGravityScale;
+		SuppressWallRun(ResetTime);
+	}
+}
+
+void APlayerCharacter::SuppressWallRun(float Delay)
+{
+	bIsWallrunSuppressed = true;
+	GetWorld()->GetTimerManager().SetTimer(ResetSuppressWallrunTimerHandle, this, &APlayerCharacter::ResetWallRunSuppression, Delay, false);
+}
+
+void APlayerCharacter::ResetWallRunSuppression()
+{
+	GetWorld()->GetTimerManager().ClearTimer(ResetSuppressWallrunTimerHandle);
+	bIsWallrunSuppressed = false;
+}
+
+void APlayerCharacter::CameraTick()
+{
+	if (bIsWallRunningLeft)
+	{
+		TiltCamera(15.0f);
+	}
+	else if (bIsWallRunningRight)
+	{
+		TiltCamera(-15.0f);
+	}
+	else
+	{
+		TiltCamera(0.0f);
+	}
+}
+
+void APlayerCharacter::TiltCamera(float Roll)
+{
+	FRotator current = GetControlRotation();
+	
+	float pitch = GetControlRotation().Pitch;
+	float yaw = GetControlRotation().Yaw;
+	FRotator target = FRotator(pitch, yaw, Roll);
+	
+	float deltaTime = GetWorld()->GetDeltaSeconds();
+	FRotator newRotation = FMath::RInterpTo(current, target, deltaTime, 10.0f);
+	
+	GetController()->SetControlRotation(newRotation);
+}
+
+void APlayerCharacter::WallRunJump()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::White, "Jump off wall");
+	if (IsWallRunning())
+	{
+		EndWallRun(0.25f);
+		float xVelocity = WallRunNormal.X * WallRunJumpOffForce;
+		float yVelocity = WallRunNormal.Y * WallRunJumpOffForce;
+		FVector launchVelocity = FVector(xVelocity, yVelocity, WallRunJumpHeight);
+		LaunchCharacter(launchVelocity, false, true);
+	}
+}
 
 void APlayerCharacter::scrollInput(const FInputActionValue& value)
 {
@@ -390,7 +562,10 @@ void APlayerCharacter::Landed(const FHitResult& hit)
 {
 	Super::Landed(hit);
 
+	// Restore jumps and end wallrun
 	NumOfJumps = 2;
+	EndWallRun(0.0f);
+	bIsWallrunSuppressed = false;
 
 	if (sliding || crouching)
 	{

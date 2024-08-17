@@ -52,7 +52,6 @@ void UMyGameInstance::PlayMusicTrack(USoundBase* Track)
 
 	CurrentAudioComponent->Activate();
 	CurrentAudioComponent->Play(0.0);
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Some debug message!"));
 }
 
 void UMyGameInstance::PauseMusic()
