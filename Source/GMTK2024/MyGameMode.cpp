@@ -3,3 +3,9 @@
 
 #include "MyGameMode.h"
 
+AMyGameMode::AMyGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
+
+
+
+
+}

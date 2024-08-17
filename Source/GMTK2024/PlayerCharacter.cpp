@@ -34,6 +34,8 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 
+	TryRechargeSlideJumpBoost();
+
 	DeferSetupMovementSystem();
 
 }
