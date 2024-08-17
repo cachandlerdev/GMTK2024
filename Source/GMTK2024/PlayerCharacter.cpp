@@ -11,7 +11,7 @@
 #include "EnhancedInputLibrary.h"
 
 #include "UObject/UObjectGlobals.h"
-
+#include "Kismet/GameplayStatics.h"
 
 #include "PartSelectorKiosk.h"
 
@@ -401,11 +401,13 @@ void APlayerCharacter::Landed(const FHitResult& hit) {
 
 	if (sliding || crouching) {
 
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, "slope boost");
 
-
+		FVector lateralVelocity = GetCharacterMovement()->Velocity;
+		lateralVelocity.Z = 0.0f;
 
 		//if not moving but pressing crouch after jump on a hill/bump, then give minimum slide speed
-		if (GetCharacterMovement()->Velocity.Length() < 450.0f) {
+		if (lateralVelocity.Length() < 450.0f) {
 			FVector forwardDir = GetActorForwardVector();
 			forwardDir.Z = 0.0f;
 			forwardDir = forwardDir.GetSafeNormal();
@@ -415,7 +417,7 @@ void APlayerCharacter::Landed(const FHitResult& hit) {
 
 
 		//change velocity based on the hill steepness and direction
-		GetCharacterMovement()->Velocity *= (CalcHillSlideBoost());
+		GetCharacterMovement()->Velocity *= (CalcHillSlideBoost() + 1.1f);
 
 	}
 

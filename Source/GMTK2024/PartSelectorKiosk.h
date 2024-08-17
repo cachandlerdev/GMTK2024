@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+#include "GameFramework/Character.h"
+
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
@@ -15,7 +17,7 @@
 
 
 UCLASS()
-class GMTK2024_API ADisplayItemActor : public AActor {
+class GMTK2024_API ADisplayItemActor : public ACharacter {
 	GENERATED_BODY()
 
 public:
@@ -40,17 +42,38 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		int currentItem = 0;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		USkeletalMeshComponent* currentDisplay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USkeletalMeshComponent* kioskMesh;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USkeletalMesh* testMesh;
 
 	UPROPERTY(BlueprintReadWrite)
 		UBoxComponent* BoxCollider;
 
 
+	UPROPERTY(BlueprintReadWrite)
+		ADisplayItemActor* currentDisplayItem;
+		
+
+	UPROPERTY(BlueprintReadWrite)
+		FVector holoLocation;
+
+	UPROPERTY(EditAnywhere)
+		UMaterial* HoloMaterial;
+
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY()
+		float localTime = 0.0f;
+
 
 public:	
 	// Called every frame
