@@ -9,6 +9,7 @@
 #include "GameplayTags.h"
 
 #include "InputAction.h"
+#include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 
 
@@ -34,6 +35,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* BoxCollider;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCameraComponent* Camera;
+
+	// The welder object.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* Welder;
+
 	UPROPERTY(BlueprintReadOnly)
 	APlayerController* playerController;
 
@@ -49,17 +57,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float jogSpeed = 400.0f;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float slideJumpBoost = 0.2f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float WallRunSpeed = 850.0f;
+	float WallRunSpeed = 600.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	bool bWallrunHasGravity = false;
+	bool bWallrunHasGravity = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float WallrunTargetGravity = 0.25f;
+	float WallrunTargetGravity = 0.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float WallRunJumpHeight = 400.0f;
@@ -67,8 +75,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float WallRunJumpOffForce = 300.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float WallRunCameraTilt = 8.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float SprintFovIncrease = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float DashStrength = 1000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float DashCooldown = 5.0f;
 	
 private:
 	bool sprinting = false;
@@ -98,6 +115,18 @@ private:
 
 	// The normal vector of the wall we're running on.
 	FVector WallRunNormal;
+
+	// Used to track the initial field of view.
+	float InitialFov;
+	
+	// Used to make sure the FOV doesn't go too high when sprinting
+	float MaxFov;
+
+	// Whether the player is dashing
+	bool bIsOnDashCooldown = false;
+
+	// used to track the dash cooldown reset.
+	FTimerHandle DashCooldownHandle;
 	
 public:
 
@@ -107,9 +136,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* movementAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* airStrafeAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* lookAction;
@@ -124,38 +150,19 @@ public:
 		UInputAction* fireAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* heavyFireAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* scrollAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* zoomAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* forwardAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* crouchAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* dodgeAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* menuAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* swapWeaponAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* aimAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* ability1Action;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* targetLockAction;
-
+	UInputAction* DashAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control Mappings")
 		UInputMappingContext* baseControls;
@@ -211,6 +218,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsWallRunning();
 
+	// Returns whether the player is on a dash cooldown
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsOnDashCooldown();
+
 	// Inputs
 	
 	UFUNCTION()
@@ -218,10 +229,7 @@ public:
 
 	UFUNCTION()
 		virtual void fireInput(const FInputActionValue& value);
-
-	UFUNCTION()
-		virtual void heavyFireInput(const FInputActionValue& value);
-
+	
 	UFUNCTION()
 		virtual void moveInput(const FInputActionValue& value);
 
@@ -238,16 +246,7 @@ public:
 		virtual void crouchInput(const FInputActionValue& value);
 
 	UFUNCTION()
-		virtual void dodgeInput(const FInputActionValue& value);
-
-	UFUNCTION()
 		virtual void jumpInput(const FInputActionValue& value);
-
-	UFUNCTION()
-		virtual void ability1Input(const FInputActionValue& value);
-
-	UFUNCTION()
-		virtual void targetLockInput(const FInputActionValue& value);
 
 	// A blueprint implementable event that can be run when the player crouches. Optional
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
@@ -261,6 +260,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void DoWhenSprintingOver();
 
+	UFUNCTION(BlueprintCallable)
+	void Dash();
+
 	UFUNCTION()
 		float CalcHillSlideBoost();
 
@@ -268,6 +270,14 @@ public:
 		void TryRechargeSlideJumpBoost();
 
 private:
+
+	// Camera
+
+	// Updates the player's FOV depending on his movement speed.
+	void UpdateFovTick(float DeltaTime);
+
+	// Wallrun
+	
 	// Runs repeatedly to update wall running
 	void WallRunUpdate();
 
@@ -292,5 +302,13 @@ private:
 
 	// Lets the player jump off of a wallrun.
 	void WallRunJump();
+
+	// Dash
+
+	// Perform the actual dash
+	void PerformDash();
+
+	// Allows the player to dash again
+	void SetDashCooldownOver();
 	
 };

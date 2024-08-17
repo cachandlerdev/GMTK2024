@@ -3,19 +3,16 @@
 
 #include "MyGameMode.h"
 
-
 #include "Kismet/GameplayStatics.h"
 
 AMyGameMode::AMyGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 
-
 	orderSheet = CreateDefaultSubobject<UOrderDataSheet>("Order Sheet");
-
-
 }
 
 
-void AMyGameMode::BeginPlay() {
+void AMyGameMode::BeginPlay()
+{
 	Super::BeginPlay();
 
 	GetWorld()->GetTimerManager().SetTimer(shiftStatTimerHandle, this, &AMyGameMode::ShiftStartCallback, 3.0f);
@@ -36,15 +33,19 @@ void AMyGameMode::ShiftStartCallback() {
 	}
 
 	AddOrder();
-
 }
 
 
-void AMyGameMode::AddOrder() {
-
+void AMyGameMode::AddOrder()
+{
 	FOrder newOrder;
 	newOrder.firepower = 100.0f * difficulty;
 
+	if (orderSheet == nullptr)
+	{
+		// Let's see if this solves my crashing issue
+		return;
+	}
 	orderSheet->orders.Add(newOrder);
 
 	if (addOrderTimerHandle.IsValid()) {
@@ -55,14 +56,9 @@ void AMyGameMode::AddOrder() {
 
 	GetWorld()->GetTimerManager().SetTimer(addOrderTimerHandle, this, &AMyGameMode::AddOrder, 10.0f * (1.0f / difficulty));
 
-
 }
 
-void AMyGameMode::SpawnShipChasis() {
-
+void AMyGameMode::SpawnShipChasis()
+{
 	currentShip = GetWorld()->SpawnActor<AActor>(ChasisActorType);
-
-
-
-
 }

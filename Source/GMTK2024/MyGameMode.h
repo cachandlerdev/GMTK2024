@@ -24,18 +24,16 @@ UCLASS()
 class GMTK2024_API AMyGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-	
-public:
 
+public:
 	AMyGameMode(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<AActor> ChasisActorType;
+	TSubclassOf<AActor> ChasisActorType;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float difficulty = 1.0f;
-
+	float difficulty = 1.0f;
 
 
 	UPROPERTY(BlueprintReadWrite)
@@ -48,11 +46,8 @@ public:
 		USoundBase* ShiftStartSoundBase;
 
 
-
-
 	UPROPERTY(BlueprintReadWrite)
-		AActor* currentShip;
-
+	AActor* currentShip;
 
 
 
@@ -70,15 +65,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
 public:
+	UFUNCTION(BlueprintCallable)
+	void AddOrder();
+
 
 	UFUNCTION(BlueprintCallable)
-		void AddOrder();
-
-
-	UFUNCTION(BlueprintCallable)
-		void SpawnShipChasis();
+	void SpawnShipChasis();
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void SpawnShipChasisBP();
@@ -91,5 +84,4 @@ public:
 
 	//UFUNCTION()
 		//void AddOrderCallback();
-
 };

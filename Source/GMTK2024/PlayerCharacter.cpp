@@ -6,6 +6,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputLibrary.h"
@@ -25,12 +26,43 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) 
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Add camera
+	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
+
+	// Add welder
+	Welder = CreateDefaultSubobject<UStaticMeshComponent>("Welder");
+	
+	FVector welderLocation = FVector(40.0f, 30.0f, -30.0f);
+	Welder->AddLocalOffset(welderLocation, false);
+	
+	FRotator rotation = FRotator(0.0f, 180.0f, 0.0f);
+	Welder->AddLocalRotation(rotation);
+
+	FVector scale = FVector(0.3f, 0.3f, 0.3f);
+	Welder->SetWorldScale3D(scale);
+	Welder->SetCollisionProfileName(TEXT("OverlapAll"));
+
+	// setup constants
+	InitialFov = Camera->FieldOfView;
+	MaxFov = Camera->FieldOfView + SprintFovIncrease;
+
+	GetCharacterMovement()->AirControl = 0.25f;
+	JumpMaxCount = 2;
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Attach things
+	FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, false);
+	Camera->AttachToComponent(GetCapsuleComponent(), Rules);
+	Camera->SetRelativeLocation(FVector(0.0f, 0.0f, 60.0f));
+	Camera->bUsePawnControlRotation = true;
+
+	Welder->AttachToComponent(Camera, Rules);
 
 	GetCharacterMovement()->MaxWalkSpeed = jogSpeed;
 	NumOfJumps = 2;
@@ -39,7 +71,8 @@ void APlayerCharacter::BeginPlay()
 	TryRechargeSlideJumpBoost();
 	DeferSetupMovementSystem();
 
-	GetWorld()->GetTimerManager().SetTimer(WallrunTimerHandle, this, &APlayerCharacter::WallRunUpdate, WallrunUpdateTime, true);
+	GetWorld()->GetTimerManager().SetTimer(WallrunTimerHandle, this, &APlayerCharacter::WallRunUpdate,
+	                                       WallrunUpdateTime, true);
 }
 
 
@@ -103,17 +136,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		if (movementAction && lookAction)
 		{
 			//BUILD ALL MAPPINGS THAT ARENT BUILT IN EDITOR
-
-			//baseControlsCopy->MapKey(fireAction, EKeys::LeftMouseButton);
-			//need to rebuild the control mapping
-			//UEnhancedInputLibrary::RequestRebuildControlMappingsUsingContext(baseControlsCopy);
-
 			playerEnhancedInput->BindAction(movementAction, ETriggerEvent::Triggered, this,
 			                                &APlayerCharacter::moveInput);
-			//playerEnhancedInput->BindAction(airStrafeAction, ETriggerEvent::Started, this, &APlayerCharacter::airStrafeInput);
-			//playerEnhancedInput->BindAction(forwardAction, ETriggerEvent::Triggered, this, &APlayerCharacter::forwardInput);
 			playerEnhancedInput->BindAction(lookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::lookInput);
-			//playerEnhancedInput->BindAction(zoomAction, ETriggerEvent::Triggered, this, &APlayerCharacter::zoomInput);
 			playerEnhancedInput->BindAction(sprintAction, ETriggerEvent::Triggered, this,
 			                                &APlayerCharacter::ToggleSprint);
 			playerEnhancedInput->BindAction(jumpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::jumpInput);
@@ -123,13 +148,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 			playerEnhancedInput->BindAction(scrollAction, ETriggerEvent::Triggered, this,
 			                                &APlayerCharacter::scrollInput);
-
-			//playerEnhancedInput->BindAction(dodgeAction, ETriggerEvent::Triggered, this, &APlayerCharacter::dodgeInput);
-			//playerEnhancedInput->BindAction(ability1Action, ETriggerEvent::Triggered, this, &APlayerCharacter::ability1Input);
-			//playerEnhancedInput->BindAction(targetLockAction, ETriggerEvent::Triggered, this, &APlayerCharacter::targetLockInput);
-			//playerEnhancedInput->BindAction(fireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::fireInput);
-			//playerEnhancedInput->BindAction(heavyFireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::heavyFireInput);
-			//playerEnhancedInput->BindAction(aimAction, ETriggerEvent::Triggered, this, &APlayerCharacter::aimInput);
+			playerEnhancedInput->BindAction(DashAction, ETriggerEvent::Triggered, this,
+			                                &APlayerCharacter::Dash);
 		}
 	}
 }
@@ -153,6 +173,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 	}
 	CameraTick();
+	UpdateFovTick(DeltaTime);
 }
 
 
@@ -206,6 +227,11 @@ bool APlayerCharacter::IsWallRunning()
 	return bIsWallRunningLeft || bIsWallRunningRight;
 }
 
+bool APlayerCharacter::IsOnDashCooldown()
+{
+	return bIsOnDashCooldown;
+}
+
 void APlayerCharacter::lookInput(const FInputActionValue& value)
 {
 	AddControllerPitchInput(-1.0f * value.Get<FVector2D>().Y * lookSensitivity);
@@ -217,7 +243,8 @@ void APlayerCharacter::ToggleSprint(const FInputActionValue& value)
 {
 	// i want to have a release check on the input
 	//(maybe for later, might change to only pressed tho) but I only want this to be sprinting if true
-	if (value.Get<bool>())
+	bool isMoving = GetVelocity().Length() > 10.0f;
+	if (value.Get<bool>() && isMoving)
 	{
 		SetSprinting(true);
 		DoWhileSprinting();
@@ -277,6 +304,32 @@ void APlayerCharacter::TryRechargeSlideJumpBoost()
 	                                0.8f);
 }
 
+void APlayerCharacter::UpdateFovTick(float DeltaTime)
+{
+	if (Camera == nullptr)
+	{
+		return;
+	}
+	float threshhold = jogSpeed + 10.0f;
+	float currentSpeed = GetVelocity().Length();
+	bool bShouldIncreaseFov = currentSpeed > threshhold;
+
+	if (bShouldIncreaseFov)
+	{
+		float currentFov = Camera->FieldOfView;
+		float targetFov = Camera->FieldOfView + SprintFovIncrease;
+		float newFov = UKismetMathLibrary::Lerp(currentFov, targetFov, DeltaTime);
+		float clampedFov = UKismetMathLibrary::FClamp(newFov, 0.0f, MaxFov);
+		Camera->SetFieldOfView(clampedFov);
+	}
+	else
+	{
+		float currentFov = Camera->FieldOfView;
+		float newFov = UKismetMathLibrary::Lerp(currentFov, InitialFov, DeltaTime * 5.0f);
+		Camera->SetFieldOfView(newFov);
+	}
+}
+
 void APlayerCharacter::WallRunUpdate()
 {
 	if (bIsWallrunSuppressed)
@@ -284,7 +337,7 @@ void APlayerCharacter::WallRunUpdate()
 		// Ignore if the wallrun is suppressed.
 		return;
 	}
-	
+
 	// Get right end point
 	FVector location = GetActorLocation();
 	FVector rightVector = GetActorRightVector();
@@ -336,14 +389,14 @@ bool APlayerCharacter::WallRunMovement(FVector Start, FVector End, float WallRun
 	FHitResult Hit;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
-	
+
 	GetWorld()->LineTraceSingleByChannel(Hit, Start, End, TraceChannelProperty, QueryParams);
 
 	bool bIsValidWallVector = (Hit.Normal.Z > -0.52f && Hit.Normal.Z < 0.52f);
 	if (Hit.bBlockingHit && bIsValidWallVector && GetCharacterMovement()->IsFalling())
 	{
 		WallRunNormal = Hit.Normal;
-		
+
 		// Stick the character to the wall
 		float length = (Hit.Normal - GetActorLocation()).Length();
 		FVector wallLaunchVelocity = Hit.Normal * length;
@@ -381,7 +434,8 @@ void APlayerCharacter::EndWallRun(float ResetTime)
 void APlayerCharacter::SuppressWallRun(float Delay)
 {
 	bIsWallrunSuppressed = true;
-	GetWorld()->GetTimerManager().SetTimer(ResetSuppressWallrunTimerHandle, this, &APlayerCharacter::ResetWallRunSuppression, Delay, false);
+	GetWorld()->GetTimerManager().SetTimer(ResetSuppressWallrunTimerHandle, this,
+	                                       &APlayerCharacter::ResetWallRunSuppression, Delay, false);
 }
 
 void APlayerCharacter::ResetWallRunSuppression()
@@ -409,14 +463,14 @@ void APlayerCharacter::CameraTick()
 void APlayerCharacter::TiltCamera(float Roll)
 {
 	FRotator current = GetControlRotation();
-	
+
 	float pitch = GetControlRotation().Pitch;
 	float yaw = GetControlRotation().Yaw;
 	FRotator target = FRotator(pitch, yaw, Roll);
-	
+
 	float deltaTime = GetWorld()->GetDeltaSeconds();
 	FRotator newRotation = FMath::RInterpTo(current, target, deltaTime, 10.0f);
-	
+
 	GetController()->SetControlRotation(newRotation);
 }
 
@@ -431,6 +485,20 @@ void APlayerCharacter::WallRunJump()
 		FVector launchVelocity = FVector(xVelocity, yVelocity, WallRunJumpHeight);
 		LaunchCharacter(launchVelocity, false, true);
 	}
+}
+
+void APlayerCharacter::PerformDash()
+{
+	Falling
+	FVector launchVelocity = GetActorForwardVector() * DashStrength;
+	LaunchCharacter(launchVelocity, false, false);
+	GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this,
+										   &APlayerCharacter::SetDashCooldownOver, DashCooldown, false);
+}
+
+void APlayerCharacter::SetDashCooldownOver()
+{
+	bIsOnDashCooldown = false;
 }
 
 void APlayerCharacter::scrollInput(const FInputActionValue& value)
@@ -465,11 +533,6 @@ void APlayerCharacter::fireInput(const FInputActionValue& value)
 	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, "Base Fire Called");
 }
 
-void APlayerCharacter::heavyFireInput(const FInputActionValue& value)
-{
-}
-
-
 void APlayerCharacter::crouchInput(const FInputActionValue& value)
 {
 	crouching = value.Get<bool>();
@@ -499,25 +562,9 @@ void APlayerCharacter::crouchInput(const FInputActionValue& value)
 	}
 }
 
-
-void APlayerCharacter::dodgeInput(const FInputActionValue& value)
-{
-}
-
-void APlayerCharacter::targetLockInput(const FInputActionValue& value)
-{
-}
-
-
 void APlayerCharacter::aimInput(const FInputActionValue& value)
 {
 }
-
-void APlayerCharacter::ability1Input(const FInputActionValue& value)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::White, "ability1 call");
-}
-
 
 void APlayerCharacter::SetSprinting(bool val)
 {
@@ -574,9 +621,10 @@ void APlayerCharacter::Landed(const FHitResult& hit)
 	{
 		FVector lateralVelocity = GetCharacterMovement()->Velocity;
 		lateralVelocity.Z = 0.0f;
-		
+
 		//if not moving but pressing crouch after jump on a hill/bump, then give minimum slide speed
-		if (lateralVelocity.Length() < 450.0f) {
+		if (lateralVelocity.Length() < 450.0f)
+		{
 			FVector forwardDir = GetActorForwardVector();
 			forwardDir.Z = 0.0f;
 			forwardDir = forwardDir.GetSafeNormal();
@@ -586,11 +634,28 @@ void APlayerCharacter::Landed(const FHitResult& hit)
 
 
 		//change velocity based on the hill steepness and direction
-		//GetCharacterMovement()->Velocity *= (CalcHillSlideBoost() + 1.1f);
 		GetCharacterMovement()->Velocity *= (CalcHillSlideBoost());
 	}
 }
 
+
+void APlayerCharacter::Dash()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, "Try to dash");
+	if (!bIsOnDashCooldown)
+	{
+		bIsOnDashCooldown = true;
+		// We boost the player up to allow the dash to happen
+		FVector upBoost = FVector(0.0f, 0.0f, 200.0f);
+		LaunchCharacter(upBoost, false, false);
+
+		// Launch the player forward after 0.1 seconds.
+		float delay = 0.1f;
+		FTimerHandle DashHandle;
+		GetWorld()->GetTimerManager().SetTimer(DashHandle, this,
+											   &APlayerCharacter::PerformDash, delay, false);
+	}
+}
 
 float APlayerCharacter::CalcHillSlideBoost()
 {
