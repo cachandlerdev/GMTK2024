@@ -3,12 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/Character.h"
 
 
 #include "GameplayTags.h"
 
 #include "InputAction.h"
 #include "Components/BoxComponent.h"
+
+
 
 #include "PlayerCharacter.generated.h"
 
@@ -20,7 +23,7 @@ class USoundCue;
 
 
 UCLASS()
-class GMTK2024_API APlayerCharacter : public APawn, public IGameplayTagAssetInterface
+class GMTK2024_API APlayerCharacter : public ACharacter, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
