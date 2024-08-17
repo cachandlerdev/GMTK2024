@@ -53,6 +53,14 @@ public:
 };
 
 
+UENUM(BlueprintType)
+enum class PartType : uint8 {
+	PT_STRUCTURAL = 0 UMETA(DisplayName = "STRUCTURAL"),
+	PT_FIREPOWER = 1  UMETA(DisplayName = "FIREPOWER"),
+	PT_THRUST = 2     UMETA(DisplayName = "TRUST"),
+	PT_ENERGY = 3     UMETA(DisplayName = "ENERGY"),
+	PT_MISC = 4		UMETA(DisplayName = "MISC")
+};
 
 
 

@@ -18,7 +18,7 @@ APartBase::APartBase()
 void APartBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	localTime = 0.0f;
 }
 
 // Called every frame
@@ -26,5 +26,29 @@ void APartBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	localTime += DeltaTime;
+
 }
 
+bool APartBase::ProgressWeld() {
+
+	float dt = localTime - localTimeAtLastWeldCheckin;
+
+	weldTime += dt;
+
+	return (weldTime >= weldTimeRequirement);
+
+}
+
+void APartBase::SolidifyWeld() {
+
+	if (weldTarget) {
+
+		FAttachmentTransformRules attachRules = FAttachmentTransformRules::KeepRelativeTransform;
+
+
+		AttachToComponent(weldTarget->mesh, attachRules, "weldSocket");
+
+	}
+
+}
