@@ -66,9 +66,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float WallRunJumpOffForce = 300.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float WallRunCameraTilt = 15.0f;
 	
 private:
 	bool sprinting = false;
