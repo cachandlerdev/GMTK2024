@@ -9,6 +9,7 @@
 #include "GameplayTags.h"
 
 #include "InputAction.h"
+#include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 
 
@@ -34,6 +35,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* BoxCollider;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCameraComponent* Camera;
+
+	// The welder object.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* Welder;
+
 	UPROPERTY(BlueprintReadOnly)
 	APlayerController* playerController;
 
@@ -53,13 +61,13 @@ public:
 	float slideJumpBoost = 0.2f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float WallRunSpeed = 850.0f;
+	float WallRunSpeed = 600.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	bool bWallrunHasGravity = false;
+	bool bWallrunHasGravity = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float WallrunTargetGravity = 0.25f;
+	float WallrunTargetGravity = 0.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float WallRunJumpHeight = 400.0f;
@@ -67,8 +75,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float WallRunJumpOffForce = 300.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float WallRunCameraTilt = 8.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float SprintFovIncrease = 10.0f;
 	
 private:
 	bool sprinting = false;
@@ -98,6 +109,12 @@ private:
 
 	// The normal vector of the wall we're running on.
 	FVector WallRunNormal;
+
+	// Used to track the initial field of view.
+	float InitialFov;
+	
+	// Used to make sure the FOV doesn't go too high when sprinting
+	float MaxFov;
 	
 public:
 
@@ -268,6 +285,14 @@ public:
 		void TryRechargeSlideJumpBoost();
 
 private:
+
+	// Camera
+
+	// Updates the player's FOV depending on his movement speed.
+	void UpdateFovTick(float DeltaTime);
+
+	// Wallrun
+	
 	// Runs repeatedly to update wall running
 	void WallRunUpdate();
 

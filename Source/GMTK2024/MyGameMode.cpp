@@ -3,37 +3,34 @@
 
 #include "MyGameMode.h"
 
-AMyGameMode::AMyGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
-
-
+AMyGameMode::AMyGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
 	orderSheet = CreateDefaultSubobject<UOrderDataSheet>("Order Sheet");
-
-
 }
 
 
-void AMyGameMode::BeginPlay() {
+void AMyGameMode::BeginPlay()
+{
 	Super::BeginPlay();
 
 	AddOrder();
-
 }
 
 
-void AMyGameMode::AddOrder() {
-
+void AMyGameMode::AddOrder()
+{
 	FOrder newOrder;
 	newOrder.firepower = 100.0f * difficulty;
 
+	if (orderSheet == nullptr)
+	{
+		// Let's see if this solves my crashing issue
+		return;
+	}
 	orderSheet->orders.Add(newOrder);
-
 }
 
-void AMyGameMode::SpawnShipChasis() {
-
+void AMyGameMode::SpawnShipChasis()
+{
 	currentShip = GetWorld()->SpawnActor<AActor>(ChasisActorType);
-
-
-
-
 }
