@@ -49,6 +49,41 @@ public:
 
 
 
+
+
+
+
+
+	UPROPERTY(BlueprintReadWrite)
+		bool sliding = false;
+
+	UPROPERTY(BlueprintReadOnly)
+		float slideTimer = 0.0f;
+
+
+
+	UPROPERTY(BlueprintReadWrite)
+		bool sprinting = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float sprintSpeed = 800.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float jogSpeed = 400.0f;
+
+
+	UPROPERTY(BlueprintReadWrite)
+		bool crouching = false;
+
+
+	UPROPERTY(BlueprintReadWrite)
+		float slideJumpBoost = 0.2f;
+
+	UPROPERTY()
+		FTimerHandle slideJumpRechargeTimerHandle;
+
+
+
 	//INPUT STUFF
 	UPROPERTY(BlueprintReadOnly)
 		UEnhancedInputComponent* playerEnhancedInput;
@@ -172,5 +207,27 @@ public:
 
 	UFUNCTION()
 		virtual void targetLockInput(const FInputActionValue& value);
+
+
+
+
+	UFUNCTION()
+		void SetSliding(bool val);
+
+	UFUNCTION(BlueprintIMplementableEvent)
+		void CrouchBP(bool crouchVal);
+
+
+	UFUNCTION()
+		float CalcHillSlideBoost();
+
+
+	UFUNCTION()
+		void SetSprinting(bool val);
+
+
+	UFUNCTION()
+		void TryRechargeSlideJumpBoost();
+
 
 };

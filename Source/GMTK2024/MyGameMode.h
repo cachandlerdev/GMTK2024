@@ -14,4 +14,9 @@ class GMTK2024_API AMyGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+
+	AMyGameMode(const FObjectInitializer& ObjectInitializer);
+
+
 };
