@@ -13,6 +13,8 @@
 #include "UObject/UObjectGlobals.h"
 
 
+#include "PartSelectorKiosk.h"
+
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -108,8 +110,12 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			playerEnhancedInput->BindAction(sprintAction, ETriggerEvent::Triggered, this,
 			                                &APlayerCharacter::ToggleSprint);
 			playerEnhancedInput->BindAction(jumpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::jumpInput);
-			playerEnhancedInput->BindAction(crouchAction, ETriggerEvent::Triggered, this,
-			                                &APlayerCharacter::crouchInput);
+
+			playerEnhancedInput->BindAction(crouchAction, ETriggerEvent::Triggered, this, &APlayerCharacter::crouchInput);
+
+			playerEnhancedInput->BindAction(scrollAction, ETriggerEvent::Triggered, this, &APlayerCharacter::scrollInput);
+
+
 			//playerEnhancedInput->BindAction(dodgeAction, ETriggerEvent::Triggered, this, &APlayerCharacter::dodgeInput);
 			//playerEnhancedInput->BindAction(ability1Action, ETriggerEvent::Triggered, this, &APlayerCharacter::ability1Input);
 			//playerEnhancedInput->BindAction(targetLockAction, ETriggerEvent::Triggered, this, &APlayerCharacter::targetLockInput);
@@ -251,8 +257,46 @@ void APlayerCharacter::TryRechargeSlideJumpBoost()
 }
 
 
-void APlayerCharacter::fireInput(const FInputActionValue& value)
-{
+
+
+
+
+
+void APlayerCharacter::scrollInput(const FInputActionValue& value) {
+	
+	FVector eyeLoc;
+	FRotator eyeDir;
+	
+	GetActorEyesViewPoint(eyeLoc, eyeDir);
+	
+	TArray<FHitResult> hits;
+
+
+
+	GetWorld()->LineTraceMultiByChannel(hits, GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f), ECC_Visibility);
+	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f), 10.0f, FColor::Green, false, 1.0f);
+
+	for (FHitResult hit : hits) {
+
+		APartSelectorKiosk* kiosk = Cast<APartSelectorKiosk>(hit.GetActor());
+
+		if (kiosk) {
+
+			kiosk->RotateDisplayItem(value.Get<float>());
+
+
+		}
+
+	}
+
+
+
+}
+
+
+
+void APlayerCharacter::fireInput(const FInputActionValue& value) {
+
 	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, "Base Fire Called");
 }
 
