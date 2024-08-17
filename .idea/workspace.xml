@@ -2,13 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="37f2d12a-7bc6-407e-a8b2-2be732d9c409" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Maps/ThirdPersonMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ThirdPerson/Maps/ThirdPersonMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GMTK2024.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/GMTK2024.uproject" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/GMTK2024.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/GMTK2024.Build.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/GMTK2024Character.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/GMTK2024Character.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Effects/NS_SpeedLines.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Player/PlayerCharacterBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Player/PlayerCharacterBP.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Particles/P_Explosion.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Particles/P_Explosion.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
