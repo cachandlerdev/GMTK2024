@@ -3,8 +3,10 @@
 
 #include "MyGameMode.h"
 
-AMyGameMode::AMyGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-{
+#include "Kismet/GameplayStatics.h"
+
+AMyGameMode::AMyGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
+
 	orderSheet = CreateDefaultSubobject<UOrderDataSheet>("Order Sheet");
 }
 
@@ -12,6 +14,23 @@ AMyGameMode::AMyGameMode(const FObjectInitializer& ObjectInitializer) : Super(Ob
 void AMyGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetWorld()->GetTimerManager().SetTimer(shiftStatTimerHandle, this, &AMyGameMode::ShiftStartCallback, 3.0f);
+	
+
+}
+
+
+
+void AMyGameMode::ShiftStartCallback() {
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShiftStartAlarm, FVector(0.0f, 0.0f, 0.0f));
+
+	if (shiftStatTimerHandle.IsValid()) {
+
+		shiftStatTimerHandle.Invalidate();
+
+	}
 
 	AddOrder();
 }
@@ -28,6 +47,15 @@ void AMyGameMode::AddOrder()
 		return;
 	}
 	orderSheet->orders.Add(newOrder);
+
+	if (addOrderTimerHandle.IsValid()) {
+
+		addOrderTimerHandle.Invalidate();
+
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(addOrderTimerHandle, this, &AMyGameMode::AddOrder, 10.0f * (1.0f / difficulty));
+
 }
 
 void AMyGameMode::SpawnShipChasis()
