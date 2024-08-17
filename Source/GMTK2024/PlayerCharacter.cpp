@@ -386,6 +386,33 @@ void APlayerCharacter::SetSliding(bool val)
 }
 
 
+
+void APlayerCharacter::Landed(const FHitResult& hit) {
+	Super::Landed(hit);
+
+	if (sliding || crouching) {
+
+
+
+
+		//if not moving but pressing crouch after jump on a hill/bump, then give minimum slide speed
+		if (GetCharacterMovement()->Velocity.Length() < 450.0f) {
+			FVector forwardDir = GetActorForwardVector();
+			forwardDir.Z = 0.0f;
+			forwardDir = forwardDir.GetSafeNormal();
+
+			GetCharacterMovement()->Velocity = forwardDir * 500.0f;
+		}
+
+
+		//change velocity based on the hill steepness and direction
+		GetCharacterMovement()->Velocity *= (CalcHillSlideBoost());
+
+	}
+
+}
+
+
 float APlayerCharacter::CalcHillSlideBoost()
 {
 	float hillGrade = 0.0f;
