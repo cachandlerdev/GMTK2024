@@ -206,15 +206,19 @@ void APlayerCharacter::ToggleSprint(const FInputActionValue& value)
 
 void APlayerCharacter::jumpInput(const FInputActionValue& value)
 {
-	Jump();
-	if (sliding && !GetCharacterMovement()->IsFalling())
+	if (NumOfJumps != 0)
 	{
-		//apply slide jump boost
-		GetCharacterMovement()->Velocity *= (1.0f + slideJumpBoost);
+		NumOfJumps--;
+		Jump();
+		if (sliding && !GetCharacterMovement()->IsFalling())
+		{
+			//apply slide jump boost
+			GetCharacterMovement()->Velocity *= (1.0f + slideJumpBoost);
 
-		//max slide boost is 0.2 so after 2 jumps no more boost
-		//and after 3 jumps they start loosing speed so they cant slide forever
-		slideJumpBoost -= 0.1f;
+			//max slide boost is 0.2 so after 2 jumps no more boost
+			//and after 3 jumps they start loosing speed so they cant slide forever
+			slideJumpBoost -= 0.1f;
+		}
 	}
 }
 
