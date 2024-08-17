@@ -35,54 +35,30 @@ public:
 	UBoxComponent* BoxCollider;
 
 	UPROPERTY(BlueprintReadOnly)
-		APlayerController* playerController;
+	APlayerController* playerController;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Tags")
-		FGameplayTagContainer GameplayTags;
-
-
+	FGameplayTagContainer GameplayTags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		float lookSensitivity = 0.5f;
-
-
-
-
-
-
-
-
-
-
-	UPROPERTY(BlueprintReadWrite)
-		bool sliding = false;
-
-	UPROPERTY(BlueprintReadOnly)
-		float slideTimer = 0.0f;
-
-
-
-	UPROPERTY(BlueprintReadWrite)
-		bool sprinting = false;
+	float lookSensitivity = 0.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float sprintSpeed = 800.0f;
+	float sprintSpeed = 800.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float jogSpeed = 400.0f;
-
-
-	UPROPERTY(BlueprintReadWrite)
-		bool crouching = false;
-
+	float jogSpeed = 400.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-		float slideJumpBoost = 0.2f;
-
-	UPROPERTY()
-		FTimerHandle slideJumpRechargeTimerHandle;
-
-
+	float slideJumpBoost = 0.2f;
+	
+private:
+	bool sprinting = false;
+	bool sliding = false;
+	bool crouching = false;
+	float slideTimer = 0.0f;
+	FTimerHandle slideJumpRechargeTimerHandle;
+public:
 
 	//INPUT STUFF
 	UPROPERTY(BlueprintReadOnly)
@@ -150,12 +126,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
-
-
 	UPROPERTY(BlueprintReadOnly)
-		bool movementSuccessful = false;
-
+	bool movementSuccessful = false;
 
 public:	
 	// Called every frame
@@ -164,17 +136,33 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
 	//needed for gameplay tags
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
-
-
 
 	//setup movement after begin so that player controller never fails to acquire input
 	UFUNCTION(BlueprintCallable)
 		void DeferSetupMovementSystem();
 
+	// Makes the player slide
+	UFUNCTION()
+	void SetSliding(bool val);
 
+	// Makes the player sprint
+	UFUNCTION()
+	void SetSprinting(bool val);
+
+	// Returns whether the player is sprinting
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsPlayerSprinting();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartCrouch();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void EndCrouch();
+
+	// Inputs
+	
 	UFUNCTION()
 		virtual void lookInput(const FInputActionValue& value);
 
@@ -188,7 +176,7 @@ public:
 		virtual void moveInput(const FInputActionValue& value);
 
 	UFUNCTION()
-		virtual void sprintInput(const FInputActionValue& value);
+		virtual void ToggleSprint(const FInputActionValue& value);
 
 	UFUNCTION()
 		virtual void aimInput(const FInputActionValue& value);
@@ -208,26 +196,21 @@ public:
 	UFUNCTION()
 		virtual void targetLockInput(const FInputActionValue& value);
 
+	// A blueprint implementable event that can be run when the player crouches. Optional
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void DoWhileCrouching(bool crouchVal);
 
+	// A blueprint implementable event that can be run when the player sprints.
+	UFUNCTION(BlueprintImplementableEvent)
+	void DoWhileSprinting();
 
-
-	UFUNCTION()
-		void SetSliding(bool val);
-
-	UFUNCTION(BlueprintIMplementableEvent)
-		void CrouchBP(bool crouchVal);
-
+	// A blueprint implementable event that runs after the player has stopped sprinting.
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void DoWhenSprintingOver();
 
 	UFUNCTION()
 		float CalcHillSlideBoost();
 
-
-	UFUNCTION()
-		void SetSprinting(bool val);
-
-
 	UFUNCTION()
 		void TryRechargeSlideJumpBoost();
-
-
 };
