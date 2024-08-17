@@ -136,17 +136,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		if (movementAction && lookAction)
 		{
 			//BUILD ALL MAPPINGS THAT ARENT BUILT IN EDITOR
-
-			//baseControlsCopy->MapKey(fireAction, EKeys::LeftMouseButton);
-			//need to rebuild the control mapping
-			//UEnhancedInputLibrary::RequestRebuildControlMappingsUsingContext(baseControlsCopy);
-
 			playerEnhancedInput->BindAction(movementAction, ETriggerEvent::Triggered, this,
 			                                &APlayerCharacter::moveInput);
-			//playerEnhancedInput->BindAction(airStrafeAction, ETriggerEvent::Started, this, &APlayerCharacter::airStrafeInput);
-			//playerEnhancedInput->BindAction(forwardAction, ETriggerEvent::Triggered, this, &APlayerCharacter::forwardInput);
 			playerEnhancedInput->BindAction(lookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::lookInput);
-			//playerEnhancedInput->BindAction(zoomAction, ETriggerEvent::Triggered, this, &APlayerCharacter::zoomInput);
 			playerEnhancedInput->BindAction(sprintAction, ETriggerEvent::Triggered, this,
 			                                &APlayerCharacter::ToggleSprint);
 			playerEnhancedInput->BindAction(jumpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::jumpInput);
@@ -156,13 +148,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 			playerEnhancedInput->BindAction(scrollAction, ETriggerEvent::Triggered, this,
 			                                &APlayerCharacter::scrollInput);
-
-			//playerEnhancedInput->BindAction(dodgeAction, ETriggerEvent::Triggered, this, &APlayerCharacter::dodgeInput);
-			//playerEnhancedInput->BindAction(ability1Action, ETriggerEvent::Triggered, this, &APlayerCharacter::ability1Input);
-			//playerEnhancedInput->BindAction(targetLockAction, ETriggerEvent::Triggered, this, &APlayerCharacter::targetLockInput);
-			//playerEnhancedInput->BindAction(fireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::fireInput);
-			//playerEnhancedInput->BindAction(heavyFireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::heavyFireInput);
-			//playerEnhancedInput->BindAction(aimAction, ETriggerEvent::Triggered, this, &APlayerCharacter::aimInput);
+			playerEnhancedInput->BindAction(DashAction, ETriggerEvent::Triggered, this,
+			                                &APlayerCharacter::Dash);
 		}
 	}
 }
@@ -240,6 +227,11 @@ bool APlayerCharacter::IsWallRunning()
 	return bIsWallRunningLeft || bIsWallRunningRight;
 }
 
+bool APlayerCharacter::IsOnDashCooldown()
+{
+	return bIsOnDashCooldown;
+}
+
 void APlayerCharacter::lookInput(const FInputActionValue& value)
 {
 	AddControllerPitchInput(-1.0f * value.Get<FVector2D>().Y * lookSensitivity);
@@ -251,7 +243,8 @@ void APlayerCharacter::ToggleSprint(const FInputActionValue& value)
 {
 	// i want to have a release check on the input
 	//(maybe for later, might change to only pressed tho) but I only want this to be sprinting if true
-	if (value.Get<bool>())
+	bool isMoving = GetVelocity().Length() > 10.0f;
+	if (value.Get<bool>() && isMoving)
 	{
 		SetSprinting(true);
 		DoWhileSprinting();
@@ -494,6 +487,20 @@ void APlayerCharacter::WallRunJump()
 	}
 }
 
+void APlayerCharacter::PerformDash()
+{
+	Falling
+	FVector launchVelocity = GetActorForwardVector() * DashStrength;
+	LaunchCharacter(launchVelocity, false, false);
+	GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this,
+										   &APlayerCharacter::SetDashCooldownOver, DashCooldown, false);
+}
+
+void APlayerCharacter::SetDashCooldownOver()
+{
+	bIsOnDashCooldown = false;
+}
+
 void APlayerCharacter::scrollInput(const FInputActionValue& value)
 {
 	FVector eyeLoc;
@@ -526,11 +533,6 @@ void APlayerCharacter::fireInput(const FInputActionValue& value)
 	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, "Base Fire Called");
 }
 
-void APlayerCharacter::heavyFireInput(const FInputActionValue& value)
-{
-}
-
-
 void APlayerCharacter::crouchInput(const FInputActionValue& value)
 {
 	crouching = value.Get<bool>();
@@ -560,25 +562,9 @@ void APlayerCharacter::crouchInput(const FInputActionValue& value)
 	}
 }
 
-
-void APlayerCharacter::dodgeInput(const FInputActionValue& value)
-{
-}
-
-void APlayerCharacter::targetLockInput(const FInputActionValue& value)
-{
-}
-
-
 void APlayerCharacter::aimInput(const FInputActionValue& value)
 {
 }
-
-void APlayerCharacter::ability1Input(const FInputActionValue& value)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::White, "ability1 call");
-}
-
 
 void APlayerCharacter::SetSprinting(bool val)
 {
@@ -648,11 +634,28 @@ void APlayerCharacter::Landed(const FHitResult& hit)
 
 
 		//change velocity based on the hill steepness and direction
-		//GetCharacterMovement()->Velocity *= (CalcHillSlideBoost() + 1.1f);
 		GetCharacterMovement()->Velocity *= (CalcHillSlideBoost());
 	}
 }
 
+
+void APlayerCharacter::Dash()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, "Try to dash");
+	if (!bIsOnDashCooldown)
+	{
+		bIsOnDashCooldown = true;
+		// We boost the player up to allow the dash to happen
+		FVector upBoost = FVector(0.0f, 0.0f, 200.0f);
+		LaunchCharacter(upBoost, false, false);
+
+		// Launch the player forward after 0.1 seconds.
+		float delay = 0.1f;
+		FTimerHandle DashHandle;
+		GetWorld()->GetTimerManager().SetTimer(DashHandle, this,
+											   &APlayerCharacter::PerformDash, delay, false);
+	}
+}
 
 float APlayerCharacter::CalcHillSlideBoost()
 {
