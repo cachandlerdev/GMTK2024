@@ -392,11 +392,11 @@ void APlayerCharacter::CameraTick()
 {
 	if (bIsWallRunningLeft)
 	{
-		TiltCamera(15.0f);
+		TiltCamera(WallRunCameraTilt);
 	}
 	else if (bIsWallRunningRight)
 	{
-		TiltCamera(-15.0f);
+		TiltCamera(-1 * WallRunCameraTilt);
 	}
 	else
 	{
