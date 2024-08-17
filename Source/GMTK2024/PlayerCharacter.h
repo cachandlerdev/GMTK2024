@@ -110,6 +110,9 @@ public:
 		UInputAction* heavyFireAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
+		UInputAction* scrollAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 		UInputAction* zoomAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
@@ -192,6 +195,9 @@ public:
 
 	UFUNCTION()
 		virtual void aimInput(const FInputActionValue& value);
+
+	UFUNCTION()
+		virtual void scrollInput(const FInputActionValue& value);
 
 	UFUNCTION()
 		virtual void crouchInput(const FInputActionValue& value);
