@@ -23,7 +23,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) 
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-   
+
+
 
 }
 
@@ -131,10 +132,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			playerEnhancedInput->BindAction(lookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::lookInput);
 			//playerEnhancedInput->BindAction(zoomAction, ETriggerEvent::Triggered, this, &APlayerCharacter::zoomInput);
 
-			//playerEnhancedInput->BindAction(sprintAction, ETriggerEvent::Triggered, this, &APlayerCharacter::sprintInput);
+			playerEnhancedInput->BindAction(sprintAction, ETriggerEvent::Triggered, this, &APlayerCharacter::sprintInput);
+			
 			playerEnhancedInput->BindAction(jumpAction, ETriggerEvent::Triggered, this, &APlayerCharacter::jumpInput);
 
-			//playerEnhancedInput->BindAction(crouchAction, ETriggerEvent::Triggered, this, &APlayerCharacter::crouchInput);
+			playerEnhancedInput->BindAction(crouchAction, ETriggerEvent::Triggered, this, &APlayerCharacter::crouchInput);
 
 			//playerEnhancedInput->BindAction(dodgeAction, ETriggerEvent::Triggered, this, &APlayerCharacter::dodgeInput);
 
@@ -168,11 +170,85 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
+
+
+
+	if (sliding) {
+
+		slideTimer += DeltaTime;
+
+		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, "sliding");
+
+
+
+
+		if (GetCharacterMovement()->Velocity.Length() < 400.0f && sliding) {
+
+
+
+			SetSliding(false);
+		}
+		else if (!GetCharacterMovement()->IsFalling()) {
+
+			GetCharacterMovement()->Velocity *= (((CalcHillSlideBoost() - .9f) * DeltaTime * 10.0f) + 1.0f);
+
+		}
+
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
 
+
+
+
+
+
+
+
+
 void APlayerCharacter::moveInput(const FInputActionValue& value) {
+
+	FVector2D passValue = value.Get<FVector2D>();
+
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, "Slide Timer: " + FString::SanitizeFloat(slideTimer));
+
+	if (sliding) {
+
+
+		if (slideTimer > .8f || !GetCharacterMovement()->IsFalling()) {
+			passValue.X = 0.0f;
+			passValue.Y *= 0.01f;
+
+			GetCharacterMovement()->AirControl = 0.05f;
+		}
+		else {
+
+			GetCharacterMovement()->AirControl = 0.9f;
+
+			passValue.X *= 1.05f;
+			passValue.Y *= 1.1f;
+
+		}
+
+
+	}
+
+
 
 	//GetControlRotation().Vector().ForwardVector;
 
@@ -199,7 +275,32 @@ void APlayerCharacter::moveInput(const FInputActionValue& value) {
 	//DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (right * 100.0f), 10.0f, FColor::Red);
 
 
+
+	if (sprinting && value.Get<FVector2D>().X < 0.5f && !GetCharacterMovement()->IsFalling()) {
+		SetSprinting(false);
+	}
+	else {
+
+		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, FString::SanitizeFloat(value.Get<FVector2D>().X));
+
+	}
+
+
+	
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
 
 void APlayerCharacter::lookInput(const FInputActionValue& value) {
 
@@ -212,7 +313,10 @@ void APlayerCharacter::lookInput(const FInputActionValue& value) {
 
 void APlayerCharacter::sprintInput(const FInputActionValue& value) {
 
-	//sprinting = value.Get<bool>();
+	//i want to have a release check on the input(maybe for later, might change to only pressed tho) but I only want this to be sprinting if true
+	if (value.Get<bool>()) {
+		SetSprinting(true);
+	}
 
 }
 
@@ -221,8 +325,57 @@ void APlayerCharacter::jumpInput(const FInputActionValue& value) {
 	
 	Jump();
 
+	if (sliding && !GetCharacterMovement()->IsFalling()) {
+
+		//apply slide jump boost
+		GetCharacterMovement()->Velocity *= (1.0f + slideJumpBoost);
+
+		//max slide boost is 0.2 so after 2 jumps no more boost and after 3 jumps they start loosing speed so they cant slide forever
+		slideJumpBoost -= 0.1f;
+
+
+	}
+
 
 }
+
+
+
+void APlayerCharacter::TryRechargeSlideJumpBoost() {
+
+	GEngine->AddOnScreenDebugMessage(-1, 0.8f, FColor::Orange, FString::SanitizeFloat(slideJumpBoost));
+
+	//only charge if they are on the ground and are not sliding
+	if (!GetCharacterMovement()->IsFalling() && !sliding) {
+
+
+		//recharge up to the 20% slide boost
+		if (slideJumpBoost < 0.2f) {
+
+			//the slide jump boost can go below 0 if they do more than 2 jumps in a slide
+			slideJumpBoost = fmaxf(0.0f, slideJumpBoost);
+
+			slideJumpBoost += 0.1f;
+
+		}
+
+	}
+
+
+
+	if (slideJumpRechargeTimerHandle.IsValid()) {
+
+		slideJumpRechargeTimerHandle.Invalidate();
+
+	}
+
+	GetWorldTimerManager().SetTimer(slideJumpRechargeTimerHandle, this, &APlayerCharacter::TryRechargeSlideJumpBoost, 0.8f);
+
+}
+
+
+
+
 
 
 
@@ -244,6 +397,50 @@ void APlayerCharacter::heavyFireInput(const FInputActionValue& value) {
 
 
 void APlayerCharacter::crouchInput(const FInputActionValue& value) {
+
+	crouching = value.Get<bool>();
+
+	if (value.Get<bool>()) {
+		//GetCapsuleComponent()->SetCapsuleHalfHeight(44.0f);
+
+		CrouchBP(value.Get<bool>());
+
+
+		if (!GetCharacterMovement()->IsFalling()) {
+
+			SetSprinting(false);
+
+		}
+
+		if (GetCharacterMovement()->Velocity.Length() > 410.0f && !sliding) {
+
+			SetSliding(true);
+
+			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "NOT SLIDING");
+
+			if (!GetCharacterMovement()->IsFalling()) {
+				GetCharacterMovement()->Velocity *= 1.3f;
+			}
+
+
+
+
+
+		}
+
+	}
+
+	if (!value.Get<bool>()) {
+
+		//GetCapsuleComponent()->SetCapsuleHalfHeight(88.0f);
+
+		CrouchBP(value.Get<bool>());
+
+
+		SetSliding(false);
+	}
+
+
 
 }
 
@@ -278,12 +475,108 @@ void APlayerCharacter::ability1Input(const FInputActionValue& value) {
 
 
 
+void APlayerCharacter::SetSprinting(bool val) {
+
+	sprinting = val;
+
+	if (sprinting) {
+
+		GetCharacterMovement()->MaxWalkSpeed = sprintSpeed;
+
+	}
+	else {
+
+		GetCharacterMovement()->MaxWalkSpeed = jogSpeed;
+
+	}
+
+}
+
+
+
+void APlayerCharacter::SetSliding(bool val) {
+
+
+
+	sliding = val;
+
+	if (sliding) {
+
+		slideTimer = 0.0f;
+
+		GetCharacterMovement()->BrakingFriction = 0.3f;
+		GetCharacterMovement()->GroundFriction = 0.3f;
+
+	}
+	else {
+
+		GetCharacterMovement()->BrakingFriction = 8.0f;
+		GetCharacterMovement()->GroundFriction = 8.0f;
+
+
+		GetCharacterMovement()->AirControl = 0.05f;
+
+	}
+	
+}
 
 
 
 
+float APlayerCharacter::CalcHillSlideBoost() {
+
+	float hillGrade = 0.0f;
+	float hillOppose = 0.0f;
+
+	TArray<FHitResult> hits;
+	GetWorld()->LineTraceMultiByChannel(hits, GetActorLocation(), GetActorLocation() - FVector(0.0f, 0.0f, 500.0f), ECC_Visibility);
+
+	for (FHitResult hit : hits) {
+
+		APlayerCharacter* tryCastPlayer = Cast<APlayerCharacter>(hit.GetActor());
+
+		if (!IsValid(tryCastPlayer)) {
+
+			//how steep is this hill
+			hillGrade = 1.0f - FMath::Abs(hit.ImpactNormal.Dot(FVector(0.0f, 0.0f, 1.0f)));
+
+			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, FString::SanitizeFloat(hillGrade));
+
+			//cap the boost at 1.5f * velocity
+			//hillGrade *= 0.5f;
 
 
+			// ** get whether or not we're moving into the hill or with the hill
+
+			//get hill xy direction 
+			FVector hillDir = hit.ImpactNormal;
+			hillDir.Z = 0.0f;
+			hillDir = hillDir.GetSafeNormal();
+
+			//get velocity direction in xy play normalized
+			FVector vDir = GetCharacterMovement()->Velocity;
+			vDir.Z = 0.0f;
+			vDir = vDir.GetSafeNormal();
+
+			//calculate whether the hill opposes players movement direction
+			hillOppose = FVector::DotProduct(hillDir, vDir);
+
+			// **
+
+
+			//only do this for the first hit below the player
+			break;
+
+		}
+
+
+	}
+
+
+	
+
+	return (1.0f + (hillOppose * hillGrade));
+}
 
 
 
