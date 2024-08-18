@@ -14,6 +14,7 @@
 
 #include "MyGameMode.generated.h"
 
+class APartBase;
 class USoundCue;
 class USoundBase;
 
@@ -36,8 +37,10 @@ public:
 	float difficulty = 1.0f;
 
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		UOrderDataSheet* orderSheet;
+
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		USoundCue* ShiftStartAlarm;
@@ -46,8 +49,7 @@ public:
 		USoundBase* ShiftStartSoundBase;
 
 
-	UPROPERTY(BlueprintReadWrite)
-	AActor* currentShip;
+	
 
 
 
@@ -58,14 +60,42 @@ public:
 		FTimerHandle addOrderTimerHandle;
 
 
+	UPROPERTY(BlueprintReadOnly)
+		bool shipUnderConstruction = false;
 
+	UPROPERTY(BlueprintReadOnly)
+		APartBase* currentShipChassis;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
+		FVector newShipStartLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
+		FVector shipConstructionLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
+		FVector shipLaunchLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
+		float transitionTime = 2.0f;
+
+
+	UPROPERTY()
+		FTimerHandle moveTimerHandle;
 
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadOnly)
+		float localTime = 0.0f;
+
+
 public:
+	virtual void Tick(float deltaTime) override;
+
+
 	UFUNCTION(BlueprintCallable)
 	void AddOrder();
 
@@ -77,10 +107,21 @@ public:
 		void SpawnShipChasisBP();
 
 
+	UFUNCTION()
+		void MoveShipToLocationOverTime(FVector startLocation, FVector endLocation, float overTime, int nCalls);
+
 
 
 	UFUNCTION()
 		void ShiftStartCallback();
+
+
+
+	UFUNCTION()
+		void DoNewShipChassisProcedure();
+
+	UFUNCTION()
+		void DoFinishOrderProcedure();
 
 	//UFUNCTION()
 		//void AddOrderCallback();

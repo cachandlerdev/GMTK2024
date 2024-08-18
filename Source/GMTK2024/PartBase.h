@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/BoxComponent.h"
+
+#include "DataTypes.h"
 
 #include "PartBase.generated.h"
 
@@ -16,10 +19,13 @@ class GMTK2024_API APartBase : public AActor
 	
 public:	
 	// Sets default values for this actor's properties
-	APartBase();
+	APartBase(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		USkeletalMeshComponent* mesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UBoxComponent* physicsBox;
 
 	UPROPERTY(BlueprintReadOnly)
 		APartBase* weldTarget;
@@ -32,6 +38,20 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 		float localTimeAtLastWeldCheckin;
+
+
+	//the attribute of the part abstracted away from the part type
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float baseAttribute = 25.0f;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		PartType type;
+
+
+
+	UPROPERTY(BlueprintReadWrite)
+		bool launched = false;
 
 
 protected:
@@ -52,5 +72,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void SolidifyWeld();
+
+	UFUNCTION(BlueprintCallable)
+		virtual void ActivatePart();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void ActivatePartBP();
 
 };

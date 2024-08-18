@@ -246,7 +246,7 @@ void UWelderComponent::SetEquippedPart(PartType type) {
 			equippedPart = energyPart;
 			break;
 
-		case PartType::PT_MISC:
+		case PartType::PT_SUPPORT:
 			equippedPart = miscPart;
 			break;
 
@@ -297,7 +297,7 @@ void UWelderComponent::SetPartTypePart(PartType type, TSubclassOf<APartBase> par
 		energyPart = part;
 		break;
 
-	case PartType::PT_MISC:
+	case PartType::PT_SUPPORT:
 		miscPart = part;
 		break;
 

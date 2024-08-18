@@ -1,35 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="37f2d12a-7bc6-407e-a8b2-2be732d9c409" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Content/Blueprints/Player/MyPlayerCharacter0000.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Blueprints/Player/TestPlayerCharacter.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Input/Actions/aimAction.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Input/Actions/fireAction.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/7/RL/OB8TDZT4R44Q4MFWTD12GH.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BP/BP_PlayerCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/BP_PlayerCharacter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BP/BP_PlayerCharacter1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/BP_PlayerCharacter1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Parts/SmallChasisPartBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Parts/SmallChasisPartBP.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Parts/WingLPartBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Parts/WingLPartBP.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Player/WelderComponentBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Player/WelderComponentBP.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Input/Mappings/CharacterInputMapping.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Input/Mappings/CharacterInputMapping.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Materials/Effect/HoloMat.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Materials/Effect/HoloMat.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Models/Parts/SmallChasis/ChassisLightDraft_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Models/Parts/SmallChasis/ChassisLightDraft_Skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Models/Parts/Wings/Wing1L_PhysicsAsset.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Models/Parts/Wings/Wing1L_PhysicsAsset.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Models/Parts/Wings/Wing1L_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Models/Parts/Wings/Wing1L_Skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Particles/P_Explosion.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Particles/P_Explosion.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/DataTypes.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/DataTypes.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/DataTypes.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/DataTypes.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PartBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PartBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PartSelectorKiosk.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PartSelectorKiosk.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PartSelectorKiosk.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PartSelectorKiosk.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/WelderComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/WelderComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/WelderComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/WelderComponent.h" afterDir="false" />
-    </list>
+    <list default="true" id="37f2d12a-7bc6-407e-a8b2-2be732d9c409" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

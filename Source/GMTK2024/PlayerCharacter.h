@@ -23,6 +23,7 @@ class USoundBase;
 class USoundCue;
 
 class UWelderComponent;
+class AMyGameMode;
 
 
 UCLASS()
@@ -46,6 +47,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<UWelderComponent> welderClass;
+
+	UPROPERTY(BlueprintReadOnly)
+		AMyGameMode* gameMode;
 
 	UPROPERTY(BlueprintReadOnly)
 	APlayerController* playerController;

@@ -3,14 +3,23 @@
 
 #include "PartBase.h"
 
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
-APartBase::APartBase()
+APartBase::APartBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	physicsBox = CreateDefaultSubobject<UBoxComponent>("Box");
+	SetRootComponent(physicsBox);
+
 
 	mesh = CreateDefaultSubobject<USkeletalMeshComponent>("Mesh");
+	mesh->SetupAttachment(physicsBox);
+
+
+	weldTimeRequirement = 1.0f;
 
 }
 
@@ -22,6 +31,10 @@ void APartBase::BeginPlay()
 
 	weldTime = 0.0f;
 	localTimeAtLastWeldCheckin = 0.0f;
+
+	mesh->SetCollisionProfileName("BlockAll");
+	//mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	//mesh->SetCollisionResponseToChannels(ECollisionResponse::ECR_Block);
 
 }
 
@@ -58,4 +71,11 @@ void APartBase::SolidifyWeld() {
 
 	}
 
+}
+
+
+void APartBase::ActivatePart() {
+
+
+	ActivatePartBP();
 }
