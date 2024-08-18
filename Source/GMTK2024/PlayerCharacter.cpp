@@ -545,7 +545,20 @@ void APlayerCharacter::PerformDash()
 	if (isInAir)
 	{
 		FString distance = FString::SanitizeFloat(Hit.Distance);
-		launchVelocity *= (DashStrength / 10.0f);
+
+		float smallifier = 0.01f;
+
+		float newSpeed = GetVelocity().Length() + (DashStrength * smallifier);
+		if (newSpeed > sprintSpeed)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Clamp boost");
+			launchVelocity *= DashStrength * smallifier;
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Don't clamp boost");
+			launchVelocity *= DashStrength;
+		}
 	}
 	else
 	{
