@@ -6,6 +6,8 @@
 #include "PartBase.h"
 #include "EnginePartBase.generated.h"
 
+class AMyGameMode;
+
 /**
  * 
  */
@@ -18,9 +20,12 @@ public:
 	AEnginePartBase(const FObjectInitializer& ObjectInitializer);
 	
 
-	//UPROPERTY(EditAnywhere)
-		
+	UPROPERTY(EditAnywhere)
+		float thrust = 100.0f;
 
+
+	UPROPERTY()
+		AMyGameMode* gameMode;
 
 	virtual void ActivatePart() override;
 
@@ -28,5 +33,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 };

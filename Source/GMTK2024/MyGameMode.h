@@ -110,6 +110,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		FReportCard EvaluateBuildWithOrder(FOrder order);
 
+	UFUNCTION(BlueprintCallable)
+		void DoShipFlight();
+
 	UFUNCTION()
 	void DoNewShipChassisProcedure();
 
