@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="37f2d12a-7bc6-407e-a8b2-2be732d9c409" name="Changes" comment="" />
+    <list default="true" id="37f2d12a-7bc6-407e-a8b2-2be732d9c409" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Parts/Thrust/LightAtmoEngineBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Parts/Thrust/LightAtmoEngineBP.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/EnginePartBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/EnginePartBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.h" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
