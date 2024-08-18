@@ -22,6 +22,10 @@
 
 #include "GameFramework/CharacterMovementComponent.h"
 
+
+#include "WelderComponent.h"
+
+
 // Sets default values
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -32,17 +36,17 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) 
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 
 	// Add welder
-	Welder = CreateDefaultSubobject<UStaticMeshComponent>("Welder");
+	//Welder = CreateDefaultSubobject<USkeletalMeshComponent>("Welder");
 	
 	FVector welderLocation = FVector(40.0f, 30.0f, -30.0f);
-	Welder->AddLocalOffset(welderLocation, false);
-	
+	//Welder->AddLocalOffset(welderLocation, false);
+
 	FRotator rotation = FRotator(0.0f, 180.0f, 0.0f);
-	Welder->AddLocalRotation(rotation);
+	//Welder->AddLocalRotation(rotation);
 
 	FVector scale = FVector(0.3f, 0.3f, 0.3f);
-	Welder->SetWorldScale3D(scale);
-	Welder->SetCollisionProfileName(TEXT("OverlapAll"));
+	//Welder->SetWorldScale3D(scale);
+	//Welder->SetCollisionProfileName(TEXT("OverlapAll"));
 
 	// setup constants
 	InitialFov = Camera->FieldOfView;
@@ -57,13 +61,39 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+
+
 	// Attach things
 	FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, false);
 	Camera->AttachToComponent(GetCapsuleComponent(), Rules);
 	Camera->SetRelativeLocation(FVector(0.0f, 0.0f, 60.0f));
 	Camera->bUsePawnControlRotation = true;
+	
 
-	Welder->AttachToComponent(Camera, Rules);
+	GetMesh()->AttachToComponent(Camera, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	GetMesh()->SetVisibility(false, false);
+
+
+	Welder = Cast<UWelderComponent>(AddComponentByClass(welderClass, true, GetActorTransform(), false));
+
+
+	if (Welder) {
+
+		Welder->OwningPlayer = this;
+
+		Welder->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "handSocket");
+
+	}
+	else {
+
+		FTimerHandle tempHandle;
+
+		GetWorld()->GetTimerManager().SetTimer(tempHandle, this, &APlayerCharacter::WelderAttachmentCallback, 0.1f);
+
+	}
+
+
+
 
 	GetCharacterMovement()->MaxWalkSpeed = jogSpeed;
 	NumOfJumps = 2;
@@ -75,6 +105,30 @@ void APlayerCharacter::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(WallrunTimerHandle, this, &APlayerCharacter::WallRunUpdate,
 	                                       WallrunUpdateTime, true);
 }
+
+
+
+
+
+void APlayerCharacter::WelderAttachmentCallback() {
+
+	if (Welder) {
+
+		Welder->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "handSocket");
+
+	}
+	else {
+
+		GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Welder was never created.");
+
+	}
+}
+
+
+
+
+
+
 
 
 void APlayerCharacter::DeferSetupMovementSystem()
@@ -146,6 +200,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			                                &APlayerCharacter::scrollInput);
 			playerEnhancedInput->BindAction(DashAction, ETriggerEvent::Triggered, this,
 			                                &APlayerCharacter::Dash);
+
+			playerEnhancedInput->BindAction(fireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::fireInput);
+			playerEnhancedInput->BindAction(aimAction, ETriggerEvent::Triggered, this, &APlayerCharacter::aimInput);
+
+
 		}
 	}
 }
@@ -155,6 +214,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	if (sliding)
 	{
 		slideTimer += DeltaTime;
@@ -485,6 +545,7 @@ void APlayerCharacter::WallRunJump()
 
 void APlayerCharacter::PerformDash()
 {
+
 	OnDash();
 
 	FHitResult Hit;
@@ -573,21 +634,45 @@ void APlayerCharacter::scrollInput(const FInputActionValue& value)
 	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f), 10.0f,
 	                          FColor::Green, false, 1.0f);
 
+	bool kioskHit = false;
+
 	for (FHitResult hit : hits)
 	{
 		APartSelectorKiosk* kiosk = Cast<APartSelectorKiosk>(hit.GetActor());
 
 		if (kiosk)
 		{
+			kioskHit = true;
 			kiosk->RotateDisplayItem(value.Get<float>());
 		}
 	}
+
+	if (!kioskHit) {
+
+		Welder->ScrollPartType(value.Get<float>());
+
+	}
+
+
 }
 
 
 void APlayerCharacter::fireInput(const FInputActionValue& value)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, "Base Fire Called");
+	
+
+	if (value.Get<bool>()) {
+
+		Welder->WeldInput();
+
+	}
+	else {
+
+		Welder->WeldReleased();
+
+	}
+
+
 }
 
 void APlayerCharacter::crouchInput(const FInputActionValue& value)
@@ -620,6 +705,20 @@ void APlayerCharacter::crouchInput(const FInputActionValue& value)
 
 void APlayerCharacter::aimInput(const FInputActionValue& value)
 {
+
+	
+
+	if (value.Get<bool>()) {
+
+		Welder->BlueprintInput();
+
+	}
+	else {
+
+		Welder->BlueprintReleased();
+
+	}
+
 }
 
 void APlayerCharacter::SetSprinting(bool val)

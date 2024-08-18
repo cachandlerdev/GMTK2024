@@ -21,13 +21,36 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		USkeletalMeshComponent* mesh;
 
+	UPROPERTY(BlueprintReadOnly)
+		APartBase* weldTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float weldTimeRequirement;
+
+	UPROPERTY(BlueprintReadWrite)
+		float weldTime;
+
+	UPROPERTY(BlueprintReadOnly)
+		float localTimeAtLastWeldCheckin;
+
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadOnly)
+		float localTime;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+
+	//returns true if weld has completed, false if weld is still incomplete.
+	UFUNCTION(BlueprintCallable)
+		bool ProgressWeld();
+
+	UFUNCTION(BlueprintCallable)
+		void SolidifyWeld();
 
 };

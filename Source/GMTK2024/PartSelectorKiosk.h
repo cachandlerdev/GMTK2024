@@ -12,8 +12,11 @@
 
 #include "PartBase.h"
 
+#include "DataTypes.h"
+
 #include "PartSelectorKiosk.generated.h"
 
+class UWelderComponent;
 
 
 UCLASS()
@@ -65,6 +68,13 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		UMaterial* HoloMaterial;
+
+
+	UPROPERTY(EditAnywhere)
+		PartType partType;
+
+	UPROPERTY(BlueprintReadOnly)
+		UWelderComponent* playerWelder;
 
 
 protected:
