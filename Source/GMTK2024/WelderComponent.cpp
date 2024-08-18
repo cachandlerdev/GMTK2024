@@ -6,54 +6,41 @@
 #include "PlayerCharacter.h"
 #include "PartBase.h"
 
-UWelderComponent::UWelderComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
-
-
-	
-
-
-
-
+UWelderComponent::UWelderComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
 }
 
 
-void UWelderComponent::BeginPlay() {
-
+void UWelderComponent::BeginPlay()
+{
 	blueprintActor = GetWorld()->SpawnActor<ASkeletalMeshActor>();
 
 	SetBlueprintActorVisible(false);
 	blueprintActor->SetActorEnableCollision(false);
-
-
-
 }
 
-void UWelderComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
+void UWelderComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                     FActorComponentTickFunction* ThisTickFunction)
+{
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	buildCooldownTimer += DeltaTime;
-
-
 }
 
 
-
-
-void UWelderComponent::WeldInput() {
-
-	if (!equippedPart) {
-
+void UWelderComponent::WeldInput()
+{
+	if (!equippedPart)
+	{
 		return;
-
 	}
 
 
-	if (!inProgressWeld && buildCooldownTimer > buildCooldown) {
-		
-
+	if (!inProgressWeld && buildCooldownTimer > buildCooldown)
+	{
 		//only start a weld if they are aiming a blueprint
-		if (blueprintOn) {
-
+		if (blueprintOn)
+		{
 			FVector eyeLoc;
 			FRotator eyeRot;
 
@@ -64,83 +51,59 @@ void UWelderComponent::WeldInput() {
 			GetWorld()->LineTraceMultiByChannel(hits, eyeLoc, eyeLoc + (eyeRot.Vector() * 1000.0f), ECC_Visibility);
 
 
-			for (FHitResult& hit : hits) {
-
+			for (FHitResult& hit : hits)
+			{
 				APartBase* partFromHit = Cast<APartBase>(hit.GetActor());
 
 
 				//if the player is bleuprinting and firing at any of the ship parts
-				if (partFromHit) {
-
+				if (partFromHit)
+				{
 					inProgressWeld = GetWorld()->SpawnActor<APartBase>(equippedPart);
 					inProgressWeld->SetActorTransform(blueprintActor->GetActorTransform());
 
 					inProgressWeld->weldTarget = partFromHit;
 					break;
 				}
-
 			}
-
 		}
-
-		
-		
-
 	}
-	else if(inProgressWeld) {
-
+	else if (inProgressWeld)
+	{
 		bool weldDone = inProgressWeld->ProgressWeld();
 
-		if (weldDone) {
-
+		if (weldDone)
+		{
 			buildCooldownTimer = 0.0f;
 			inProgressWeld->SolidifyWeld();
 
 			inProgressWeld = nullptr;
-
 		}
-
 	}
-
-
-
 }
 
 
-
-void UWelderComponent::WeldReleased() {
-
-	if (inProgressWeld) {
-
+void UWelderComponent::WeldReleased()
+{
+	if (inProgressWeld)
+	{
 		inProgressWeld->Destroy();
 
 		inProgressWeld = nullptr;
 	}
-
 }
 
 
-
-
-
-
-
-
-
-
-void UWelderComponent::BlueprintInput() {
-
-
-	if (!equippedPart || inProgressWeld) {
-
-		if (blueprintOn) {
-
+void UWelderComponent::BlueprintInput()
+{
+	if (!equippedPart || inProgressWeld)
+	{
+		if (blueprintOn)
+		{
 			SetBlueprintActorVisible(false);
-
 		}
 
 		return;
-
 	}
 
 	FVector eyeLoc;
@@ -154,108 +117,94 @@ void UWelderComponent::BlueprintInput() {
 
 	bool anyPartHit = false;
 
-	for (FHitResult& hit : hits) {
-
+	for (FHitResult& hit : hits)
+	{
 		APartBase* partFromHit = Cast<APartBase>(hit.GetActor());
 
-		if (partFromHit) {
-
+		if (partFromHit)
+		{
 			blueprintActor->SetActorLocation(hit.ImpactPoint);
 			blueprintActor->SetActorRotation(hit.ImpactNormal.Rotation());
 
-			
+
 			anyPartHit = true;
-			if (!blueprintOn) {
-
+			if (!blueprintOn)
+			{
 				SetBlueprintActorVisible(true);
-
 			}
-
 		}
-
 	}
 
 	//if they look away from the ship and keep holding aim the turn off blueprints
-	if(!anyPartHit && blueprintOn) {
-
+	if (!anyPartHit && blueprintOn)
+	{
 		SetBlueprintActorVisible(false);
-
 	}
-
-
 }
 
 
-void UWelderComponent::BlueprintReleased() {
-
+void UWelderComponent::BlueprintReleased()
+{
 	SetBlueprintActorVisible(false);
-
 }
 
-void UWelderComponent::SetBlueprintActorVisible(bool value) {
-
+void UWelderComponent::SetBlueprintActorVisible(bool value)
+{
 	blueprintOn = value;
 
 	blueprintActor->GetSkeletalMeshComponent()->SetVisibility(value);
-
 }
 
-void UWelderComponent::ScrollPartType(float value) {
-
-
+void UWelderComponent::ScrollPartType(float value)
+{
 	int dir = (int)FMath::Sign(value);
 
 	int cur = static_cast<int>(equippedPartType);
 
 	cur += dir;
-	
-	if (cur < 0) {
 
+	if (cur < 0)
+	{
 		cur = NUM_PART_TYPES - 1;
-
 	}
 
 	cur %= NUM_PART_TYPES;
-	
+
 
 	equippedPartType = static_cast<PartType>(cur);
 
 	SetEquippedPart(equippedPartType);
-
 }
 
 
+void UWelderComponent::SetEquippedPart(PartType type)
+{
+	switch (type)
+	{
+	case PartType::PT_STRUCTURAL:
+		equippedPart = structuralPart;
+		break;
 
-void UWelderComponent::SetEquippedPart(PartType type) {
+	case PartType::PT_FIREPOWER:
+		equippedPart = firepowerPart;
+		break;
 
-	switch (type) {
+	case PartType::PT_THRUST:
+		equippedPart = thrustPart;
+		break;
 
-		case PartType::PT_STRUCTURAL:
-			equippedPart = structuralPart;
-			break;
+	case PartType::PT_ENERGY:
+		equippedPart = energyPart;
+		break;
 
-		case PartType::PT_FIREPOWER:
-			equippedPart = firepowerPart;
-			break;
-
-		case PartType::PT_THRUST:
-			equippedPart = thrustPart;
-			break;
-
-		case PartType::PT_ENERGY:
-			equippedPart = energyPart;
-			break;
-
-		case PartType::PT_SUPPORT:
-			equippedPart = miscPart;
-			break;
-
+	case PartType::PT_SUPPORT:
+		equippedPart = miscPart;
+		break;
 	}
 
-	if (!equippedPart) {
-
+	if (!equippedPart)
+	{
 		return;
-
 	}
 
 	SetBlueprintActorVisible(false);
@@ -268,19 +217,16 @@ void UWelderComponent::SetEquippedPart(PartType type) {
 	int nMat = blueprintMeshComp->GetNumMaterials();
 
 
-	for (int i = 0; i < nMat; i++) {
-
+	for (int i = 0; i < nMat; i++)
+	{
 		blueprintMeshComp->SetMaterial(i, HoloMaterial);
-
 	}
-
-
 }
 
-void UWelderComponent::SetPartTypePart(PartType type, TSubclassOf<APartBase> part) {
-
-	switch (type) {
-
+void UWelderComponent::SetPartTypePart(PartType type, TSubclassOf<APartBase> part)
+{
+	switch (type)
+	{
 	case PartType::PT_STRUCTURAL:
 		structuralPart = part;
 		break;
@@ -300,10 +246,8 @@ void UWelderComponent::SetPartTypePart(PartType type, TSubclassOf<APartBase> par
 	case PartType::PT_SUPPORT:
 		miscPart = part;
 		break;
-
 	}
 
 	//update the equipped part
 	SetEquippedPart(equippedPartType);
-
 }

@@ -45,8 +45,9 @@ void UMyGameInstance::PlayMusicTrack(USoundBase* Track)
 		CurrentAudioComponent->Stop();
 		CurrentAudioComponent->OnAudioFinished.Remove(TrackFinished);
 	}
+	float volume = MusicVolume * Track->GetVolumeMultiplier();
 	CurrentAudioComponent = UGameplayStatics::CreateSound2D(GetWorld(), Track,
-		MusicVolume, 1, 0.0, nullptr, true);
+		volume, 1, 0.0, nullptr, true);
 	TrackFinished.BindUFunction(this, "GoToNextMusicTrack");
 	CurrentAudioComponent->OnAudioFinished.Add(TrackFinished);
 

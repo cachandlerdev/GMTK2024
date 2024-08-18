@@ -10,148 +10,120 @@
 
 
 USTRUCT(BlueprintType)
-struct GMTK2024_API FOrder {
-
+struct GMTK2024_API FOrder
+{
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintReadWrite)
+	float structural = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float firepower = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float thrust = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float energy = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float support = 100.0f;
 
 
 	UPROPERTY(BlueprintReadWrite)
-		float structural = 100.0f;
+	float shield = 100.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-		float firepower = 100.0f;
+	float powerSurplus = 10.0f;
+
 
 	UPROPERTY(BlueprintReadWrite)
-		float thrust = 100.0f;
+	int numEMWeapons = 0;
 
 	UPROPERTY(BlueprintReadWrite)
-		float energy = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-		float support = 100.0f;
-
-	
-
-	UPROPERTY(BlueprintReadWrite)
-		float shield = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-		float powerSurplus = 10.0f;
-
-	
-
-	UPROPERTY(BlueprintReadWrite)
-		int numEMWeapons = 0;
-
-	UPROPERTY(BlueprintReadWrite)
-		int numKineticWeapons = 0;
-
-	
-
+	int numKineticWeapons = 0;
 };
 
 
 USTRUCT(BlueprintType)
-struct GMTK2024_API FReportCard {
-
+struct GMTK2024_API FReportCard
+{
 	GENERATED_BODY()
 
 public:
-
 	UPROPERTY(BlueprintReadWrite)
-		float overall = 0.0f;
-
-
-	UPROPERTY(BlueprintReadWrite)
-		float structural = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-		float firepower = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-		float thrust = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-		float energy = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-		float support = 100.0f;
-
+	float overall = 0.0f;
 
 
 	UPROPERTY(BlueprintReadWrite)
-		float shield = 100.0f;
+	float structural = 100.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-		float powerSurplus = 10.0f;
+	float firepower = 100.0f;
 
+	UPROPERTY(BlueprintReadWrite)
+	float thrust = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float energy = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float support = 100.0f;
 
 
 	UPROPERTY(BlueprintReadWrite)
-		float harmony = 0.0f;
+	float shield = 100.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-		float fractionOfRunwayCovered = 0.0f;
-	
-
+	float powerSurplus = 10.0f;
 
 
 	UPROPERTY(BlueprintReadWrite)
-		int numEMWeapons = 0;
+	float harmony = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-		int numKineticWeapons = 0;
+	float fractionOfRunwayCovered = 0.0f;
 
 
+	UPROPERTY(BlueprintReadWrite)
+	int numEMWeapons = 0;
 
+	UPROPERTY(BlueprintReadWrite)
+	int numKineticWeapons = 0;
 };
-
 
 
 UCLASS(Blueprintable)
-class GMTK2024_API UOrderDataSheet : public UDataAsset {
-
+class GMTK2024_API UOrderDataSheet : public UDataAsset
+{
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FOrder> orders;
 
 	UPROPERTY(BlueprintReadWrite)
-		TArray<FOrder> orders;
+	TArray<FReportCard> reports;
 
 	UPROPERTY(BlueprintReadWrite)
-		TArray<FReportCard> reports;
+	TArray<float> grades;
 
 	UPROPERTY(BlueprintReadWrite)
-		TArray<float> grades;
-
-	UPROPERTY(BlueprintReadWrite)
-		float averageGrade;
-
+	float averageGrade;
 };
 
 
-
-
-
-
 UENUM(BlueprintType)
-enum class PartType : uint8 {
+enum class PartType : uint8
+{
 	PT_STRUCTURAL = 0 UMETA(DisplayName = "STRUCTURAL"),
-	PT_FIREPOWER = 1  UMETA(DisplayName = "FIREPOWER"),
-	PT_THRUST = 2     UMETA(DisplayName = "THRUST"),
-	PT_ENERGY = 3     UMETA(DisplayName = "ENERGY"),
-<<<<<<< Updated upstream
-	PT_MISC = 4		UMETA(DisplayName = "MISC")
-=======
+	PT_FIREPOWER = 1 UMETA(DisplayName = "FIREPOWER"),
+	PT_THRUST = 2 UMETA(DisplayName = "THRUST"),
+	PT_ENERGY = 3 UMETA(DisplayName = "ENERGY"),
+	//PT_MISC = 4 UMETA(DisplayName = "MISC")
 	PT_SUPPORT = 4		UMETA(DisplayName = "SUPPORT"),
 	PT_CHASSIS = 5		UMETA(DisplayName = "CHASSIS")
-
-
-	
-
->>>>>>> Stashed changes
 };
 
 /*
@@ -199,7 +171,6 @@ PartType operator--(PartType& left) {
 */
 
 
-
 /**
  * 
  */
@@ -208,7 +179,6 @@ class GMTK2024_API DataTypes
 public:
 	DataTypes();
 
-	
 
 	~DataTypes();
 };

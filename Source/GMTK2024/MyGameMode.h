@@ -38,59 +38,52 @@ public:
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		UOrderDataSheet* orderSheet;
-
+	UOrderDataSheet* orderSheet;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USoundCue* ShiftStartAlarm;
+	USoundCue* ShiftStartAlarm;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USoundBase* ShiftStartSoundBase;
-
-
-	
-
+	USoundBase* ShiftStartSoundBase;
 
 
 	UPROPERTY()
-		FTimerHandle shiftStatTimerHandle;
+	FTimerHandle shiftStatTimerHandle;
 
 	UPROPERTY()
-		FTimerHandle addOrderTimerHandle;
+	FTimerHandle addOrderTimerHandle;
 
 
 	UPROPERTY(BlueprintReadOnly)
-		bool shipUnderConstruction = false;
+	bool shipUnderConstruction = false;
 
 	UPROPERTY(BlueprintReadOnly)
-		APartBase* currentShipChassis;
+	APartBase* currentShipChassis;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
-		FVector newShipStartLocation;
+	FVector newShipStartLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
-		FVector shipConstructionLocation;
+	FVector shipConstructionLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
-		FVector shipLaunchLocation;
+	FVector shipLaunchLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
-		float transitionTime = 2.0f;
+	float transitionTime = 2.0f;
 
 
 	UPROPERTY()
-		FTimerHandle moveTimerHandle;
-
+	FTimerHandle moveTimerHandle;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadOnly)
-		float localTime = 0.0f;
-
+	float localTime = 0.0f;
 
 public:
 	virtual void Tick(float deltaTime) override;
@@ -104,25 +97,23 @@ public:
 	void SpawnShipChasis();
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void SpawnShipChasisBP();
+	void SpawnShipChasisBP();
 
 
 	UFUNCTION()
-		void MoveShipToLocationOverTime(FVector startLocation, FVector endLocation, float overTime, int nCalls);
-
-
-
-	UFUNCTION()
-		void ShiftStartCallback();
-
+	void MoveShipToLocationOverTime(FVector startLocation, FVector endLocation, float overTime, int nCalls);
 
 
 	UFUNCTION()
-		void DoNewShipChassisProcedure();
+	void ShiftStartCallback();
+
 
 	UFUNCTION()
-		void DoFinishOrderProcedure();
+	void DoNewShipChassisProcedure();
+
+	UFUNCTION()
+	void DoFinishOrderProcedure();
 
 	//UFUNCTION()
-		//void AddOrderCallback();
+	//void AddOrderCallback();
 };
