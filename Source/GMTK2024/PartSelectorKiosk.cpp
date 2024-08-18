@@ -30,7 +30,15 @@ void APartSelectorKiosk::BeginPlay()
 {
 	Super::BeginPlay();
 
-	playerWelder = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->Welder;
+	// Prevent crashing in simulate mode (rip still happens anyway)
+	APawn* playerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(playerPawn);
+	if (PlayerCharacter == nullptr)
+	{
+		return;
+	}
+	
+	playerWelder = PlayerCharacter->Welder;
 
 
 	kioskMesh->SetWorldLocation(GetActorLocation() - FVector(0.0f, 0.0f, 40.0f));
