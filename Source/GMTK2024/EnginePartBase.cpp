@@ -4,6 +4,9 @@
 #include "EnginePartBase.h"
 #include "DataTypes.h"
 
+#include "MyGameMode.h"
+#include "Kismet/GameplayStatics.h"
+
 
 
 AEnginePartBase::AEnginePartBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
@@ -26,6 +29,23 @@ void AEnginePartBase::BeginPlay() {
 	Super::BeginPlay();
 
 	
+	gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+}
+
+
+void AEnginePartBase::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+
+	if (launched) {
+
+		gameMode->currentShipChassis->physicsBox->AddForceAtLocation(GetActorForwardVector() * thrust, GetActorLocation());
+		
+
+	}
+
+
 
 
 }

@@ -706,15 +706,20 @@ void APlayerCharacter::fireInput(const FInputActionValue& value)
 			}
 		}
 
-		if (value.Get<bool>())
-		{
-			Welder->WeldInput();
-		}
-		else
-		{
-			Welder->WeldReleased();
-		}
+		
 	}
+
+
+	if (value.Get<bool>())
+	{
+		Welder->WeldInput();
+	}
+	else
+	{
+		Welder->WeldReleased();
+	}
+
+
 }
 
 void APlayerCharacter::crouchInput(const FInputActionValue& value)

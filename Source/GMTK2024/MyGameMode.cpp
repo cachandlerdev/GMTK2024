@@ -106,7 +106,7 @@ void AMyGameMode::DoFinishOrderProcedure() {
 
 	}
 
-	currentShipChassis->SetActorLocation(shipLaunchLocation);
+	
 
 	
 	FReportCard newReport = EvaluateBuildWithOrder(orderSheet->currentOrder);
@@ -135,6 +135,42 @@ void AMyGameMode::DoFinishOrderProcedure() {
 }
 
 
+
+
+void AMyGameMode::DoShipFlight() {
+
+	//currentShipChassis->SetActorLocation(shipLaunchLocation);
+
+
+	//activate all of the parts
+	TArray<AActor*> partsA;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
+
+	for (AActor* partA : partsA)
+	{
+		APartBase* part = Cast<APartBase>(partA);
+
+		part->ActivatePart();
+		part->launched = true;
+	}
+
+
+	currentShipChassis->mesh->SetCollisionProfileName("NoCollision");
+	currentShipChassis->physicsBox->SetSimulatePhysics(true);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
 
 
@@ -145,6 +181,7 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
 	FOrder currentOrder = orderSheet->orders[orderSheet->orders.Num() - 1];
 	FReportCard newReport;
 
+	//sum each part attribute into the report card
 	for (AActor* partA : partsA)
 	{
 		APartBase* part = Cast<APartBase>(partA);
@@ -178,13 +215,9 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
 
 		newReport.cost += part->cost;
 
-		//part->ActivatePart();
-		//part->launched = true;
+		
 	}
 
-
-	currentShipChassis->mesh->SetCollisionProfileName("NoCollision");
-	currentShipChassis->physicsBox->SetSimulatePhysics(true);
 
 
 	//grade is 1 minus the percent difference from requested value

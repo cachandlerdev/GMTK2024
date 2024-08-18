@@ -22,3 +22,9 @@ void AFirepowerPartBase::BeginPlay() {
 
 
 }
+
+void AFirepowerPartBase::ActivatePart() {
+
+
+
+}
