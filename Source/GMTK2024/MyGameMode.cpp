@@ -69,6 +69,10 @@ void AMyGameMode::AddOrder()
 	orderSheet->orders.Add(newOrder);
 	orderSheet->currentOrder = newOrder;
 
+	orderSheet->currentBuildOrder = GetZeroOrder();
+
+
+
 	if (addOrderTimerHandle.IsValid())
 	{
 		addOrderTimerHandle.Invalidate();
@@ -167,7 +171,59 @@ void AMyGameMode::DoShipFlight() {
 
 
 
+void AMyGameMode::AddPartToBuildOrder(APartBase* part) {
 
+	
+
+
+	PartType type = part->type;
+		
+	switch (type){
+
+		case PartType::PT_STRUCTURAL:
+			
+			orderSheet->currentBuildOrder.structural += part->baseAttribute;
+
+			break;
+
+
+		case PartType::PT_FIREPOWER:
+			
+			orderSheet->currentBuildOrder.firepower += part->baseAttribute;
+
+			break;
+
+
+		case PartType::PT_THRUST:
+			
+			orderSheet->currentBuildOrder.thrust += part->baseAttribute;
+
+			break;
+
+
+		case PartType::PT_ENERGY:
+			
+			orderSheet->currentBuildOrder.energy += part->baseAttribute;
+
+			break;
+
+
+		case PartType::PT_SUPPORT:
+			
+			orderSheet->currentBuildOrder.support += part->baseAttribute;
+
+			break;
+	}
+
+
+	orderSheet->currentBuildOrder.cost += part->cost;
+
+		
+
+
+	
+
+}
 
 
 
@@ -236,5 +292,22 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
 
 
 	return newReport;
+
+}
+
+
+FOrder AMyGameMode::GetZeroOrder() {
+
+	FOrder blankOrder;
+
+	blankOrder.cost = 0.0f;
+	blankOrder.structural = 0.0f;
+	blankOrder.firepower = 0.0f;
+	blankOrder.thrust = 0.0f;
+	blankOrder.energy = 0.0f;
+	blankOrder.support = 0.0f;
+
+
+	return blankOrder;
 
 }

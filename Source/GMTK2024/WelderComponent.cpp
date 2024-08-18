@@ -6,6 +6,10 @@
 #include "PlayerCharacter.h"
 #include "PartBase.h"
 
+#include "MyGameMode.h"
+
+#include "Kismet/GameplayStatics.h"
+
 UWelderComponent::UWelderComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
@@ -17,6 +21,9 @@ void UWelderComponent::BeginPlay()
 
 	SetBlueprintActorVisible(false);
 	blueprintActor->SetActorEnableCollision(false);
+
+	gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
 }
 
 void UWelderComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -76,6 +83,8 @@ void UWelderComponent::WeldInput()
 		{
 			buildCooldownTimer = 0.0f;
 			inProgressWeld->SolidifyWeld();
+
+			gameMode->AddPartToBuildOrder(inProgressWeld);
 
 			inProgressWeld = nullptr;
 		}

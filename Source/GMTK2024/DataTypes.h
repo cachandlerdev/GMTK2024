@@ -110,6 +110,9 @@ public:
 		FOrder currentOrder;
 
 	UPROPERTY(BlueprintReadWrite)
+		FOrder currentBuildOrder;
+
+	UPROPERTY(BlueprintReadWrite)
 	TArray<FReportCard> reports;
 
 	UPROPERTY(BlueprintReadWrite)
