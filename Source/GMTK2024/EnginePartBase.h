@@ -20,7 +20,7 @@ public:
 	AEnginePartBase(const FObjectInitializer& ObjectInitializer);
 	
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly)
 		float thrust = 100.0f;
 
 

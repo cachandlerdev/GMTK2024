@@ -51,6 +51,11 @@ public:
 		float cost = 25.0f;
 
 
+	//the mass of the part
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float mass = 25.0f;
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		PartType type;
 
