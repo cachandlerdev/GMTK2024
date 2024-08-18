@@ -71,7 +71,7 @@ void APlayerCharacter::BeginPlay()
 	
 
 	GetMesh()->AttachToComponent(Camera, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	
+	GetMesh()->SetVisibility(false, false);
 
 
 	Welder = Cast<UWelderComponent>(AddComponentByClass(welderClass, true, GetActorTransform(), false));
