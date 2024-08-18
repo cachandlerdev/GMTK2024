@@ -61,6 +61,7 @@ public:
 	APartBase* currentShipChassis;
 
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
 	FVector newShipStartLocation;
 
@@ -99,12 +100,29 @@ public:
 	void SpawnShipChasisBP();
 
 
+
+
+	UFUNCTION(BlueprintCallable)
+		FOrder GetZeroOrder();
+
+
 	UFUNCTION()
 	void MoveShipToLocationOverTime(FVector startLocation, FVector endLocation, float overTime, int nCalls);
 
 
 	UFUNCTION()
 	void ShiftStartCallback();
+
+
+
+
+
+	UFUNCTION(BlueprintCallable)
+		void AddPartToBuildOrder(APartBase* part);
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void PartAddedBP();
+
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)

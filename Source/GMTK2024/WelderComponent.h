@@ -15,7 +15,7 @@
 class APartBase;
 class APlayerCharacter;
 
-
+class AMyGameMode;
 
 /**
  * 
@@ -32,7 +32,8 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		APlayerCharacter* OwningPlayer;
 
-
+	UPROPERTY(BLueprintReadWrite)
+		AMyGameMode* gameMode;
 
 
 	UPROPERTY(BlueprintReadWrite)

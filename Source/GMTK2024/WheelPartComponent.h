@@ -9,6 +9,9 @@
 
 #include "WheelPartComponent.generated.h"
 
+
+class AMyGameMode;
+
 /**
  * 
  */
@@ -21,7 +24,7 @@ public:
 
 	UWheelPartComponent(const FObjectInitializer& ObjectInitializer);
 	
-
+	
 
 
 
