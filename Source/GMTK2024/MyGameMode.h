@@ -120,6 +120,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void AddPartToBuildOrder(APartBase* part);
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void PartAddedBP();
 
 
 	//finds the ship in the world and compares it to the given order

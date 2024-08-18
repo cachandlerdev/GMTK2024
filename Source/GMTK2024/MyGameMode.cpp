@@ -220,7 +220,7 @@ void AMyGameMode::AddPartToBuildOrder(APartBase* part) {
 
 		
 
-
+	PartAddedBP();
 	
 
 }
