@@ -9,7 +9,7 @@
 UWelderComponent::UWelderComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 
 
-
+	
 
 
 
@@ -21,7 +21,9 @@ void UWelderComponent::BeginPlay() {
 
 	blueprintActor = GetWorld()->SpawnActor<ASkeletalMeshActor>();
 
-	blueprintActor->SetHidden(true);
+	SetBlueprintActorVisible(false);
+	blueprintActor->SetActorEnableCollision(false);
+
 
 
 }
@@ -29,7 +31,7 @@ void UWelderComponent::BeginPlay() {
 void UWelderComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-
+	buildCooldownTimer += DeltaTime;
 
 
 }
@@ -39,43 +41,59 @@ void UWelderComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UWelderComponent::WeldInput() {
 
-	if (!inProgressWeld) {
+	if (!equippedPart) {
+
+		return;
+
+	}
+
+
+	if (!inProgressWeld && buildCooldownTimer > buildCooldown) {
 		
-		FVector eyeLoc;
-		FRotator eyeRot;
 
-		OwningPlayer->GetActorEyesViewPoint(eyeLoc, eyeRot);
+		//only start a weld if they are aiming a blueprint
+		if (blueprintOn) {
 
-		TArray<FHitResult> hits;
+			FVector eyeLoc;
+			FRotator eyeRot;
 
-		GetWorld()->LineTraceMultiByChannel(hits, eyeLoc, eyeLoc + (eyeRot.Vector() * 1000.0f), ECC_Visibility);
+			OwningPlayer->GetActorEyesViewPoint(eyeLoc, eyeRot);
+
+			TArray<FHitResult> hits;
+
+			GetWorld()->LineTraceMultiByChannel(hits, eyeLoc, eyeLoc + (eyeRot.Vector() * 1000.0f), ECC_Visibility);
 
 
-		for (FHitResult& hit : hits) {
-			
-			APartBase* partFromHit = Cast<APartBase>(hit.GetActor());
+			for (FHitResult& hit : hits) {
+
+				APartBase* partFromHit = Cast<APartBase>(hit.GetActor());
 
 
-			//if the player is bleuprinting and firing at any of the ship parts
-			if (partFromHit && !blueprintActor->IsHidden()) {
+				//if the player is bleuprinting and firing at any of the ship parts
+				if (partFromHit) {
 
-				inProgressWeld = GetWorld()->SpawnActor<APartBase>(equippedPart);
-				inProgressWeld->SetActorTransform(blueprintActor->GetActorTransform());
+					inProgressWeld = GetWorld()->SpawnActor<APartBase>(equippedPart);
+					inProgressWeld->SetActorTransform(blueprintActor->GetActorTransform());
 
-				inProgressWeld->weldTarget = partFromHit;
-				break;
+					inProgressWeld->weldTarget = partFromHit;
+					break;
+				}
+
 			}
-			
+
 		}
+
+		
 		
 
 	}
-	else {
+	else if(inProgressWeld) {
 
 		bool weldDone = inProgressWeld->ProgressWeld();
 
 		if (weldDone) {
 
+			buildCooldownTimer = 0.0f;
 			inProgressWeld->SolidifyWeld();
 
 			inProgressWeld = nullptr;
@@ -88,7 +106,42 @@ void UWelderComponent::WeldInput() {
 
 }
 
+
+
+void UWelderComponent::WeldReleased() {
+
+	if (inProgressWeld) {
+
+		inProgressWeld->Destroy();
+
+		inProgressWeld = nullptr;
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
 void UWelderComponent::BlueprintInput() {
+
+
+	if (!equippedPart || inProgressWeld) {
+
+		if (blueprintOn) {
+
+			SetBlueprintActorVisible(false);
+
+		}
+
+		return;
+
+	}
 
 	FVector eyeLoc;
 	FRotator eyeRot;
@@ -99,6 +152,7 @@ void UWelderComponent::BlueprintInput() {
 
 	GetWorld()->LineTraceMultiByChannel(hits, eyeLoc, eyeLoc + (eyeRot.Vector() * 1000.0f), ECC_Visibility);
 
+	bool anyPartHit = false;
 
 	for (FHitResult& hit : hits) {
 
@@ -110,10 +164,10 @@ void UWelderComponent::BlueprintInput() {
 			blueprintActor->SetActorRotation(hit.ImpactNormal.Rotation());
 
 			
+			anyPartHit = true;
+			if (!blueprintOn) {
 
-			if (blueprintActor->IsHidden()) {
-
-				blueprintActor->SetHidden(false);
+				SetBlueprintActorVisible(true);
 
 			}
 
@@ -121,10 +175,54 @@ void UWelderComponent::BlueprintInput() {
 
 	}
 
+	//if they look away from the ship and keep holding aim the turn off blueprints
+	if(!anyPartHit && blueprintOn) {
+
+		SetBlueprintActorVisible(false);
+
+	}
+
 
 }
 
 
+void UWelderComponent::BlueprintReleased() {
+
+	SetBlueprintActorVisible(false);
+
+}
+
+void UWelderComponent::SetBlueprintActorVisible(bool value) {
+
+	blueprintOn = value;
+
+	blueprintActor->GetSkeletalMeshComponent()->SetVisibility(value);
+
+}
+
+void UWelderComponent::ScrollPartType(float value) {
+
+
+	int dir = (int)FMath::Sign(value);
+
+	int cur = static_cast<int>(equippedPartType);
+
+	cur += dir;
+	
+	if (cur < 0) {
+
+		cur = NUM_PART_TYPES - 1;
+
+	}
+
+	cur %= NUM_PART_TYPES;
+	
+
+	equippedPartType = static_cast<PartType>(cur);
+
+	SetEquippedPart(equippedPartType);
+
+}
 
 
 
@@ -154,7 +252,13 @@ void UWelderComponent::SetEquippedPart(PartType type) {
 
 	}
 
-	blueprintActor->SetHidden(true);
+	if (!equippedPart) {
+
+		return;
+
+	}
+
+	SetBlueprintActorVisible(false);
 
 	USkeletalMeshComponent* blueprintMeshComp = blueprintActor->GetSkeletalMeshComponent();
 
@@ -198,5 +302,8 @@ void UWelderComponent::SetPartTypePart(PartType type, TSubclassOf<APartBase> par
 		break;
 
 	}
+
+	//update the equipped part
+	SetEquippedPart(equippedPartType);
 
 }

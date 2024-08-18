@@ -22,6 +22,8 @@ class UInputMappingContext;
 class USoundBase;
 class USoundCue;
 
+class UWelderComponent;
+
 
 UCLASS()
 class GMTK2024_API APlayerCharacter : public ACharacter, public IGameplayTagAssetInterface
@@ -40,7 +42,10 @@ public:
 
 	// The welder object.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* Welder;
+		UWelderComponent* Welder;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<UWelderComponent> welderClass;
 
 	UPROPERTY(BlueprintReadOnly)
 	APlayerController* playerController;
@@ -86,6 +91,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float DashCooldown = 5.0f;
+
 	
 private:
 	bool sprinting = false;
@@ -279,6 +285,10 @@ public:
 
 	UFUNCTION()
 		void TryRechargeSlideJumpBoost();
+
+	UFUNCTION()
+		void WelderAttachmentCallback();
+
 
 private:
 
