@@ -20,7 +20,7 @@ class APlayerCharacter;
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class GMTK2024_API UWelderComponent : public USkeletalMeshComponent
 {
 	GENERATED_BODY()
@@ -54,6 +54,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		TSubclassOf<APartBase> equippedPart;
 
+	UPROPERTY(BlueprintReadOnly)
+		PartType equippedPartType;
 
 
 
@@ -64,9 +66,17 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		ASkeletalMeshActor* blueprintActor;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		UMaterial* HoloMaterial;
 
+	UPROPERTY(BlueprintReadOnly)
+		bool blueprintOn = false;
+
+	UPROPERTY(EditAnywhere)
+		float buildCooldown = 2.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float buildCooldownTimer = 0.0f;
 
 protected:
 	// Called when the game starts or when spawned
@@ -84,11 +94,24 @@ public:
 		void WeldInput();
 
 	UFUNCTION(BlueprintCallable)
+		void WeldReleased();
+
+	UFUNCTION(BlueprintCallable)
 		void BlueprintInput();
 
+	UFUNCTION(BlueprintCallable)
+		void BlueprintReleased();
 
 
 
+	UFUNCTION(BlueprintCallable)
+		void ScrollPartType(float value);
+
+
+	UFUNCTION(BlueprintCallable)
+		void SetBlueprintActorVisible(bool value);
+
+	
 
 
 	UFUNCTION(BlueprintCallable)

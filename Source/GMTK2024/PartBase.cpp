@@ -44,7 +44,9 @@ void APartBase::SolidifyWeld() {
 
 	if (weldTarget) {
 
-		FAttachmentTransformRules attachRules = FAttachmentTransformRules::KeepRelativeTransform;
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, "Weld Target valid");
+
+		FAttachmentTransformRules attachRules = FAttachmentTransformRules::KeepWorldTransform;
 
 
 		AttachToComponent(weldTarget->mesh, attachRules, "weldSocket");
