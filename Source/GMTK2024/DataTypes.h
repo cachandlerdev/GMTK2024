@@ -62,12 +62,7 @@ enum class PartType : uint8 {
 	PT_THRUST = 2     UMETA(DisplayName = "TRUST"),
 	PT_ENERGY = 3     UMETA(DisplayName = "ENERGY"),
 	PT_MISC = 4		UMETA(DisplayName = "MISC")
-
-
-	
-
 };
-
 
 /*
 PartType operator++(PartType& left) {
