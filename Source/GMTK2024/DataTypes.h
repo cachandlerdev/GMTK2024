@@ -15,6 +15,10 @@ struct GMTK2024_API FOrder
 	GENERATED_BODY()
 
 public:
+
+	UPROPERTY(BlueprintReadWrite)
+		float cost = 200.0f;
+
 	UPROPERTY(BlueprintReadWrite)
 	float structural = 100.0f;
 
@@ -39,10 +43,10 @@ public:
 
 
 	UPROPERTY(BlueprintReadWrite)
-	int numEMWeapons = 0;
+		float accuracy = 0.0f;
 
-	UPROPERTY(BlueprintReadWrite)
-	int numKineticWeapons = 0;
+
+
 };
 
 
@@ -57,10 +61,13 @@ public:
 
 
 	UPROPERTY(BlueprintReadWrite)
-	float structural = 100.0f;
+		float cost = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-	float firepower = 100.0f;
+	float structural = 0.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float firepower = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite)
 	float thrust = 100.0f;
@@ -86,11 +93,7 @@ public:
 	float fractionOfRunwayCovered = 0.0f;
 
 
-	UPROPERTY(BlueprintReadWrite)
-	int numEMWeapons = 0;
-
-	UPROPERTY(BlueprintReadWrite)
-	int numKineticWeapons = 0;
+	
 };
 
 
@@ -102,6 +105,9 @@ class GMTK2024_API UOrderDataSheet : public UDataAsset
 public:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FOrder> orders;
+
+	UPROPERTY(BlueprintReadWrite)
+		FOrder currentOrder;
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FReportCard> reports;

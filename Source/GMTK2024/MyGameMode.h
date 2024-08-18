@@ -47,7 +47,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USoundBase* ShiftStartSoundBase;
 
-
 	UPROPERTY()
 	FTimerHandle shiftStatTimerHandle;
 
@@ -107,6 +106,9 @@ public:
 	UFUNCTION()
 	void ShiftStartCallback();
 
+	//finds the ship in the world and compares it to the given order
+	UFUNCTION(BlueprintCallable)
+		FReportCard EvaluateBuildWithOrder(FOrder order);
 
 	UFUNCTION()
 	void DoNewShipChassisProcedure();

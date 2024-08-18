@@ -57,7 +57,7 @@ void AMyGameMode::ShiftStartCallback()
 
 
 void AMyGameMode::AddOrder()
-{
+{	//randomly generate a new order
 	FOrder newOrder;
 	newOrder.firepower = 100.0f * difficulty;
 
@@ -67,6 +67,7 @@ void AMyGameMode::AddOrder()
 		return;
 	}
 	orderSheet->orders.Add(newOrder);
+	orderSheet->currentOrder = newOrder;
 
 	if (addOrderTimerHandle.IsValid())
 	{
@@ -94,10 +95,9 @@ void AMyGameMode::MoveShipToLocationOverTime(FVector startLocation, FVector endL
 }
 
 
-<<<<<<< Updated upstream
-void AMyGameMode::DoFinishOrderProcedure()
-{
-=======
+
+
+
 void AMyGameMode::DoFinishOrderProcedure() {
 
 	if (!currentShipChassis) {
@@ -106,8 +106,37 @@ void AMyGameMode::DoFinishOrderProcedure() {
 
 	}
 
->>>>>>> Stashed changes
 	currentShipChassis->SetActorLocation(shipLaunchLocation);
+
+	
+	FReportCard newReport = EvaluateBuildWithOrder(orderSheet->currentOrder);
+
+	//once attribute grading is done the ship needs to try and fly
+
+	//NEED TO IMPLEMENT THAT PROCEDURE AND THEN CALLBACK TO ADD REPORT AFTERWARDS AS SHOWN BELOW
+
+
+	//add new report to order data sheet
+	orderSheet->reports.Add(newReport);
+
+
+	//calculate average grade
+	float s = 0.0f;
+	for (FReportCard report : orderSheet->reports)
+	{
+		s += report.overall;
+	}
+	s /= orderSheet->reports.Num();
+
+	orderSheet->averageGrade = s;
+
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "ORDER GRADE: " + FString::SanitizeFloat(s));
+}
+
+
+FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
+
 
 	//GRADING BELOW
 
@@ -147,6 +176,7 @@ void AMyGameMode::DoFinishOrderProcedure() {
 			break;
 		}
 
+		newReport.cost += part->cost;
 
 		//part->ActivatePart();
 		//part->launched = true;
@@ -158,37 +188,20 @@ void AMyGameMode::DoFinishOrderProcedure() {
 
 
 	//grade is 1 minus the percent difference from requested value
-	newReport.structural = 1.0f -
-		FMath::Abs((currentOrder.structural - newReport.structural) / currentOrder.structural);
+	newReport.structural = 1.0f - FMath::Abs((currentOrder.structural - newReport.structural) / currentOrder.structural);
 	newReport.firepower = 1.0f - FMath::Abs((currentOrder.firepower - newReport.firepower) / currentOrder.firepower);
 	newReport.thrust = 1.0f - FMath::Abs((currentOrder.thrust - newReport.thrust) / currentOrder.thrust);
 	newReport.energy = 1.0f - FMath::Abs((currentOrder.energy - newReport.energy) / currentOrder.energy);
 	newReport.support = 1.0f - FMath::Abs((currentOrder.support - newReport.support) / currentOrder.support);
 
 
+	newReport.cost = 1.0f - FMath::Abs((currentOrder.cost - newReport.cost) / currentOrder.cost);
+
+
 	newReport.overall = (newReport.structural + newReport.firepower + newReport.thrust + newReport.energy + newReport.
 		support) / 5.0f;
 
 
-	//once attribute grading is done the ship needs to try and fly
+	return newReport;
 
-	//NEED TO IMPLEMENT THAT PROCEDURE AND THEN CALLBACK TO ADD REPORT AFTERWARDS AS SHOWN BELOW
-
-
-	//add new report to order data sheet
-	orderSheet->reports.Add(newReport);
-
-
-	//calculate average grade
-	float s = 0.0f;
-	for (FReportCard report : orderSheet->reports)
-	{
-		s += report.overall;
-	}
-	s /= orderSheet->reports.Num();
-
-	orderSheet->averageGrade = s;
-
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "ORDER GRADE: " + FString::SanitizeFloat(s));
 }

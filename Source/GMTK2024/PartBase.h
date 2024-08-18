@@ -44,6 +44,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float baseAttribute = 25.0f;
 
+	//the cost of the part
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float cost = 25.0f;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		PartType type;
