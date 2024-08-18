@@ -16,33 +16,27 @@ UCLASS()
 class GMTK2024_API ASpawnChasisActor : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ASpawnChasisActor();
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<APartBase> chassisClass;
+	TSubclassOf<APartBase> chassisClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		ASkeletalMeshActor* shipHolderMagnet;
-
-
-	
-
+	ASkeletalMeshActor* shipHolderMagnet;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 
-
 	UFUNCTION(BlueprintCallable)
-		void SpawnChassis();
-
+	void SpawnChassis();
 };

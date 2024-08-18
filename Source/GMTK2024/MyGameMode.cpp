@@ -261,27 +261,22 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
 			newReport.structural += part->baseAttribute;
 			break;
 
-
 		case PartType::PT_FIREPOWER:
 			newReport.firepower += part->baseAttribute;
 			break;
-
 
 		case PartType::PT_THRUST:
 			newReport.thrust += part->baseAttribute;
 			break;
 
-
 		case PartType::PT_ENERGY:
 			newReport.energy += part->baseAttribute;
 			break;
-
 
 		case PartType::PT_SUPPORT:
 			newReport.support += part->baseAttribute;
 			break;
 		}
-
 		newReport.cost += part->cost;
 
 		
@@ -318,7 +313,7 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
 
 float AMyGameMode::GetHarmonyGrade() {
 
-	FVector ceneterOfMass = FVector::ZeroVector;
+	FVector centerOfMass = FVector::ZeroVector;
 	float totalMass = 0.0f;
 
 	FVector thrustVector = FVector::ZeroVector;
@@ -377,7 +372,7 @@ float AMyGameMode::GetHarmonyGrade() {
 		}
 		
 		
-		ceneterOfMass += part->GetActorLocation() * (part->mass / totalMass);
+		centerOfMass += part->GetActorLocation() * (part->mass / totalMass);
 
 
 	}
@@ -385,7 +380,7 @@ float AMyGameMode::GetHarmonyGrade() {
 	thrustVector = thrustVector.GetSafeNormal();
 
 
-	FVector centerOffset = centerOffset - centerOfThrust;
+	FVector centerOffset = centerOfMass - centerOfThrust;
 
 	//this is how close the thrust vector is to pointing at the center of mass from the center of thrust
 	float amountTowardsCOM = FVector::DotProduct(thrustVector, (centerOffset.GetSafeNormal()));
