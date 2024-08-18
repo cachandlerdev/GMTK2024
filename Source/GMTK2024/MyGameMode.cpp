@@ -94,8 +94,19 @@ void AMyGameMode::MoveShipToLocationOverTime(FVector startLocation, FVector endL
 }
 
 
+<<<<<<< Updated upstream
 void AMyGameMode::DoFinishOrderProcedure()
 {
+=======
+void AMyGameMode::DoFinishOrderProcedure() {
+
+	if (!currentShipChassis) {
+
+		return;
+
+	}
+
+>>>>>>> Stashed changes
 	currentShipChassis->SetActorLocation(shipLaunchLocation);
 
 	//GRADING BELOW
