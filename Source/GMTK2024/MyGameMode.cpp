@@ -16,6 +16,8 @@
 
 AMyGameMode::AMyGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 }
 
 
@@ -38,6 +40,10 @@ void AMyGameMode::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	localTime += DeltaTime;
+
+	//float temp = GetHarmonyGrade();
+
+	//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Purple, FString::SanitizeFloat(temp));
 }
 
 
@@ -114,29 +120,15 @@ void AMyGameMode::DoFinishOrderProcedure() {
 	
 
 	
-	FReportCard newReport = EvaluateBuildWithOrder(orderSheet->currentOrder);
+	reportInProgress = EvaluateBuildWithOrder(orderSheet->currentOrder);
 
 	//once attribute grading is done the ship needs to try and fly
 
 	//NEED TO IMPLEMENT THAT PROCEDURE AND THEN CALLBACK TO ADD REPORT AFTERWARDS AS SHOWN BELOW
+	DoShipFlight();
 
 
-	//add new report to order data sheet
-	orderSheet->reports.Add(newReport);
-
-
-	//calculate average grade
-	float s = 0.0f;
-	for (FReportCard report : orderSheet->reports)
-	{
-		s += report.overall;
-	}
-	s /= orderSheet->reports.Num();
-
-	orderSheet->averageGrade = s;
-
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "ORDER GRADE: " + FString::SanitizeFloat(s));
+	
 }
 
 
@@ -160,8 +152,10 @@ void AMyGameMode::DoShipFlight() {
 	}
 
 
+	currentShipChassis->physicsBox->SetCenterOfMass(GetCenterOfMass());
 	currentShipChassis->mesh->SetCollisionProfileName("NoCollision");
 	currentShipChassis->physicsBox->SetSimulatePhysics(true);
+
 
 	GetWorld()->GetTimerManager().SetTimer(finsihGradingHandle, this, &AMyGameMode::CompleteGradingAfterFlight, 4.0f);
 
@@ -172,7 +166,23 @@ void AMyGameMode::DoShipFlight() {
 void AMyGameMode::CompleteGradingAfterFlight() {
 
 
+	//add new report to order data sheet
+	orderSheet->reports.Add(reportInProgress);
 
+
+	//calculate average grade
+	float s = 0.0f;
+	for (FReportCard report : orderSheet->reports)
+	{
+		s += report.overall;
+	}
+	s /= orderSheet->reports.Num();
+
+	orderSheet->averageGrade = s;
+
+
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "ORDER GRADE: " + FString::SanitizeFloat(s));
 
 }
 
@@ -318,7 +328,13 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
 
 float AMyGameMode::GetHarmonyGrade() {
 
-	FVector ceneterOfMass = FVector::ZeroVector;
+	if (!currentShipChassis) {
+
+		return 0.0f;
+
+	}
+
+	FVector centerOfMass = FVector::ZeroVector;
 	float totalMass = 0.0f;
 
 	FVector thrustVector = FVector::ZeroVector;
@@ -370,6 +386,8 @@ float AMyGameMode::GetHarmonyGrade() {
 
 			thrustVector += part->GetActorForwardVector() * part->baseAttribute;
 			
+			//DrawDebugDirectionalArrow(GetWorld(), part->GetActorLocation(), GetActorLocation(), 20.0f, FColor::Green);
+
 
 			centerOfThrust += part->GetActorLocation() * (part->baseAttribute / totalThrustMagnitude);
 
@@ -377,7 +395,7 @@ float AMyGameMode::GetHarmonyGrade() {
 		}
 		
 		
-		ceneterOfMass += part->GetActorLocation() * (part->mass / totalMass);
+		centerOfMass += part->GetActorLocation() * (part->mass / totalMass);
 
 
 	}
@@ -385,21 +403,90 @@ float AMyGameMode::GetHarmonyGrade() {
 	thrustVector = thrustVector.GetSafeNormal();
 
 
-	FVector centerOffset = centerOffset - centerOfThrust;
+	FVector centerOffset = centerOfMass - centerOfThrust;
+
 
 	//this is how close the thrust vector is to pointing at the center of mass from the center of thrust
-	float amountTowardsCOM = FVector::DotProduct(thrustVector, (centerOffset.GetSafeNormal()));
+	float amountTowardsCOM = FVector::DotProduct(-thrustVector, (centerOffset.GetSafeNormal()));
 
-	DrawDebugDirectionalArrow(GetWorld(), currentShipChassis->GetActorLocation() + FVector(0.0f, 0.0f, 500.0f), centerOffset.GetSafeNormal() * 2000.0f, 20.0f, FColor::Green);
-	DrawDebugDirectionalArrow(GetWorld(), currentShipChassis->GetActorLocation() + FVector(0.0f, 0.0f, 500.0f), thrustVector * 2000.0f, 20.0f, FColor::Yellow);
+	//DrawDebugSphere(GetWorld(), centerOfMass, 50.0f, 32, FColor::Green);
+
+	//DrawDebugDirectionalArrow(GetWorld(), centerOfThrust, centerOfMass + centerOffset, 20.0f, FColor::Green);
+	//DrawDebugDirectionalArrow(GetWorld(), centerOfThrust, centerOfThrust + (-thrustVector * 500.0f), 20.0f, FColor::Yellow);
 
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, "Harmony Grade: " + FString::SanitizeFloat(amountTowardsCOM));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, "Harmony Grade: " + FString::SanitizeFloat(amountTowardsCOM));
 
 	return amountTowardsCOM;
 
 
 }
+
+
+
+FVector AMyGameMode::GetCenterOfMass() {
+
+	if (!currentShipChassis) {
+
+		return FVector::ZeroVector;
+
+	}
+
+	FVector centerOfMass = FVector::ZeroVector;
+	float totalMass = 0.0f;
+
+
+	TArray<AActor*> partsA;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
+
+
+	//get the total thrust and total mass first
+	for (AActor* partA : partsA)
+	{
+		APartBase* part = Cast<APartBase>(partA);
+		
+
+		
+
+		totalMass += part->mass;
+
+
+
+	}
+
+
+
+
+	//get the center of mass, center of thrust and thrust vector
+	for (AActor* partA : partsA)
+	{
+		APartBase* part = Cast<APartBase>(partA);
+		
+
+		
+		centerOfMass += part->GetActorLocation() * (part->mass / totalMass);
+
+
+	}
+
+	
+
+
+	return centerOfMass;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
