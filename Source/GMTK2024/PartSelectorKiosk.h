@@ -70,7 +70,7 @@ public:
 		UMaterial* HoloMaterial;
 
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		PartType partType;
 
 	UPROPERTY(BlueprintReadOnly)
