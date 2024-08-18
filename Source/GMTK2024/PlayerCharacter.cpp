@@ -10,6 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputLibrary.h"
+#include "KismetTraceUtils.h"
 
 
 #include "Kismet/KismetMathLibrary.h"
@@ -91,10 +92,6 @@ void APlayerCharacter::DeferSetupMovementSystem()
 		FEnhancedActionKeyMapping* mapCopy = &baseControlsCopy->MapKey(map.Action, map.Key);
 
 		mapCopy->Modifiers = map.Modifiers;
-
-
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green,
-		                                 map.Action.GetFName().ToString() + " | " + map.Key.GetFName().ToString());
 	}
 	UEnhancedInputLibrary::RequestRebuildControlMappingsUsingContext(baseControlsCopy);
 
@@ -104,7 +101,6 @@ void APlayerCharacter::DeferSetupMovementSystem()
 		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
 			playerController->GetLocalPlayer());
 
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::White, playerController->GetName());
 		FString name = playerController->GetName();
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *name);
 
@@ -162,7 +158,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	if (sliding)
 	{
 		slideTimer += DeltaTime;
-		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, "sliding");
 		if (GetCharacterMovement()->Velocity.Length() < 400.0f && sliding)
 		{
 			SetSliding(false);
@@ -174,13 +169,13 @@ void APlayerCharacter::Tick(float DeltaTime)
 	}
 	CameraTick();
 	UpdateFovTick(DeltaTime);
+	MantlingTick();
 }
 
 
 void APlayerCharacter::moveInput(const FInputActionValue& value)
 {
 	FVector2D passValue = value.Get<FVector2D>();
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, "Slide Timer: " + FString::SanitizeFloat(slideTimer));
 
 	if (sliding)
 	{
@@ -217,7 +212,7 @@ void APlayerCharacter::moveInput(const FInputActionValue& value)
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, FString::SanitizeFloat(value.Get<FVector2D>().X));
+		//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, FString::SanitizeFloat(value.Get<FVector2D>().X));
 	}
 }
 
@@ -253,6 +248,10 @@ void APlayerCharacter::ToggleSprint(const FInputActionValue& value)
 
 void APlayerCharacter::jumpInput(const FInputActionValue& value)
 {
+	if (bCanMantle)
+	{
+		Mantle();
+	}
 	if (NumOfJumps > 0)
 	{
 		if (IsWallRunning())
@@ -279,8 +278,6 @@ void APlayerCharacter::jumpInput(const FInputActionValue& value)
 
 void APlayerCharacter::TryRechargeSlideJumpBoost()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 0.8f, FColor::Orange, FString::SanitizeFloat(slideJumpBoost));
-
 	//only charge if they are on the ground and are not sliding
 	if (!GetCharacterMovement()->IsFalling() && !sliding)
 	{
@@ -476,7 +473,6 @@ void APlayerCharacter::TiltCamera(float Roll)
 
 void APlayerCharacter::WallRunJump()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::White, "Jump off wall");
 	if (IsWallRunning())
 	{
 		EndWallRun(0.25f);
@@ -489,8 +485,28 @@ void APlayerCharacter::WallRunJump()
 
 void APlayerCharacter::PerformDash()
 {
-	Falling
-	FVector launchVelocity = GetActorForwardVector() * DashStrength;
+	OnDash();
+
+	FHitResult Hit;
+	FVector TraceStart = GetActorLocation();
+	FVector TraceEnd = GetActorLocation() + FVector(0.0f, 0.0f, -1000.0f);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Pawn;
+	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
+
+	FVector launchVelocity = GetActorForwardVector();
+	bool isInAir = (!Hit.bBlockingHit || Hit.Distance > 200.0f);
+	if (isInAir)
+	{
+		FString distance = FString::SanitizeFloat(Hit.Distance);
+		launchVelocity *= (DashStrength / 4.0f);
+	}
+	else
+	{
+		launchVelocity *= DashStrength;
+	}
+	
 	LaunchCharacter(launchVelocity, false, false);
 	GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this,
 										   &APlayerCharacter::SetDashCooldownOver, DashCooldown, false);
@@ -499,6 +515,46 @@ void APlayerCharacter::PerformDash()
 void APlayerCharacter::SetDashCooldownOver()
 {
 	bIsOnDashCooldown = false;
+}
+
+void APlayerCharacter::MantlingTick()
+{
+	FHitResult Hit;
+
+	float forgiveness = 40.0f;
+	FVector EyeLevel = Camera->GetComponentLocation() + FVector(0.0f, 0.0f, forgiveness);
+	float forwardDistanceMultiplier = 100.0f;
+	FVector TraceStart = EyeLevel + (GetActorForwardVector() * forwardDistanceMultiplier);
+	float length = GetCapsuleComponent()->GetScaledCapsuleHalfHeight() * 2;
+	FVector TraceEnd = TraceStart + FVector(0.0f, 0.0f, -1.0f * length);
+	
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Visibility;
+	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, TraceChannelProperty, QueryParams);
+
+	float minMantleHeight = 15.0f;
+	float maxMantleHeight = 50.0f + forgiveness;
+	FString distance = FString::SanitizeFloat(Hit.Distance);
+	bool rightDistance = (Hit.Distance > minMantleHeight) && (Hit.Distance < maxMantleHeight);
+
+	if (Hit.bBlockingHit && rightDistance)
+	{
+		bCanMantle = true;
+	}
+	else
+	{
+		bCanMantle = false;
+	}
+	
+}
+
+void APlayerCharacter::Mantle()
+{
+	OnMantle();
+	float mantleStrength = 550.0f;
+	FVector launchVelocity = GetActorForwardVector() + FVector(0.0f, 0.0f, mantleStrength);
+	LaunchCharacter(launchVelocity, false, false);
 }
 
 void APlayerCharacter::scrollInput(const FInputActionValue& value)
@@ -547,7 +603,6 @@ void APlayerCharacter::crouchInput(const FInputActionValue& value)
 		if (GetCharacterMovement()->Velocity.Length() > 410.0f && !sliding)
 		{
 			SetSliding(true);
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, "NOT SLIDING");
 			if (!GetCharacterMovement()->IsFalling())
 			{
 				GetCharacterMovement()->Velocity *= 1.3f;
@@ -641,9 +696,13 @@ void APlayerCharacter::Landed(const FHitResult& hit)
 
 void APlayerCharacter::Dash()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, "Try to dash");
 	if (!bIsOnDashCooldown)
 	{
+		if (IsWallRunning())
+		{
+			WallRunJump();
+		}
+		
 		bIsOnDashCooldown = true;
 		// We boost the player up to allow the dash to happen
 		FVector upBoost = FVector(0.0f, 0.0f, 200.0f);
@@ -674,8 +733,6 @@ float APlayerCharacter::CalcHillSlideBoost()
 		{
 			//how steep is this hill
 			hillGrade = 1.0f - FMath::Abs(hit.ImpactNormal.Dot(FVector(0.0f, 0.0f, 1.0f)));
-
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, FString::SanitizeFloat(hillGrade));
 
 			//cap the boost at 1.5f * velocity
 			//hillGrade *= 0.5f;

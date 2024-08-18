@@ -127,6 +127,9 @@ private:
 
 	// used to track the dash cooldown reset.
 	FTimerHandle DashCooldownHandle;
+
+	// Keeps track of whether the player can mantle
+	bool bCanMantle = true;
 	
 public:
 
@@ -222,6 +225,14 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsOnDashCooldown();
 
+	// Runs when the player dashes.
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDash();
+	
+	// Runs when the player mantles.
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnMantle();
+
 	// Inputs
 	
 	UFUNCTION()
@@ -310,5 +321,13 @@ private:
 
 	// Allows the player to dash again
 	void SetDashCooldownOver();
+
+	// Mantling
+
+	// Performs a line trace to see if enough of the player's body is high enough to mantle
+	void MantlingTick();
+
+	// Performs a mantle.
+	void Mantle();
 	
 };
