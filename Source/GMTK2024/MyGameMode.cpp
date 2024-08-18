@@ -136,7 +136,7 @@ void AMyGameMode::DoFinishOrderProcedure() {
 
 void AMyGameMode::DoShipFlight() {
 
-	//currentShipChassis->SetActorLocation(shipLaunchLocation);
+	currentShipChassis->SetActorLocation(shipLaunchLocation);
 
 
 	//activate all of the parts
@@ -180,11 +180,44 @@ void AMyGameMode::CompleteGradingAfterFlight() {
 
 	orderSheet->averageGrade = s;
 
-
+	CleanupShip();
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "ORDER GRADE: " + FString::SanitizeFloat(s));
 
 }
+
+
+
+
+void AMyGameMode::CleanupShip() {
+
+	TArray<AActor*> partsA;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
+
+	//get the total thrust and total mass first
+	for (AActor* partA : partsA)
+	{
+		partA->Destroy();
+
+
+
+	}
+
+	currentShipChassis = nullptr;
+	shipUnderConstruction = false;
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

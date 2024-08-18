@@ -151,6 +151,12 @@ public:
 
 
 
+
+	UFUNCTION()
+		void CleanupShip();
+
+
+
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
 		FReportCard EvaluateBuildWithOrder(FOrder order);
