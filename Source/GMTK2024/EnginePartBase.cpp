@@ -31,6 +31,8 @@ void AEnginePartBase::BeginPlay() {
 	
 	gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
+	thrust = baseAttribute;
+
 }
 
 

@@ -78,6 +78,9 @@ public:
 	UPROPERTY()
 	FTimerHandle moveTimerHandle;
 
+	UPROPERTY()
+		FTimerHandle finsihGradingHandle;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -91,6 +94,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddOrder();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void AddOrderBP();
 
 
 	UFUNCTION(BlueprintCallable)
@@ -124,9 +130,7 @@ public:
 		void PartAddedBP();
 
 
-	//finds the ship in the world and compares it to the given order
-	UFUNCTION(BlueprintCallable)
-		FReportCard EvaluateBuildWithOrder(FOrder order);
+	
 
 	UFUNCTION(BlueprintCallable)
 		void DoShipFlight();
@@ -137,6 +141,17 @@ public:
 	UFUNCTION()
 	void DoFinishOrderProcedure();
 
-	//UFUNCTION()
-	//void AddOrderCallback();
+	UFUNCTION()
+		void CompleteGradingAfterFlight();
+
+
+
+	//finds the ship in the world and compares it to the given order
+	UFUNCTION(BlueprintCallable)
+		FReportCard EvaluateBuildWithOrder(FOrder order);
+
+	//finds the ship in the world and compares it to the given order
+	UFUNCTION(BlueprintCallable)
+		float GetHarmonyGrade();
+	
 };
