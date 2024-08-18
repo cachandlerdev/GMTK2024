@@ -304,27 +304,22 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
 			newReport.structural += part->baseAttribute;
 			break;
 
-
 		case PartType::PT_FIREPOWER:
 			newReport.firepower += part->baseAttribute;
 			break;
-
 
 		case PartType::PT_THRUST:
 			newReport.thrust += part->baseAttribute;
 			break;
 
-
 		case PartType::PT_ENERGY:
 			newReport.energy += part->baseAttribute;
 			break;
-
 
 		case PartType::PT_SUPPORT:
 			newReport.support += part->baseAttribute;
 			break;
 		}
-
 		newReport.cost += part->cost;
 
 		
@@ -360,6 +355,7 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
 
 
 float AMyGameMode::GetHarmonyGrade() {
+
 
 	if (!currentShipChassis) {
 

@@ -95,9 +95,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float DashCooldown = 5.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-	float TimeToPerformActions = 2.0f;
-
 private:
 	bool sprinting = false;
 	bool sliding = false;
@@ -141,12 +138,6 @@ private:
 
 	// Keeps track of whether the player can mantle
 	bool bCanMantle = true;
-
-	// Used on the HUD to determine whether to show the progress bar.
-	bool bIsPerformingAction = false;
-
-	// Used on the HUD to determine whether to show the progress bar.
-	float TimeToPerformActionRemaining = 0.0f;
 
 public:
 	//INPUT STUFF
@@ -226,14 +217,6 @@ public:
 	// Returns whether the player is sprinting
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsPlayerSprinting();
-
-	// Used to determine whether to show the UI progress bar.
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	bool IsPerformingAction();
-
-	// Used to determine whether to show the UI progress bar.
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	float GetPerformingActionTimeRemaining();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartCrouch();
@@ -359,7 +342,4 @@ private:
 
 	// Performs a mantle.
 	void Mantle();
-
-	// Ticks down the remaining time to perform action X 
-	void PerformActionTick(float DeltaTime);
 };

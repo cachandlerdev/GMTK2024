@@ -24,6 +24,9 @@ public:
 	APartBase(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText PartName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		USkeletalMeshComponent* mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
