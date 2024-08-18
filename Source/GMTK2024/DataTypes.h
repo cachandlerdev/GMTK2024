@@ -16,14 +16,26 @@ struct GMTK2024_API FOrder {
 
 public:
 
+
+	UPROPERTY(BlueprintReadWrite)
+		float structural = 100.0f;
+
 	UPROPERTY(BlueprintReadWrite)
 		float firepower = 100.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-		float shield = 100.0f;
+		float thrust = 100.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-		float thrust = 100.0f;
+		float energy = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float support = 100.0f;
+
+	
+
+	UPROPERTY(BlueprintReadWrite)
+		float shield = 100.0f;
 
 	UPROPERTY(BlueprintReadWrite)
 		float powerSurplus = 10.0f;
@@ -41,6 +53,63 @@ public:
 };
 
 
+USTRUCT(BlueprintType)
+struct GMTK2024_API FReportCard {
+
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadWrite)
+		float overall = 0.0f;
+
+
+	UPROPERTY(BlueprintReadWrite)
+		float structural = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float firepower = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float thrust = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float energy = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float support = 100.0f;
+
+
+
+	UPROPERTY(BlueprintReadWrite)
+		float shield = 100.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float powerSurplus = 10.0f;
+
+
+
+	UPROPERTY(BlueprintReadWrite)
+		float harmony = 0.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+		float fractionOfRunwayCovered = 0.0f;
+	
+
+
+
+	UPROPERTY(BlueprintReadWrite)
+		int numEMWeapons = 0;
+
+	UPROPERTY(BlueprintReadWrite)
+		int numKineticWeapons = 0;
+
+
+
+};
+
+
+
 UCLASS(Blueprintable)
 class GMTK2024_API UOrderDataSheet : public UDataAsset {
 
@@ -51,17 +120,38 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		TArray<FOrder> orders;
 
+	UPROPERTY(BlueprintReadWrite)
+		TArray<FReportCard> reports;
+
+	UPROPERTY(BlueprintReadWrite)
+		TArray<float> grades;
+
+	UPROPERTY(BlueprintReadWrite)
+		float averageGrade;
 
 };
+
+
+
+
 
 
 UENUM(BlueprintType)
 enum class PartType : uint8 {
 	PT_STRUCTURAL = 0 UMETA(DisplayName = "STRUCTURAL"),
 	PT_FIREPOWER = 1  UMETA(DisplayName = "FIREPOWER"),
-	PT_THRUST = 2     UMETA(DisplayName = "TRUST"),
+	PT_THRUST = 2     UMETA(DisplayName = "THRUST"),
 	PT_ENERGY = 3     UMETA(DisplayName = "ENERGY"),
+<<<<<<< Updated upstream
 	PT_MISC = 4		UMETA(DisplayName = "MISC")
+=======
+	PT_SUPPORT = 4		UMETA(DisplayName = "SUPPORT"),
+	PT_CHASSIS = 5		UMETA(DisplayName = "CHASSIS")
+
+
+	
+
+>>>>>>> Stashed changes
 };
 
 /*

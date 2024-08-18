@@ -25,6 +25,13 @@
 
 #include "WelderComponent.h"
 
+#include "SpawnChasisActor.h"
+#include "FinishOrderActor.h"
+
+
+#include "Kismet/GameplayStatics.h"
+#include "MyGameMode.h"
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -61,6 +68,10 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+<<<<<<< Updated upstream
+=======
+	gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+>>>>>>> Stashed changes
 
 	// Attach things
 	FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, false);
@@ -652,8 +663,55 @@ void APlayerCharacter::scrollInput(const FInputActionValue& value)
 
 void APlayerCharacter::fireInput(const FInputActionValue& value)
 {
+<<<<<<< Updated upstream
 	if (value.Get<bool>())
 	{
+=======
+	
+	//trace to check if trying to press finish order or spawn chassis buttons
+
+	FVector eyeLoc;
+	FRotator eyeDir;
+
+	GetActorEyesViewPoint(eyeLoc, eyeDir);
+
+	TArray<FHitResult> hits;
+
+
+	GetWorld()->LineTraceMultiByChannel(hits, GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
+		ECC_Visibility);
+	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f), 10.0f,
+		FColor::Green, false, 1.0f);
+
+
+
+	for (FHitResult hit : hits)
+	{
+		ASpawnChasisActor* spawnChassisButton = Cast<ASpawnChasisActor>(hit.GetActor());
+
+		if (spawnChassisButton)
+		{
+			spawnChassisButton->SpawnChassis();
+		}
+
+		AFinishOrderActor* finishOrderButton = Cast<AFinishOrderActor>(hit.GetActor());
+
+		if (finishOrderButton)
+		{
+			finishOrderButton->FinishOrder();
+		}
+
+	}
+
+	
+	
+
+
+
+
+	if (value.Get<bool>()) {
+
+>>>>>>> Stashed changes
 		Welder->WeldInput();
 	}
 	else
