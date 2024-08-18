@@ -68,11 +68,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-<<<<<<< Updated upstream
-=======
 	gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
->>>>>>> Stashed changes
-
 	// Attach things
 	FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, false);
 	Camera->AttachToComponent(GetCapsuleComponent(), Rules);
@@ -223,6 +219,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	CameraTick();
 	UpdateFovTick(DeltaTime);
 	MantlingTick();
+	PerformActionTick(DeltaTime);
 }
 
 
@@ -556,7 +553,20 @@ void APlayerCharacter::PerformDash()
 	if (isInAir)
 	{
 		FString distance = FString::SanitizeFloat(Hit.Distance);
-		launchVelocity *= (DashStrength / 10.0f);
+
+		float smallifier = 0.01f;
+
+		float newSpeed = GetVelocity().Length() + (DashStrength * smallifier);
+		if (newSpeed > sprintSpeed)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Clamp boost");
+			launchVelocity *= DashStrength * smallifier;
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Don't clamp boost");
+			launchVelocity *= DashStrength;
+		}
 	}
 	else
 	{
@@ -613,6 +623,23 @@ void APlayerCharacter::Mantle()
 	LaunchCharacter(launchVelocity, false, false);
 }
 
+void APlayerCharacter::PerformActionTick(float DeltaTime)
+{
+	if (IsPerformingAction())
+	{
+		TimeToPerformActionRemaining -= DeltaTime;
+		if (TimeToPerformActionRemaining <= 0.0f)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Perform action");
+			bIsPerformingAction = false;
+		}
+	}
+	else
+	{
+		TimeToPerformActionRemaining = TimeToPerformActions;
+	}
+}
+
 void APlayerCharacter::scrollInput(const FInputActionValue& value)
 {
 	FVector eyeLoc;
@@ -650,60 +677,43 @@ void APlayerCharacter::scrollInput(const FInputActionValue& value)
 
 void APlayerCharacter::fireInput(const FInputActionValue& value)
 {
-<<<<<<< Updated upstream
 	if (value.Get<bool>())
 	{
-=======
-	
-	//trace to check if trying to press finish order or spawn chassis buttons
+		//trace to check if trying to press finish order or spawn chassis buttons
+		FVector eyeLoc;
+		FRotator eyeDir;
 
-	FVector eyeLoc;
-	FRotator eyeDir;
+		GetActorEyesViewPoint(eyeLoc, eyeDir);
+		TArray<FHitResult> hits;
+		GetWorld()->LineTraceMultiByChannel(hits, GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
+		                                    ECC_Visibility);
+		DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
+		                          10.0f,
+		                          FColor::Green, false, 1.0f);
 
-	GetActorEyesViewPoint(eyeLoc, eyeDir);
-
-	TArray<FHitResult> hits;
-
-
-	GetWorld()->LineTraceMultiByChannel(hits, GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
-		ECC_Visibility);
-	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f), 10.0f,
-		FColor::Green, false, 1.0f);
-
-
-
-	for (FHitResult hit : hits)
-	{
-		ASpawnChasisActor* spawnChassisButton = Cast<ASpawnChasisActor>(hit.GetActor());
-
-		if (spawnChassisButton)
+		for (FHitResult hit : hits)
 		{
-			spawnChassisButton->SpawnChassis();
+			ASpawnChasisActor* spawnChassisButton = Cast<ASpawnChasisActor>(hit.GetActor());
+			if (spawnChassisButton != nullptr)
+			{
+				bIsPerformingAction = true;
+				spawnChassisButton->SpawnChassis();
+			}
+			AFinishOrderActor* finishOrderButton = Cast<AFinishOrderActor>(hit.GetActor());
+			if (finishOrderButton != nullptr)
+			{
+				finishOrderButton->FinishOrder();
+			}
 		}
 
-		AFinishOrderActor* finishOrderButton = Cast<AFinishOrderActor>(hit.GetActor());
-
-		if (finishOrderButton)
+		if (value.Get<bool>())
 		{
-			finishOrderButton->FinishOrder();
+			Welder->WeldInput();
 		}
-
-	}
-
-	
-	
-
-
-
-
-	if (value.Get<bool>()) {
-
->>>>>>> Stashed changes
-		Welder->WeldInput();
-	}
-	else
-	{
-		Welder->WeldReleased();
+		else
+		{
+			Welder->WeldReleased();
+		}
 	}
 }
 
@@ -764,6 +774,16 @@ void APlayerCharacter::SetSprinting(bool val)
 bool APlayerCharacter::IsPlayerSprinting()
 {
 	return sprinting;
+}
+
+bool APlayerCharacter::IsPerformingAction()
+{
+	return bIsPerformingAction;
+}
+
+float APlayerCharacter::GetPerformingActionTimeRemaining()
+{
+	return TimeToPerformActionRemaining;
 }
 
 

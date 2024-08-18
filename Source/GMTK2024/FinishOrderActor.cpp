@@ -31,6 +31,8 @@ void AFinishOrderActor::Tick(float DeltaTime)
 void AFinishOrderActor::FinishOrder() {
 
 	AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-
-	gameMode->DoFinishOrderProcedure();
+	if (gameMode != nullptr)
+	{
+		gameMode->DoFinishOrderProcedure();
+	}
 }

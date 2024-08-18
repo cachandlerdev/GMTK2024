@@ -13,7 +13,6 @@
 #include "Components/BoxComponent.h"
 
 
-
 #include "PlayerCharacter.generated.h"
 
 class UEnhancedInputComponent;
@@ -43,13 +42,13 @@ public:
 
 	// The welder object.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UWelderComponent* Welder;
+	UWelderComponent* Welder;
 
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<UWelderComponent> welderClass;
+	TSubclassOf<UWelderComponent> welderClass;
 
 	UPROPERTY(BlueprintReadOnly)
-		AMyGameMode* gameMode;
+	AMyGameMode* gameMode;
 
 	UPROPERTY(BlueprintReadOnly)
 	APlayerController* playerController;
@@ -95,7 +94,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float DashCooldown = 5.0f;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
+	float TimeToPerformActions = 2.0f;
+
 private:
 	bool sprinting = false;
 	bool sliding = false;
@@ -127,7 +129,7 @@ private:
 
 	// Used to track the initial field of view.
 	float InitialFov;
-	
+
 	// Used to make sure the FOV doesn't go too high when sprinting
 	float MaxFov;
 
@@ -139,51 +141,56 @@ private:
 
 	// Keeps track of whether the player can mantle
 	bool bCanMantle = true;
-	
-public:
 
+	// Used on the HUD to determine whether to show the progress bar.
+	bool bIsPerformingAction = false;
+
+	// Used on the HUD to determine whether to show the progress bar.
+	float TimeToPerformActionRemaining = 0.0f;
+
+public:
 	//INPUT STUFF
 	UPROPERTY(BlueprintReadOnly)
-		UEnhancedInputComponent* playerEnhancedInput;
+	UEnhancedInputComponent* playerEnhancedInput;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* movementAction;
+	UInputAction* movementAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* lookAction;
+	UInputAction* lookAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* jumpAction;
+	UInputAction* jumpAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* sprintAction;
+	UInputAction* sprintAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* fireAction;
+	UInputAction* fireAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* scrollAction;
+	UInputAction* scrollAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* crouchAction;
+	UInputAction* crouchAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* menuAction;
+	UInputAction* menuAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
-		UInputAction* aimAction;
+	UInputAction* aimAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 	UInputAction* DashAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control Mappings")
-		UInputMappingContext* baseControls;
+	UInputMappingContext* baseControls;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control Mappings")
-		UInputMappingContext* baseControlsCopy;
+	UInputMappingContext* baseControlsCopy;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control Mappings")
-		int32 baseControlsPriority = 0;
+	int32 baseControlsPriority = 0;
 
 protected:
 	// Called when the game starts or when spawned
@@ -192,7 +199,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	bool movementSuccessful = false;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -206,7 +213,7 @@ public:
 
 	//setup movement after begin so that player controller never fails to acquire input
 	UFUNCTION(BlueprintCallable)
-		void DeferSetupMovementSystem();
+	void DeferSetupMovementSystem();
 
 	// Makes the player slide
 	UFUNCTION()
@@ -219,6 +226,14 @@ public:
 	// Returns whether the player is sprinting
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsPlayerSprinting();
+
+	// Used to determine whether to show the UI progress bar.
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsPerformingAction();
+
+	// Used to determine whether to show the UI progress bar.
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	float GetPerformingActionTimeRemaining();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartCrouch();
@@ -237,36 +252,36 @@ public:
 	// Runs when the player dashes.
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDash();
-	
+
 	// Runs when the player mantles.
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnMantle();
 
 	// Inputs
-	
-	UFUNCTION()
-		virtual void lookInput(const FInputActionValue& value);
 
 	UFUNCTION()
-		virtual void fireInput(const FInputActionValue& value);
-	
-	UFUNCTION()
-		virtual void moveInput(const FInputActionValue& value);
+	virtual void lookInput(const FInputActionValue& value);
 
 	UFUNCTION()
-		virtual void ToggleSprint(const FInputActionValue& value);
+	virtual void fireInput(const FInputActionValue& value);
 
 	UFUNCTION()
-		virtual void aimInput(const FInputActionValue& value);
+	virtual void moveInput(const FInputActionValue& value);
 
 	UFUNCTION()
-		virtual void scrollInput(const FInputActionValue& value);
+	virtual void ToggleSprint(const FInputActionValue& value);
 
 	UFUNCTION()
-		virtual void crouchInput(const FInputActionValue& value);
+	virtual void aimInput(const FInputActionValue& value);
 
 	UFUNCTION()
-		virtual void jumpInput(const FInputActionValue& value);
+	virtual void scrollInput(const FInputActionValue& value);
+
+	UFUNCTION()
+	virtual void crouchInput(const FInputActionValue& value);
+
+	UFUNCTION()
+	virtual void jumpInput(const FInputActionValue& value);
 
 	// A blueprint implementable event that can be run when the player crouches. Optional
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
@@ -288,24 +303,22 @@ public:
 	void Dash();
 
 	UFUNCTION()
-		float CalcHillSlideBoost();
+	float CalcHillSlideBoost();
 
 	UFUNCTION()
-		void TryRechargeSlideJumpBoost();
+	void TryRechargeSlideJumpBoost();
 
 	UFUNCTION()
-		void WelderAttachmentCallback();
-
+	void WelderAttachmentCallback();
 
 private:
-
 	// Camera
 
 	// Updates the player's FOV depending on his movement speed.
 	void UpdateFovTick(float DeltaTime);
 
 	// Wallrun
-	
+
 	// Runs repeatedly to update wall running
 	void WallRunUpdate();
 
@@ -346,5 +359,7 @@ private:
 
 	// Performs a mantle.
 	void Mantle();
-	
+
+	// Ticks down the remaining time to perform action X 
+	void PerformActionTick(float DeltaTime);
 };
