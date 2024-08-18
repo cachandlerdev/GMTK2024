@@ -91,7 +91,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float DashCooldown = 5.0f;
-
 	
 private:
 	bool sprinting = false;
@@ -276,6 +275,10 @@ public:
 	// A blueprint implementable event that runs after the player has stopped sprinting.
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void DoWhenSprintingOver();
+
+	// Plays when the player jumps.
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void OnJump(bool bIsAirJump);
 
 	UFUNCTION(BlueprintCallable)
 	void Dash();

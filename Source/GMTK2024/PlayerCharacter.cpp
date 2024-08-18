@@ -37,7 +37,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) 
 
 	// Add welder
 	//Welder = CreateDefaultSubobject<USkeletalMeshComponent>("Welder");
-	
+
 	FVector welderLocation = FVector(40.0f, 30.0f, -30.0f);
 	//Welder->AddLocalOffset(welderLocation, false);
 
@@ -62,13 +62,12 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 
-
 	// Attach things
 	FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, false);
 	Camera->AttachToComponent(GetCapsuleComponent(), Rules);
 	Camera->SetRelativeLocation(FVector(0.0f, 0.0f, 60.0f));
 	Camera->bUsePawnControlRotation = true;
-	
+
 
 	GetMesh()->AttachToComponent(Camera, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	GetMesh()->SetVisibility(false, false);
@@ -77,22 +76,18 @@ void APlayerCharacter::BeginPlay()
 	Welder = Cast<UWelderComponent>(AddComponentByClass(welderClass, true, GetActorTransform(), false));
 
 
-	if (Welder) {
-
+	if (Welder)
+	{
 		Welder->OwningPlayer = this;
 
 		Welder->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "handSocket");
-
 	}
-	else {
-
+	else
+	{
 		FTimerHandle tempHandle;
 
 		GetWorld()->GetTimerManager().SetTimer(tempHandle, this, &APlayerCharacter::WelderAttachmentCallback, 0.1f);
-
 	}
-
-
 
 
 	GetCharacterMovement()->MaxWalkSpeed = jogSpeed;
@@ -107,28 +102,17 @@ void APlayerCharacter::BeginPlay()
 }
 
 
-
-
-
-void APlayerCharacter::WelderAttachmentCallback() {
-
-	if (Welder) {
-
+void APlayerCharacter::WelderAttachmentCallback()
+{
+	if (Welder)
+	{
 		Welder->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "handSocket");
-
 	}
-	else {
-
+	else
+	{
 		GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Welder was never created.");
-
 	}
 }
-
-
-
-
-
-
 
 
 void APlayerCharacter::DeferSetupMovementSystem()
@@ -203,8 +187,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 			playerEnhancedInput->BindAction(fireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::fireInput);
 			playerEnhancedInput->BindAction(aimAction, ETriggerEvent::Triggered, this, &APlayerCharacter::aimInput);
-
-
 		}
 	}
 }
@@ -320,6 +302,7 @@ void APlayerCharacter::jumpInput(const FInputActionValue& value)
 		}
 		else
 		{
+			OnJump(GetCharacterMovement()->IsFalling());
 			Jump();
 			NumOfJumps--;
 			if (sliding && !GetCharacterMovement()->IsFalling())
@@ -535,6 +518,8 @@ void APlayerCharacter::WallRunJump()
 {
 	if (IsWallRunning())
 	{
+		NumOfJumps--;
+		OnJump(true);
 		EndWallRun(0.25f);
 		float xVelocity = WallRunNormal.X * WallRunJumpOffForce;
 		float yVelocity = WallRunNormal.Y * WallRunJumpOffForce;
@@ -545,7 +530,6 @@ void APlayerCharacter::WallRunJump()
 
 void APlayerCharacter::PerformDash()
 {
-
 	OnDash();
 
 	FHitResult Hit;
@@ -561,16 +545,16 @@ void APlayerCharacter::PerformDash()
 	if (isInAir)
 	{
 		FString distance = FString::SanitizeFloat(Hit.Distance);
-		launchVelocity *= (DashStrength / 4.0f);
+		launchVelocity *= (DashStrength / 10.0f);
 	}
 	else
 	{
 		launchVelocity *= DashStrength;
 	}
-	
+
 	LaunchCharacter(launchVelocity, false, false);
 	GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this,
-										   &APlayerCharacter::SetDashCooldownOver, DashCooldown, false);
+	                                       &APlayerCharacter::SetDashCooldownOver, DashCooldown, false);
 }
 
 void APlayerCharacter::SetDashCooldownOver()
@@ -582,13 +566,13 @@ void APlayerCharacter::MantlingTick()
 {
 	FHitResult Hit;
 
-	float forgiveness = 40.0f;
+	float forgiveness = 60.0f;
 	FVector EyeLevel = Camera->GetComponentLocation() + FVector(0.0f, 0.0f, forgiveness);
 	float forwardDistanceMultiplier = 100.0f;
 	FVector TraceStart = EyeLevel + (GetActorForwardVector() * forwardDistanceMultiplier);
 	float length = GetCapsuleComponent()->GetScaledCapsuleHalfHeight() * 2;
 	FVector TraceEnd = TraceStart + FVector(0.0f, 0.0f, -1.0f * length);
-	
+
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_Visibility;
@@ -607,14 +591,14 @@ void APlayerCharacter::MantlingTick()
 	{
 		bCanMantle = false;
 	}
-	
 }
 
 void APlayerCharacter::Mantle()
 {
 	OnMantle();
 	float mantleStrength = 550.0f;
-	FVector launchVelocity = GetActorForwardVector() + FVector(0.0f, 0.0f, mantleStrength);
+	float forwardStrength = 5.0f;
+	FVector launchVelocity = (GetActorForwardVector() * forwardStrength) + FVector(0.0f, 0.0f, mantleStrength);
 	LaunchCharacter(launchVelocity, false, false);
 }
 
@@ -646,32 +630,23 @@ void APlayerCharacter::scrollInput(const FInputActionValue& value)
 		}
 	}
 
-	if (!kioskHit) {
-
+	if (!kioskHit)
+	{
 		Welder->ScrollPartType(value.Get<float>());
-
 	}
-
-
 }
 
 
 void APlayerCharacter::fireInput(const FInputActionValue& value)
 {
-	
-
-	if (value.Get<bool>()) {
-
+	if (value.Get<bool>())
+	{
 		Welder->WeldInput();
-
 	}
-	else {
-
+	else
+	{
 		Welder->WeldReleased();
-
 	}
-
-
 }
 
 void APlayerCharacter::crouchInput(const FInputActionValue& value)
@@ -704,20 +679,14 @@ void APlayerCharacter::crouchInput(const FInputActionValue& value)
 
 void APlayerCharacter::aimInput(const FInputActionValue& value)
 {
-
-	
-
-	if (value.Get<bool>()) {
-
+	if (value.Get<bool>())
+	{
 		Welder->BlueprintInput();
-
 	}
-	else {
-
+	else
+	{
 		Welder->BlueprintReleased();
-
 	}
-
 }
 
 void APlayerCharacter::SetSprinting(bool val)
@@ -801,7 +770,7 @@ void APlayerCharacter::Dash()
 		{
 			WallRunJump();
 		}
-		
+
 		bIsOnDashCooldown = true;
 		// We boost the player up to allow the dash to happen
 		FVector upBoost = FVector(0.0f, 0.0f, 200.0f);
@@ -811,7 +780,7 @@ void APlayerCharacter::Dash()
 		float delay = 0.1f;
 		FTimerHandle DashHandle;
 		GetWorld()->GetTimerManager().SetTimer(DashHandle, this,
-											   &APlayerCharacter::PerformDash, delay, false);
+		                                       &APlayerCharacter::PerformDash, delay, false);
 	}
 }
 
