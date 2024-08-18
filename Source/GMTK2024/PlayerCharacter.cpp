@@ -521,7 +521,7 @@ void APlayerCharacter::MantlingTick()
 {
 	FHitResult Hit;
 
-	float forgiveness = 40.0f;
+	float forgiveness = 60.0f;
 	FVector EyeLevel = Camera->GetComponentLocation() + FVector(0.0f, 0.0f, forgiveness);
 	float forwardDistanceMultiplier = 100.0f;
 	FVector TraceStart = EyeLevel + (GetActorForwardVector() * forwardDistanceMultiplier);
@@ -553,7 +553,8 @@ void APlayerCharacter::Mantle()
 {
 	OnMantle();
 	float mantleStrength = 550.0f;
-	FVector launchVelocity = GetActorForwardVector() + FVector(0.0f, 0.0f, mantleStrength);
+	float forwardStrength = 5.0f;
+	FVector launchVelocity = (GetActorForwardVector() * forwardStrength) + FVector(0.0f, 0.0f, mantleStrength);
 	LaunchCharacter(launchVelocity, false, false);
 }
 
