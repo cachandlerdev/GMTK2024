@@ -219,7 +219,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	CameraTick();
 	UpdateFovTick(DeltaTime);
 	MantlingTick();
-	PerformActionTick(DeltaTime);
 }
 
 
@@ -623,23 +622,6 @@ void APlayerCharacter::Mantle()
 	LaunchCharacter(launchVelocity, false, false);
 }
 
-void APlayerCharacter::PerformActionTick(float DeltaTime)
-{
-	if (IsPerformingAction())
-	{
-		TimeToPerformActionRemaining -= DeltaTime;
-		if (TimeToPerformActionRemaining <= 0.0f)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Perform action");
-			bIsPerformingAction = false;
-		}
-	}
-	else
-	{
-		TimeToPerformActionRemaining = TimeToPerformActions;
-	}
-}
-
 void APlayerCharacter::scrollInput(const FInputActionValue& value)
 {
 	FVector eyeLoc;
@@ -696,7 +678,6 @@ void APlayerCharacter::fireInput(const FInputActionValue& value)
 			ASpawnChasisActor* spawnChassisButton = Cast<ASpawnChasisActor>(hit.GetActor());
 			if (spawnChassisButton != nullptr)
 			{
-				bIsPerformingAction = true;
 				spawnChassisButton->SpawnChassis();
 			}
 			AFinishOrderActor* finishOrderButton = Cast<AFinishOrderActor>(hit.GetActor());
@@ -775,17 +756,6 @@ bool APlayerCharacter::IsPlayerSprinting()
 {
 	return sprinting;
 }
-
-bool APlayerCharacter::IsPerformingAction()
-{
-	return bIsPerformingAction;
-}
-
-float APlayerCharacter::GetPerformingActionTimeRemaining()
-{
-	return TimeToPerformActionRemaining;
-}
-
 
 void APlayerCharacter::SetSliding(bool val)
 {
