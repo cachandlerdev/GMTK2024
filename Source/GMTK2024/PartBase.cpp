@@ -19,6 +19,10 @@ void APartBase::BeginPlay()
 {
 	Super::BeginPlay();
 	localTime = 0.0f;
+
+	weldTime = 0.0f;
+	localTimeAtLastWeldCheckin = 0.0f;
+
 }
 
 // Called every frame
@@ -33,6 +37,7 @@ void APartBase::Tick(float DeltaTime)
 bool APartBase::ProgressWeld() {
 
 	float dt = localTime - localTimeAtLastWeldCheckin;
+	localTimeAtLastWeldCheckin = localTime;
 
 	weldTime += dt;
 

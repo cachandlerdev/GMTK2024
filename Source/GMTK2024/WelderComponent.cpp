@@ -87,7 +87,7 @@ void UWelderComponent::WeldInput() {
 		
 
 	}
-	else {
+	else if(inProgressWeld) {
 
 		bool weldDone = inProgressWeld->ProgressWeld();
 
@@ -131,7 +131,14 @@ void UWelderComponent::WeldReleased() {
 void UWelderComponent::BlueprintInput() {
 
 
-	if (!equippedPart) {
+	if (!equippedPart || inProgressWeld) {
+
+		if (blueprintOn) {
+
+			SetBlueprintActorVisible(false);
+
+		}
+
 		return;
 
 	}
@@ -145,6 +152,7 @@ void UWelderComponent::BlueprintInput() {
 
 	GetWorld()->LineTraceMultiByChannel(hits, eyeLoc, eyeLoc + (eyeRot.Vector() * 1000.0f), ECC_Visibility);
 
+	bool anyPartHit = false;
 
 	for (FHitResult& hit : hits) {
 
@@ -156,7 +164,7 @@ void UWelderComponent::BlueprintInput() {
 			blueprintActor->SetActorRotation(hit.ImpactNormal.Rotation());
 
 			
-
+			anyPartHit = true;
 			if (!blueprintOn) {
 
 				SetBlueprintActorVisible(true);
@@ -164,6 +172,13 @@ void UWelderComponent::BlueprintInput() {
 			}
 
 		}
+
+	}
+
+	//if they look away from the ship and keep holding aim the turn off blueprints
+	if(!anyPartHit && blueprintOn) {
+
+		SetBlueprintActorVisible(false);
 
 	}
 
@@ -287,5 +302,8 @@ void UWelderComponent::SetPartTypePart(PartType type, TSubclassOf<APartBase> par
 		break;
 
 	}
+
+	//update the equipped part
+	SetEquippedPart(equippedPartType);
 
 }
