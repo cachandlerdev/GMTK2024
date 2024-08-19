@@ -678,8 +678,12 @@ void APlayerCharacter::fireInput(const FInputActionValue& value)
 			ASpawnChasisActor* spawnChassisButton = Cast<ASpawnChasisActor>(hit.GetActor());
 			if (spawnChassisButton != nullptr)
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "Spawner hit");
+
 				spawnChassisButton->SpawnChassis();
 			}
+
+
 			AFinishOrderActor* finishOrderButton = Cast<AFinishOrderActor>(hit.GetActor());
 			if (finishOrderButton != nullptr)
 			{
