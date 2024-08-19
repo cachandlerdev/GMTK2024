@@ -75,6 +75,11 @@ public:
 	float transitionTime = 2.0f;
 
 
+
+	UPROPERTY()
+		FReportCard reportInProgress;
+
+
 	UPROPERTY()
 	FTimerHandle moveTimerHandle;
 
@@ -153,5 +158,9 @@ public:
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
 		float GetHarmonyGrade();
+
+	//finds the ship in the world and compares it to the given order
+	UFUNCTION(BlueprintCallable)
+		FVector GetCenterOfMass();
 	
 };
