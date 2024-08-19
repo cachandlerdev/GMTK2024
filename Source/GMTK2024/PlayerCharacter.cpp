@@ -288,6 +288,11 @@ bool APlayerCharacter::IsOnDashCooldown()
 	return bIsOnDashCooldown;
 }
 
+float APlayerCharacter::GetDashCooldownTimeRemaining()
+{
+	//GetWorld()->GetTimerManager()->
+}
+
 void APlayerCharacter::lookInput(const FInputActionValue& value)
 {
 	AddControllerPitchInput(-1.0f * value.Get<FVector2D>().Y * lookSensitivity);
