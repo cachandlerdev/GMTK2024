@@ -106,6 +106,11 @@ void APlayerCharacter::BeginPlay()
 
 	GetWorld()->GetTimerManager().SetTimer(WallrunTimerHandle, this, &APlayerCharacter::WallRunUpdate,
 	                                       WallrunUpdateTime, true);
+
+	// Setup footsteps loop
+	FTimerHandle footstepsHandle;
+	GetWorld()->GetTimerManager().SetTimer(footstepsHandle, this, &APlayerCharacter::CheckFootsteps,
+	                                       FootstepsUpdateTime, true);
 }
 
 
@@ -622,6 +627,22 @@ void APlayerCharacter::Mantle()
 	LaunchCharacter(launchVelocity, false, false);
 }
 
+void APlayerCharacter::CheckFootsteps()
+{
+	float currentSpeed = GetCharacterMovement()->GetLastUpdateVelocity().Length();
+	if (currentSpeed > 10.0f)
+	{
+		if (IsWallRunning())
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), WallrunSound, GetActorLocation());
+		}
+		else if (!GetCharacterMovement()->IsFalling())
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), FootstepSound, GetActorLocation());
+		}
+	}
+}
+
 void APlayerCharacter::scrollInput(const FInputActionValue& value)
 {
 	FVector eyeLoc;
@@ -786,6 +807,8 @@ void APlayerCharacter::SetSliding(bool val)
 void APlayerCharacter::Landed(const FHitResult& hit)
 {
 	Super::Landed(hit);
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), LandingSound, GetActorLocation());
 
 	// Restore jumps and end wallrun
 	NumOfJumps = 2;
