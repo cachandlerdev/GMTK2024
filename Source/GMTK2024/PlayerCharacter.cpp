@@ -841,7 +841,6 @@ void APlayerCharacter::Interact()
 				currentlyHeldTicket = ticketBoard->UnplugTicket();
 				if (currentlyHeldTicket == nullptr)
 				{
-					GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Ticket is null pointer.");
 					continue;
 				}
 				currentlyHeldTicket->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "TicketSocket");
