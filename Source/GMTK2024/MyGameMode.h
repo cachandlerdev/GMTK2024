@@ -10,9 +10,13 @@
 
 #include "Sound/SoundCue.h"
 
+
 #include "Sound/SoundBase.h"
 
 #include "MyGameMode.generated.h"
+
+
+class AChasisPartBase;
 
 class APartBase;
 class USoundCue;
@@ -58,10 +62,10 @@ public:
 
 
 	UPROPERTY(BlueprintReadOnly)
-	bool shipUnderConstruction = false;
+	int nShipsUnderConstruction = 0;
 
 	UPROPERTY(BlueprintReadOnly)
-	APartBase* currentShipChassis;
+	TArray<AChasisPartBase*> currentShipChassis;
 
 
 	UPROPERTY(BlueprintReadWrite)
@@ -123,11 +127,7 @@ public:
 		void AddOrderBP();
 
 
-	UFUNCTION(BlueprintCallable)
-	void SpawnShipChasis();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void SpawnShipChasisBP();
+	
 
 
 
@@ -157,22 +157,22 @@ public:
 	
 
 	UFUNCTION(BlueprintCallable)
-		void DoShipFlight();
+		void DoShipFlight(int shipID);
 
 	UFUNCTION()
-	void DoNewShipChassisProcedure();
+	void DoNewShipChassisProcedure(int shipID);
 
 	UFUNCTION()
-	void DoFinishOrderProcedure();
+	void DoFinishOrderProcedure(int shipID, int ticketID);
 
 	UFUNCTION()
-		void CompleteGradingAfterFlight();
+		void CompleteGradingAfterFlight(int shipID);
 
 
 
 
 	UFUNCTION()
-		void CleanupShip();
+		void CleanupShip(int shipID);
 
 
 
@@ -182,19 +182,19 @@ public:
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		FReportCard EvaluateBuildWithOrder(FOrder order);
+		FReportCard EvaluateBuildWithOrder(FOrder order, int shipID);
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		float GetHarmonyGrade();
+		float GetHarmonyGrade(int shipID);
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		FVector GetShipCenterOfMass();
+		FVector GetShipCenterOfMass(int shipID);
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		void GetShipThrust(FVector& centerOfThrust, FVector& thrustVector);
+		void GetShipThrust(FVector& centerOfThrust, FVector& thrustVector, int shipID);
 
 
 

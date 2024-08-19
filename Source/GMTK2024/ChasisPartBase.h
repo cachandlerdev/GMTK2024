@@ -22,6 +22,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		float angularDampingDecay = 0.2f;
 
+	//include self
+	UPROPERTY(BlueprintReadOnly)
+		TArray<APartBase*> childParts;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

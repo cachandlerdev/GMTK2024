@@ -95,6 +95,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float DashCooldown = 5.0f;
 
+
+	UPROPERTY(BLueprintReadWrite)
+		int currentlyHeldTicketID = 0;
+
 private:
 	bool sprinting = false;
 	bool sliding = false;

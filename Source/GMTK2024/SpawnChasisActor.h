@@ -28,6 +28,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ASkeletalMeshActor* shipHolderMagnet;
 
+	UPROPERTY(EditAnywhere)
+		int shipBayShipID = 0;
+
+	UPROPERTY(EditAnywhere)
+		AActor* shipBayLocationActor;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

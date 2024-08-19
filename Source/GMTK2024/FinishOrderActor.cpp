@@ -28,11 +28,27 @@ void AFinishOrderActor::Tick(float DeltaTime)
 
 }
 
-void AFinishOrderActor::FinishOrder() {
+void AFinishOrderActor::FinishOrder(int ticketID) {
 
 	AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameMode != nullptr)
 	{
-		gameMode->DoFinishOrderProcedure();
+
+		//make sure the ticket and ship exist
+		if (ticketID >= gameMode->orderSheet->currentOrders.Num() || shipBayShipID >= gameMode->currentShipChassis.Num()) {
+
+			return;
+
+		}
+
+		//make sure ship isnt nullptr
+		if (gameMode->currentShipChassis[shipBayShipID] == nullptr) {
+
+			return;
+
+		}
+
+
+		gameMode->DoFinishOrderProcedure(shipBayShipID, ticketID);
 	}
 }

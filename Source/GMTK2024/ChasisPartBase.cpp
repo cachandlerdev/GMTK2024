@@ -16,7 +16,8 @@ AChasisPartBase::AChasisPartBase(const FObjectInitializer& ObjectInitializer) : 
 void AChasisPartBase::BeginPlay() {
 	Super::BeginPlay();
 
-	
+	childParts.Empty();
+	childParts.Add(this);
 
 
 }

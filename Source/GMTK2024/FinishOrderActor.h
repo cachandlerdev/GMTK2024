@@ -16,6 +16,8 @@ public:
 	AFinishOrderActor();
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int shipBayShipID = 0;
 
 
 protected:
@@ -28,7 +30,7 @@ public:
 
 
 	UFUNCTION()
-		void FinishOrder();
+		void FinishOrder(int ticketID);
 
 
 };
