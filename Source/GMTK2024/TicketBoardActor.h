@@ -7,6 +7,7 @@
 #include "TicketBoardActor.generated.h"
 
 class ATicketActor;
+class AChasisPartBase;
 
 UCLASS()
 class GMTK2024_API ATicketBoardActor : public AActor
@@ -21,7 +22,11 @@ public:
 	UPROPERTY(EditAnywhere)
 		bool unpluggable = false;
 
-	
+	UPROPERTY(EditAnywhere)
+		AActor* shipBayActor;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<AChasisPartBase> chassisClass;
 
 
 protected:

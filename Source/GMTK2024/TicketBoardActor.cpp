@@ -5,6 +5,12 @@
 
 #include "TicketActor.h"
 
+#include "MyGameMode.h"
+
+#include "Kismet/GameplayStatics.h"
+
+#include "ChasisPartBase.h"
+
 // Sets default values
 ATicketBoardActor::ATicketBoardActor()
 {
@@ -37,6 +43,14 @@ void ATicketBoardActor::PlugTicketIn(ATicketActor* ticket) {
 	pluggedTicket = ticket;
 
 	PlugTicketInBP();
+
+	if (shipBayActor) {
+
+		AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		gameMode->DoNewShipChassisProcedure(chassisClass, ticket, shipBayActor);
+
+	}
 
 }
 
