@@ -109,8 +109,7 @@ void APlayerCharacter::BeginPlay()
 
 	GetWorld()->GetTimerManager().SetTimer(WallrunTimerHandle, this, &APlayerCharacter::WallRunUpdate,
 	                                       WallrunUpdateTime, true);
-<<<<<<< Updated upstream
-=======
+
 
 	// Setup footsteps loop
 	FTimerHandle footstepsHandle;
@@ -120,7 +119,6 @@ void APlayerCharacter::BeginPlay()
 	//initialize to nullptr
 	currentlyHeldTicket = nullptr;
 
->>>>>>> Stashed changes
 }
 
 

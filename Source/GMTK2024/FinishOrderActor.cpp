@@ -39,7 +39,7 @@ void AFinishOrderActor::FinishOrder() {
 	if (gameMode != nullptr)
 	{
 
-		if (!shipBayTicketBoard->GetPluggedTicket()) {
+		if (!shipBayTicketBoard->GetPluggedTicket() || gameMode->finishingOrder) {
 
 			return;
 

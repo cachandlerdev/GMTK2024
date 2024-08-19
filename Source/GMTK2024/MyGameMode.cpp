@@ -139,7 +139,7 @@ void AMyGameMode::AddOrder(){
 		for (AActor* boardA : boardsA) {
 			ATicketBoardActor* board = Cast<ATicketBoardActor>(boardA);
 			
-			if (board->unpluggable) {
+			if (board->unpluggable && !board->GetPluggedTicket()) {
 
 				board->PlugTicketIn(newTicket);
 
@@ -313,7 +313,17 @@ void AMyGameMode::CompleteGradingAfterFlight(ATicketActor* ticket) {
 
 	}
 
+
+	ATicketActor* temp;
+	tickets.Remove(temp);
+
+	temp->Destroy();
+
+
+
 	finishingOrder = false;
+
+
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "ORDER GRADE: " + FString::SanitizeFloat(s));
 

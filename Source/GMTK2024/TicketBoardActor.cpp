@@ -49,10 +49,10 @@ ATicketActor* ATicketBoardActor::UnplugTicket() {
 
 	}
 
-
+	ATicketActor* temp = pluggedTicket;
 	pluggedTicket = nullptr;
 
-	return pluggedTicket;
+	return temp;
 
 
 }
