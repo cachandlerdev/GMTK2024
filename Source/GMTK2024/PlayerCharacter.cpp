@@ -290,7 +290,7 @@ bool APlayerCharacter::IsOnDashCooldown()
 
 float APlayerCharacter::GetDashCooldownTimeRemaining()
 {
-	//GetWorld()->GetTimerManager()->
+	return GetWorld()->GetTimerManager().GetTimerRemaining(DashCooldownHandle);
 }
 
 void APlayerCharacter::lookInput(const FInputActionValue& value)
