@@ -5,6 +5,10 @@
 
 #include "Kismet/GameplayStatics.h"
 
+#include "MyGameMode.h"
+
+#include "ChasisPartBase.h"
+
 // Sets default values
 APartBase::APartBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -74,6 +78,14 @@ bool APartBase::ProgressWeld() {
 void APartBase::SolidifyWeld() {
 
 	if (weldTarget) {
+
+		AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		//to keep track of which ship this part is attached to
+		shipID = weldTarget->shipID;
+
+		gameMode->currentShipChassis[shipID]->childParts.Add(this);
+		
 
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, "Weld Target valid");
 

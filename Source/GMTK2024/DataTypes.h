@@ -112,7 +112,7 @@ public:
 	TArray<FOrder> orders;
 
 	UPROPERTY(BlueprintReadWrite)
-		FOrder currentOrder;
+		TArray<FOrder> currentOrders;
 
 	UPROPERTY(BlueprintReadWrite)
 		FOrder currentBuildOrder;

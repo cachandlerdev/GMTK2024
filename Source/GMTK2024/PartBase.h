@@ -64,6 +64,9 @@ public:
 
 
 	
+	UPROPERTY(BlueprintReadOnly)
+		int shipID = -1;
+
 
 
 	UPROPERTY(BlueprintReadWrite)

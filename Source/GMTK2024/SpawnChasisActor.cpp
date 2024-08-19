@@ -5,7 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 
-#include "PartBase.h"
+#include "ChasisPartBase.h"
 
 #include "MyGameMode.h"
 
@@ -32,10 +32,14 @@ void ASpawnChasisActor::Tick(float DeltaTime)
 void ASpawnChasisActor::SpawnChassis()
 {
 	AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (gameMode->shipUnderConstruction)
+	if (gameMode->currentShipChassis[shipBayShipID])
 	{
 		return;
 	}
-	gameMode->currentShipChassis = GetWorld()->SpawnActor<APartBase>(chassisClass);
-	gameMode->DoNewShipChassisProcedure();
+
+	AChasisPartBase* newChassis = GetWorld()->SpawnActor<AChasisPartBase>(chassisClass, shipBayLocationActor->GetActorTransform());
+
+
+	gameMode->currentShipChassis[shipBayShipID] = newChassis;
+	gameMode->DoNewShipChassisProcedure(shipBayShipID);
 }
