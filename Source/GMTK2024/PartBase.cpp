@@ -45,6 +45,15 @@ void APartBase::Tick(float DeltaTime)
 
 	localTime += DeltaTime;
 
+	if (physicsBox->IsSimulatingPhysics()) {
+
+		DrawDebugSphere(GetWorld(), physicsBox->GetCenterOfMass(), 50.0f, 32, FColor::Green);
+
+		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, "CENTER OF MASS: " + physicsBox->GetCenterOfMass().ToString());
+
+	}
+
+
 }
 
 bool APartBase::ProgressWeld() {

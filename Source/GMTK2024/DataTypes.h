@@ -45,7 +45,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		float accuracy = 0.0f;
 
-
+	UPROPERTY(BlueprintReadWrite)
+		float customerPatience = 30.0f;
 
 };
 
@@ -91,6 +92,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	float fractionOfRunwayCovered = 0.0f;
+
+
+	UPROPERTY(BlueprintReadWrite)
+		float customerPatience = 30.0f;
 
 
 	

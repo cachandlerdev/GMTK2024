@@ -41,7 +41,11 @@ void AMyGameMode::Tick(float DeltaTime)
 
 	localTime += DeltaTime;
 
+	buildTime += DeltaTime;
+
 	//float temp = GetHarmonyGrade();
+
+	
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Purple, FString::SanitizeFloat(temp));
 }
@@ -62,10 +66,29 @@ void AMyGameMode::ShiftStartCallback()
 }
 
 
-void AMyGameMode::AddOrder()
-{	//randomly generate a new order
+void AMyGameMode::AddOrder(){	
+	
+	FRandomStream r;
+
+	r.GenerateNewSeed();
+
+
+	
+	//randomly generate a new order
 	FOrder newOrder;
-	newOrder.firepower = 100.0f * difficulty;
+	newOrder.cost = r.FRandRange(0.0f, 300.0f) * difficulty;
+	newOrder.structural = r.FRandRange(0.0f, 100.0f) * difficulty;
+	newOrder.firepower = r.FRandRange(0.0f, 100.0f) * difficulty;
+	newOrder.thrust = r.FRandRange(0.0f, 100.0f) * difficulty;
+	newOrder.energy = r.FRandRange(0.0f, 100.0f) * difficulty;
+	newOrder.support = r.FRandRange(0.0f, 100.0f) * difficulty;
+
+	newOrder.customerPatience = r.FRandRange(10.0f, 60.0f / difficulty);
+	
+
+
+	buildTime = 0.01f;
+
 
 	if (orderSheet == nullptr)
 	{
@@ -136,7 +159,7 @@ void AMyGameMode::DoFinishOrderProcedure() {
 
 void AMyGameMode::DoShipFlight() {
 
-	//currentShipChassis->SetActorLocation(shipLaunchLocation);
+	currentShipChassis->SetActorLocation(shipLaunchLocation);
 
 
 	//activate all of the parts
@@ -152,12 +175,17 @@ void AMyGameMode::DoShipFlight() {
 	}
 
 
-	currentShipChassis->physicsBox->SetCenterOfMass(GetCenterOfMass());
-	currentShipChassis->mesh->SetCollisionProfileName("NoCollision");
+	currentShipChassis->physicsBox->SetCenterOfMass(GetShipCenterOfMass() - currentShipChassis->GetActorLocation());
 	currentShipChassis->physicsBox->SetSimulatePhysics(true);
+	currentShipChassis->physicsBox->SetEnableGravity(false);
+
+	currentShipChassis->physicsBox->SetAngularDamping(10.0f);
+
+	currentShipChassis->mesh->SetCollisionProfileName("NoCollision");
+	
 
 
-	GetWorld()->GetTimerManager().SetTimer(finsihGradingHandle, this, &AMyGameMode::CompleteGradingAfterFlight, 4.0f);
+	GetWorld()->GetTimerManager().SetTimer(finsihGradingHandle, this, &AMyGameMode::CompleteGradingAfterFlight, 10.0f);
 
 }
 
@@ -180,11 +208,44 @@ void AMyGameMode::CompleteGradingAfterFlight() {
 
 	orderSheet->averageGrade = s;
 
-
+	CleanupShip();
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "ORDER GRADE: " + FString::SanitizeFloat(s));
 
 }
+
+
+
+
+void AMyGameMode::CleanupShip() {
+
+	TArray<AActor*> partsA;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
+
+	//get the total thrust and total mass first
+	for (AActor* partA : partsA)
+	{
+		partA->Destroy();
+
+
+
+	}
+
+	currentShipChassis = nullptr;
+	shipUnderConstruction = false;
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -309,8 +370,11 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
 	newReport.cost = 1.0f - FMath::Abs((currentOrder.cost - newReport.cost) / currentOrder.cost);
 
 
+	newReport.customerPatience = FMath::Clamp(currentOrder.customerPatience / buildTime, 0.0f, 1.0f);
+
+
 	newReport.overall = (newReport.structural + newReport.firepower + newReport.thrust + newReport.energy + newReport.
-		support) / 5.0f;
+		support + newReport.customerPatience) / 6.0f;
 
 
 
@@ -411,7 +475,7 @@ float AMyGameMode::GetHarmonyGrade() {
 	//DrawDebugDirectionalArrow(GetWorld(), centerOfThrust, centerOfThrust + (-thrustVector * 500.0f), 20.0f, FColor::Yellow);
 
 
-	//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, "Harmony Grade: " + FString::SanitizeFloat(amountTowardsCOM));
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, "Harmony Grade: " + FString::SanitizeFloat(amountTowardsCOM));
 
 	return amountTowardsCOM;
 
@@ -420,7 +484,7 @@ float AMyGameMode::GetHarmonyGrade() {
 
 
 
-FVector AMyGameMode::GetCenterOfMass() {
+FVector AMyGameMode::GetShipCenterOfMass() {
 
 	if (!currentShipChassis) {
 

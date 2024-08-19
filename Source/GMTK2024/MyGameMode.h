@@ -61,6 +61,11 @@ public:
 	APartBase* currentShipChassis;
 
 
+	UPROPERTY(BlueprintReadWrite)
+		float buildTime = 0.0f;
+
+
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
 	FVector newShipStartLocation;
@@ -151,6 +156,12 @@ public:
 
 
 
+
+	UFUNCTION()
+		void CleanupShip();
+
+
+
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
 		FReportCard EvaluateBuildWithOrder(FOrder order);
@@ -161,6 +172,6 @@ public:
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		FVector GetCenterOfMass();
+		FVector GetShipCenterOfMass();
 	
 };
