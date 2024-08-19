@@ -813,7 +813,6 @@ void APlayerCharacter::Dash()
 
 void APlayerCharacter::Interact()
 {
-
 	// Switching display items
 	
 	FVector eyeLoc;
@@ -825,7 +824,6 @@ void APlayerCharacter::Interact()
 	bool kioskHit = false;
 	for (FHitResult hit : hits)
 	{
-		
 		APartSelectorKiosk* kiosk = Cast<APartSelectorKiosk>(hit.GetActor());
 		if (kiosk)
 		{
