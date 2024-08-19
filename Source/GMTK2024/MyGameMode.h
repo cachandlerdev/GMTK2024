@@ -36,14 +36,12 @@ class GMTK2024_API AMyGameMode : public AGameModeBase
 public:
 	AMyGameMode(const FObjectInitializer& ObjectInitializer);
 
-	
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float difficulty = 1.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-		int shiftQuota = 1;
+	int shiftQuota = 1;
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -66,20 +64,17 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	int nShipsUnderConstruction = 0;
 
-	
-
 
 	UPROPERTY(BlueprintReadWrite)
-		float buildTime = 0.0f;
+	float buildTime = 0.0f;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float maxFlightTime = 5.0f;
+	float maxFlightTime = 5.0f;
 
 
 	UPROPERTY(EditAnywhere)
-		float baseAngularDamping = 50.0f;
-
+	float baseAngularDamping = 50.0f;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
@@ -95,33 +90,29 @@ public:
 	float transitionTime = 2.0f;
 
 
-
 	UPROPERTY()
-		FReportCard reportInProgress;
+	FReportCard reportInProgress;
 
 
 	UPROPERTY()
 	FTimerHandle moveTimerHandle;
 
 	UPROPERTY()
-		FTimerHandle finsihGradingHandle;
+	FTimerHandle finsihGradingHandle;
 
 
 	UPROPERTY()
-		bool finishingOrder = false;
+	bool finishingOrder = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		TArray<FString> companyNames;
+	TArray<FString> companyNames;
 
 
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<ATicketActor> ticketSpawnClass;
+	TSubclassOf<ATicketActor> ticketSpawnClass;
 
 	UPROPERTY(BlueprintReadWrite)
-		TArray<ATicketActor*> tickets;
-
-	
-
+	TArray<ATicketActor*> tickets;
 
 protected:
 	// Called when the game starts or when spawned
@@ -129,6 +120,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	float localTime = 0.0f;
+
+private:
+	bool bIsOnShift = false;
 
 public:
 	virtual void Tick(float deltaTime) override;
@@ -138,17 +132,15 @@ public:
 	void AddOrder();
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void AddOrderBP();
+	void AddOrderBP();
 
-
-	
 
 	// A blueprint event that gets called when the player's shift ends.
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void OnShiftEnd();
 
 	UFUNCTION(BlueprintCallable)
-		FOrder GetZeroOrder();
+	FOrder GetZeroOrder();
 
 
 	UFUNCTION()
@@ -159,61 +151,55 @@ public:
 	void ShiftStartCallback();
 
 
-
-
-
 	UFUNCTION(BlueprintCallable)
-		void AddPartToBuild(APartBase* part, ATicketActor* ticket);
+	void AddPartToBuild(APartBase* part, ATicketActor* ticket);
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void PartAddedBP(ATicketActor* Ticket);
+	void PartAddedBP(ATicketActor* Ticket);
 
-
-	
 
 	UFUNCTION(BlueprintCallable)
-		void DoShipFlight(ATicketActor* ticket);
+	void DoShipFlight(ATicketActor* ticket);
 
 	UFUNCTION()
-	void DoNewShipChassisProcedure(TSubclassOf<AChasisPartBase> chassisType, ATicketActor* ticket, AActor* bayTransformActor);
+	void DoNewShipChassisProcedure(TSubclassOf<AChasisPartBase> chassisType, ATicketActor* ticket,
+	                               AActor* bayTransformActor);
 
 	UFUNCTION()
 	void DoFinishOrderProcedure(ATicketActor* ticket);
 
 	UFUNCTION()
-		void CompleteGradingAfterFlight(ATicketActor* ticket);
-
-
-
-
-	UFUNCTION()
-		void CleanupShip(ATicketActor* ticket);
-
+	void CompleteGradingAfterFlight(ATicketActor* ticket);
 
 
 	UFUNCTION()
-		void EndShiftProcedure();
+	void CleanupShip(ATicketActor* ticket);
+
+
+	UFUNCTION()
+	void EndShiftProcedure();
 
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		FReportCard EvaluateBuildWithOrder(ATicketActor* ticket);
+	FReportCard EvaluateBuildWithOrder(ATicketActor* ticket);
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		float GetHarmonyGrade(ATicketActor* ticket);
+	float GetHarmonyGrade(ATicketActor* ticket);
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		FVector GetShipCenterOfMass(ATicketActor* ticket);
+	FVector GetShipCenterOfMass(ATicketActor* ticket);
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		void GetShipThrust(FVector& centerOfThrust, FVector& thrustVector, ATicketActor* ticket);
-
+	void GetShipThrust(FVector& centerOfThrust, FVector& thrustVector, ATicketActor* ticket);
 
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void UpdateQuotaBP();
-	
+	void UpdateQuotaBP();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsOnShift();
 };

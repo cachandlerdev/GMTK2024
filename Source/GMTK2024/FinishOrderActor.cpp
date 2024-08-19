@@ -38,6 +38,10 @@ void AFinishOrderActor::FinishOrder() {
 	AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameMode != nullptr)
 	{
+		if (shipBayTicketBoard == nullptr)
+		{
+			return;
+		}
 
 		if (!shipBayTicketBoard->GetPluggedTicket() || gameMode->finishingOrder) {
 
