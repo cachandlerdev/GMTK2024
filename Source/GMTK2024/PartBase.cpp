@@ -5,6 +5,12 @@
 
 #include "Kismet/GameplayStatics.h"
 
+#include "MyGameMode.h"
+
+#include "ChasisPartBase.h"
+
+#include "TicketActor.h"
+
 // Sets default values
 APartBase::APartBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -74,6 +80,12 @@ bool APartBase::ProgressWeld() {
 void APartBase::SolidifyWeld() {
 
 	if (weldTarget) {
+
+		AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		owningTicket = weldTarget->owningTicket;
+		weldTarget->owningTicket->shipChassis->childParts.Add(this);
+		
 
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, "Weld Target valid");
 

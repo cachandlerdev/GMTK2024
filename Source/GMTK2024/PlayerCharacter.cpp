@@ -32,6 +32,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "MyGameMode.h"
 
+#include "TicketActor.h"
+#include "TicketBoardActor.h"
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -107,10 +110,14 @@ void APlayerCharacter::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(WallrunTimerHandle, this, &APlayerCharacter::WallRunUpdate,
 	                                       WallrunUpdateTime, true);
 
+
 	// Setup footsteps loop
 	FTimerHandle footstepsHandle;
 	GetWorld()->GetTimerManager().SetTimer(footstepsHandle, this, &APlayerCharacter::CheckFootsteps,
 	                                       FootstepsUpdateTime, true);
+
+	currentlyHeldTicket = nullptr;
+
 }
 
 
@@ -196,6 +203,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			                                &APlayerCharacter::scrollInput);
 			playerEnhancedInput->BindAction(DashAction, ETriggerEvent::Triggered, this,
 			                                &APlayerCharacter::Dash);
+			playerEnhancedInput->BindAction(InteractAction, ETriggerEvent::Triggered, this,
+			                                &APlayerCharacter::Interact);
 
 			playerEnhancedInput->BindAction(fireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::fireInput);
 			playerEnhancedInput->BindAction(aimAction, ETriggerEvent::Triggered, this, &APlayerCharacter::aimInput);
@@ -279,6 +288,13 @@ bool APlayerCharacter::IsWallRunning()
 bool APlayerCharacter::IsOnDashCooldown()
 {
 	return bIsOnDashCooldown;
+}
+
+float APlayerCharacter::GetDashCooldownTimeRemaining()
+{
+
+	return GetWorld()->GetTimerManager().GetTimerRemaining(DashCooldownHandle);
+
 }
 
 void APlayerCharacter::lookInput(const FInputActionValue& value)
@@ -563,12 +579,10 @@ void APlayerCharacter::PerformDash()
 		float newSpeed = GetVelocity().Length() + (DashStrength * smallifier);
 		if (newSpeed > sprintSpeed)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Clamp boost");
 			launchVelocity *= DashStrength * smallifier;
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Don't clamp boost");
 			launchVelocity *= DashStrength;
 		}
 	}
@@ -645,73 +659,12 @@ void APlayerCharacter::CheckFootsteps()
 
 void APlayerCharacter::scrollInput(const FInputActionValue& value)
 {
-	FVector eyeLoc;
-	FRotator eyeDir;
-
-	GetActorEyesViewPoint(eyeLoc, eyeDir);
-
-	TArray<FHitResult> hits;
-
-
-	GetWorld()->LineTraceMultiByChannel(hits, GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
-	                                    ECC_Visibility);
-	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f), 10.0f,
-	                          FColor::Green, false, 1.0f);
-
-	bool kioskHit = false;
-
-	for (FHitResult hit : hits)
-	{
-		APartSelectorKiosk* kiosk = Cast<APartSelectorKiosk>(hit.GetActor());
-
-		if (kiosk)
-		{
-			kioskHit = true;
-			kiosk->RotateDisplayItem(value.Get<float>());
-		}
-	}
-
-	if (!kioskHit)
-	{
-		Welder->ScrollPartType(value.Get<float>());
-	}
+	Welder->ScrollPartType(value.Get<float>());
 }
 
 
 void APlayerCharacter::fireInput(const FInputActionValue& value)
 {
-	if (value.Get<bool>())
-	{
-		//trace to check if trying to press finish order or spawn chassis buttons
-		FVector eyeLoc;
-		FRotator eyeDir;
-
-		GetActorEyesViewPoint(eyeLoc, eyeDir);
-		TArray<FHitResult> hits;
-		GetWorld()->LineTraceMultiByChannel(hits, GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
-		                                    ECC_Visibility);
-		DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
-		                          10.0f,
-		                          FColor::Green, false, 1.0f);
-
-		for (FHitResult hit : hits)
-		{
-			ASpawnChasisActor* spawnChassisButton = Cast<ASpawnChasisActor>(hit.GetActor());
-			if (spawnChassisButton != nullptr)
-			{
-				spawnChassisButton->SpawnChassis();
-			}
-			AFinishOrderActor* finishOrderButton = Cast<AFinishOrderActor>(hit.GetActor());
-			if (finishOrderButton != nullptr)
-			{
-				finishOrderButton->FinishOrder();
-			}
-		}
-
-		
-	}
-
-
 	if (value.Get<bool>())
 	{
 		Welder->WeldInput();
@@ -720,8 +673,6 @@ void APlayerCharacter::fireInput(const FInputActionValue& value)
 	{
 		Welder->WeldReleased();
 	}
-
-
 }
 
 void APlayerCharacter::crouchInput(const FInputActionValue& value)
@@ -857,6 +808,58 @@ void APlayerCharacter::Dash()
 		FTimerHandle DashHandle;
 		GetWorld()->GetTimerManager().SetTimer(DashHandle, this,
 		                                       &APlayerCharacter::PerformDash, delay, false);
+	}
+}
+
+void APlayerCharacter::Interact()
+{
+	// Switching display items
+	
+	FVector eyeLoc;
+	FRotator eyeDir;
+	GetActorEyesViewPoint(eyeLoc, eyeDir);
+	// Eye is too high
+	eyeLoc -= FVector(0.0f, 0.0f, 4.0f);
+	TArray<FHitResult> hits;
+	GetWorld()->LineTraceMultiByChannel(hits, eyeLoc, eyeLoc + (eyeDir.Vector() * 10000.0f),
+	                                    ECC_Visibility);
+	bool kioskHit = false;
+	for (FHitResult hit : hits)
+	{
+		APartSelectorKiosk* kiosk = Cast<APartSelectorKiosk>(hit.GetActor());
+		if (kiosk)
+		{
+			kioskHit = true;
+			kiosk->RotateDisplayItem(1);
+			continue;
+		}
+		ATicketBoardActor* ticketBoard = Cast<ATicketBoardActor>(hit.GetActor());
+		if (ticketBoard)
+		{
+			if (!currentlyHeldTicket && ticketBoard->unpluggable)
+			{
+				currentlyHeldTicket = ticketBoard->UnplugTicket();
+				if (currentlyHeldTicket == nullptr)
+				{
+					continue;
+				}
+				currentlyHeldTicket->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "TicketSocket");
+			}
+			else if (currentlyHeldTicket && !ticketBoard->GetPluggedTicket())
+			{
+				currentlyHeldTicket->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+				
+				ticketBoard->PlugTicketIn(currentlyHeldTicket);
+				currentlyHeldTicket = nullptr;
+			}
+			continue;
+		}
+		AFinishOrderActor* finishOrderButton = Cast<AFinishOrderActor>(hit.GetActor());
+		if (finishOrderButton != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Finish order");
+			finishOrderButton->FinishOrder();
+		}
 	}
 }
 

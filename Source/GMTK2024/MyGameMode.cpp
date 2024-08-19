@@ -14,13 +14,13 @@
 #include "SupportPartBase.h"
 
 
-
+#include "TicketActor.h"
+#include "TicketBoardActor.h"
 
 
 AMyGameMode::AMyGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 
@@ -34,7 +34,12 @@ void AMyGameMode::BeginPlay()
 
 	localTime = 0.0f;
 
-	shipUnderConstruction = false;
+
+	nShipsUnderConstruction = 0;
+
+
+	//clear ticket array
+	tickets.Empty();
 }
 
 
@@ -44,22 +49,14 @@ void AMyGameMode::Tick(float DeltaTime)
 
 	localTime += DeltaTime;
 
-	buildTime += DeltaTime;
-
-	//float temp = GetHarmonyGrade();
-
-	DrawDebugSphere(GetWorld(), FVector::ZeroVector, 50.0f, 32, FColor::Blue);
-	
-	
-	DrawDebugSphere(GetWorld(), GetShipCenterOfMass(), 50.0f, 32, FColor::Yellow);
-
-	if (currentShipChassis) {
-
-		DrawDebugSphere(GetWorld(), GetShipCenterOfMass() - currentShipChassis->GetActorLocation(), 50.0f, 32, FColor::Orange);
-
+	if (IsOnShift())
+	{
+		buildTime += DeltaTime;
 	}
-
-	//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Purple, FString::SanitizeFloat(temp));
+	else
+	{
+		buildTime = 0.0f;
+	}
 }
 
 
@@ -68,7 +65,7 @@ void AMyGameMode::ShiftStartCallback()
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShiftStartAlarm,
 	                                      GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation(), 1.0f,
 	                                      1.0f, 0.0f);
-
+	bIsOnShift = true;
 
 
 	FRandomStream r;
@@ -87,63 +84,82 @@ void AMyGameMode::ShiftStartCallback()
 }
 
 
-void AMyGameMode::AddOrder(){	
-	
-	FRandomStream r;
-
-	r.GenerateNewSeed();
-
-
-	
-	//randomly generate a new order
-	FOrder newOrder;
-	newOrder.cost = r.FRandRange(0.0f, 300.0f) * difficulty;
-	newOrder.structural = r.FRandRange(0.0f, 100.0f) * difficulty;
-	newOrder.firepower = r.FRandRange(0.0f, 100.0f) * difficulty;
-	newOrder.thrust = r.FRandRange(0.0f, 100.0f) * difficulty;
-	newOrder.energy = r.FRandRange(0.0f, 100.0f) * difficulty;
-	newOrder.support = r.FRandRange(0.0f, 100.0f) * difficulty;
-
-	newOrder.customerPatience = r.FRandRange(10.0f, 60.0f / difficulty);
-	
-
-
-	buildTime = 0.01f;
-
-
-	if (orderSheet == nullptr)
+void AMyGameMode::AddOrder()
+{
+	if (tickets.Num() < 3)
 	{
-		// Let's see if this solves my crashing issue
-		return;
+		FRandomStream r;
+
+		r.GenerateNewSeed();
+
+		ATicketActor* newTicket = Cast<ATicketActor>(GetWorld()->SpawnActor<ATicketActor>(ticketSpawnClass));
+
+		tickets.Add(newTicket);
+
+		//randomly generate a new order
+		FOrder newOrder;
+		newOrder.cost = r.FRandRange(0.0f, 300.0f) * difficulty;
+		newOrder.structural = r.FRandRange(0.0f, 100.0f) * difficulty;
+		newOrder.firepower = r.FRandRange(0.0f, 100.0f) * difficulty;
+		newOrder.thrust = r.FRandRange(0.0f, 100.0f) * difficulty;
+		newOrder.energy = r.FRandRange(0.0f, 100.0f) * difficulty;
+		newOrder.support = r.FRandRange(0.0f, 100.0f) * difficulty;
+
+		newOrder.customerPatience = r.FRandRange(10.0f, 60.0f / difficulty);
+
+		int companyNameIndex = r.RandRange(0.0f, ((float)companyNames.Num()) - 0.01f);
+		if (companyNameIndex >= 0 && companyNames.Num() > 0)
+		{
+			newOrder.companyName = companyNames[companyNameIndex];
+		}
+
+		int orderShipType = (int)(r.FRandRange(0.0f, 3.99f));
+		//newOrder.shipType = static_cast<ShipType>(orderShipType);
+
+
+		newTicket->order = newOrder;
+
+		newTicket->progressOrder = GetZeroOrder();
+
+
+		buildTime = 0.01f;
+
+
+		TArray<AActor*> boardsA;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATicketBoardActor::StaticClass(), boardsA);
+
+		for (AActor* boardA : boardsA)
+		{
+			ATicketBoardActor* board = Cast<ATicketBoardActor>(boardA);
+
+			if (board->unpluggable && !board->GetPluggedTicket())
+			{
+				board->PlugTicketIn(newTicket);
+				break;
+			}
+		}
+
+
+		AddOrderBP();
 	}
-	orderSheet->orders.Add(newOrder);
-	orderSheet->currentOrder = newOrder;
-
-	orderSheet->currentBuildOrder = GetZeroOrder();
-
 
 
 	if (addOrderTimerHandle.IsValid())
 	{
 		addOrderTimerHandle.Invalidate();
 	}
-
-	AddOrderBP();
-
-	//GetWorld()->GetTimerManager().SetTimer(addOrderTimerHandle, this, &AMyGameMode::AddOrder,10.0f * (1.0f / difficulty));
-}
-
-void AMyGameMode::SpawnShipChasis()
-{
+	GetWorld()->GetTimerManager().SetTimer(addOrderTimerHandle, this, &AMyGameMode::AddOrder,
+	                                       10.0f * (1.0f / difficulty));
 }
 
 
-void AMyGameMode::DoNewShipChassisProcedure()
+void AMyGameMode::DoNewShipChassisProcedure(TSubclassOf<AChasisPartBase> chassisType, ATicketActor* ticket,
+                                            AActor* bayTransformActor)
 {
-	currentShipChassis->SetActorLocation(shipConstructionLocation);
-	currentShipChassis->SetActorRotation(FVector(0.0f, -1.0f, 0.0f).Rotation());
-	shipUnderConstruction = true;
-	//MoveShipToLocationOverTime(newShipStartLocation, shipConstructionLocation, transitionTime, 0);
+	nShipsUnderConstruction++;
+
+	ticket->shipChassis = GetWorld()->SpawnActor<AChasisPartBase>(chassisType, bayTransformActor->GetActorTransform());
+	ticket->shipChassis->owningTicket = ticket;
 }
 
 void AMyGameMode::MoveShipToLocationOverTime(FVector startLocation, FVector endLocation, float overTime, int nCalls)
@@ -151,107 +167,89 @@ void AMyGameMode::MoveShipToLocationOverTime(FVector startLocation, FVector endL
 }
 
 
-
-
-
-void AMyGameMode::DoFinishOrderProcedure() {
-
-	if (!currentShipChassis || finishingOrder) {
-
+void AMyGameMode::DoFinishOrderProcedure(ATicketActor* ticket)
+{
+	if (!ticket->shipChassis || finishingOrder)
+	{
 		return;
-
 	}
 
 	finishingOrder = true;
 
-	
-	reportInProgress = EvaluateBuildWithOrder(orderSheet->currentOrder);
+
+	reportInProgress = EvaluateBuildWithOrder(ticket);
 
 	//once attribute grading is done the ship needs to try and fly
 
 	//NEED TO IMPLEMENT THAT PROCEDURE AND THEN CALLBACK TO ADD REPORT AFTERWARDS AS SHOWN BELOW
-	DoShipFlight();
-
-
-	
+	DoShipFlight(ticket);
 }
 
 
-
-
-void AMyGameMode::DoShipFlight() {
-
-	currentShipChassis->SetActorLocation(shipLaunchLocation);
+void AMyGameMode::DoShipFlight(ATicketActor* ticket)
+{
+	ticket->shipChassis->SetActorLocation(shipLaunchLocation);
 
 
 	//get the ship thrust vector to pass to the engines
 	FVector shipThrustVector;
 	FVector shipCenterOfThrust;
 
-	GetShipThrust(shipCenterOfThrust, shipThrustVector);
+	GetShipThrust(shipCenterOfThrust, shipThrustVector, ticket);
 
 
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 
-	//activate all of the parts
-	TArray<AActor*> partsA;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
-
-
-
-	for (AActor* partA : partsA)
+	for (APartBase* part : parts)
 	{
-		APartBase* part = Cast<APartBase>(partA);
 		PartType type = part->type;
 
-		if (type == PartType::PT_THRUST) {
-
+		if (type == PartType::PT_THRUST)
+		{
 			Cast<AEnginePartBase>(part)->thrustVector = shipThrustVector;
 			Cast<AEnginePartBase>(part)->centerOfThrust = shipCenterOfThrust;
-
 		}
 
 		part->ActivatePart();
 		part->launched = true;
-
-
 	}
 
-	FVector currentCOM = currentShipChassis->physicsBox->GetCenterOfMass();
-	FVector newCOM = GetShipCenterOfMass();
-	FVector offsetCOM = currentShipChassis->GetActorRotation().UnrotateVector(newCOM - currentCOM);
-	
-	
+	FVector currentCOM = ticket->shipChassis->physicsBox->GetCenterOfMass();
+	FVector newCOM = GetShipCenterOfMass(ticket);
+	FVector offsetCOM = ticket->shipChassis->GetActorRotation().UnrotateVector(newCOM - currentCOM);
 
 
-	currentShipChassis->physicsBox->SetCenterOfMass(offsetCOM);
-	currentShipChassis->physicsBox->SetSimulatePhysics(true);
-	currentShipChassis->physicsBox->SetEnableGravity(false);
+	//setup the ship for flight physics
+	ticket->shipChassis->physicsBox->SetCenterOfMass(offsetCOM);
+	ticket->shipChassis->physicsBox->SetSimulatePhysics(true);
+	ticket->shipChassis->physicsBox->SetEnableGravity(false);
 
-	currentShipChassis->physicsBox->SetCollisionProfileName("BlockAll");
+	ticket->shipChassis->physicsBox->SetCollisionProfileName("BlockAll");
 
-	currentShipChassis->physicsBox->SetAngularDamping(baseAngularDamping);
+	ticket->shipChassis->physicsBox->SetAngularDamping(baseAngularDamping);
 
-	currentShipChassis->mesh->SetCollisionProfileName("NoCollision");
-	
+	ticket->shipChassis->mesh->SetCollisionProfileName("NoCollision");
 
 
-	GetWorld()->GetTimerManager().SetTimer(finsihGradingHandle, this, &AMyGameMode::CompleteGradingAfterFlight, maxFlightTime);
+	//this is how to do timers wtih functions that have parameters
+	FTimerDelegate tempDelegate;
 
+	tempDelegate.BindUFunction(this, FName("CompleteGradingAfterFlight"), ticket);
+
+	GetWorld()->GetTimerManager().SetTimer(finsihGradingHandle, tempDelegate, maxFlightTime, false);
 }
 
 
-
-void AMyGameMode::CompleteGradingAfterFlight() {
-
-
+void AMyGameMode::CompleteGradingAfterFlight(ATicketActor* ticket)
+{
 	//add new report to order data sheet
 	orderSheet->reports.Add(reportInProgress);
 
 
 	//calculate average grade
 	float s = 0.0f;
-	for (FReportCard report : orderSheet->reports)
+	for (FReportCard& report : orderSheet->reports)
 	{
 		s += report.overall;
 	}
@@ -259,149 +257,126 @@ void AMyGameMode::CompleteGradingAfterFlight() {
 
 	orderSheet->averageGrade = s;
 
-	CleanupShip();
+	CleanupShip(ticket);
 
 	shiftQuota--;
 	UpdateQuotaBP();
 
-	if (shiftQuota < 1) {
-
+	if (shiftQuota < 1)
+	{
 		EndShiftProcedure();
-
 	}
+
+
+	ATicketActor* temp = ticket;
+	tickets.Remove(ticket);
+
+	temp->Destroy();
+
 
 	finishingOrder = false;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "ORDER GRADE: " + FString::SanitizeFloat(s));
 
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "ORDER GRADE: " + FString::SanitizeFloat(s));
 }
 
 
-
-
-void AMyGameMode::CleanupShip() {
-
-	TArray<AActor*> partsA;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
+void AMyGameMode::CleanupShip(ATicketActor* ticket)
+{
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 	//get the total thrust and total mass first
-	for (AActor* partA : partsA)
+	for (APartBase* part : parts)
 	{
-		partA->Destroy();
-
-
-
+		part->Destroy();
 	}
 
-	currentShipChassis = nullptr;
-	shipUnderConstruction = false;
-
+	//dont shrink because we want to always be able to access each array element
+	ticket->shipChassis = nullptr;
+	nShipsUnderConstruction--;
 }
 
 
-
-
-void AMyGameMode::EndShiftProcedure() {
+void AMyGameMode::EndShiftProcedure()
+{
 	OnShiftEnd();
+	bIsOnShift = false;
 	//orderSheet->reports.Empty();
 
-	if (shiftStatTimerHandle.IsValid()) {
-
+	if (shiftStatTimerHandle.IsValid())
+	{
 		shiftStatTimerHandle.Invalidate();
-
 	}
 
 	GetWorld()->GetTimerManager().SetTimer(shiftStatTimerHandle, this, &AMyGameMode::ShiftStartCallback, 3.0f);
-
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void AMyGameMode::AddPartToBuildOrder(APartBase* part) {
-
-	
-
-
+void AMyGameMode::AddPartToBuild(APartBase* part, ATicketActor* ticket)
+{
 	PartType type = part->type;
-		
-	switch (type){
 
-		case PartType::PT_STRUCTURAL:
-			
-			orderSheet->currentBuildOrder.structural += part->baseAttribute;
+	switch (type)
+	{
+	case PartType::PT_STRUCTURAL:
 
-			break;
+		ticket->progressOrder.structural += part->baseAttribute;
 
-
-		case PartType::PT_FIREPOWER:
-			
-			orderSheet->currentBuildOrder.firepower += part->baseAttribute;
-
-			break;
+		break;
 
 
-		case PartType::PT_THRUST:
-			
-			orderSheet->currentBuildOrder.thrust += part->baseAttribute;
+	case PartType::PT_FIREPOWER:
 
-			break;
+		ticket->progressOrder.firepower += part->baseAttribute;
 
-
-		case PartType::PT_ENERGY:
-			
-			orderSheet->currentBuildOrder.energy += part->baseAttribute;
-
-			break;
+		break;
 
 
-		case PartType::PT_SUPPORT:
-			
-			orderSheet->currentBuildOrder.support += part->baseAttribute;
+	case PartType::PT_THRUST:
 
-			break;
+		ticket->progressOrder.thrust += part->baseAttribute;
+
+		break;
+
+
+	case PartType::PT_ENERGY:
+
+		ticket->progressOrder.energy += part->baseAttribute;
+
+		break;
+
+
+	case PartType::PT_SUPPORT:
+
+		ticket->progressOrder.support += part->baseAttribute;
+
+		break;
 	}
 
 
-	orderSheet->currentBuildOrder.cost += part->cost;
+	ticket->progressOrder.cost += part->cost;
 
 
-
-	PartAddedBP();
-	
-
+	PartAddedBP(ticket);
 }
 
 
-
-FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
-
-	
-
-
+FReportCard AMyGameMode::EvaluateBuildWithOrder(ATicketActor* ticket)
+{
 	//GRADING BELOW
 
-	TArray<AActor*> partsA;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
-	FOrder currentOrder = orderSheet->orders[orderSheet->orders.Num() - 1];
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
+
+
+	//FOrder currentOrder = orderSheet->orders[orderSheet->orders.Num() - 1];
 	FReportCard newReport;
 
+
+	newReport.companyName = ticket->order.companyName;
+
 	//sum each part attribute into the report card
-	for (AActor* partA : partsA)
+	for (APartBase* part : parts)
 	{
-		APartBase* part = Cast<APartBase>(partA);
 		PartType type = part->type;
 		switch (type)
 		{
@@ -426,49 +401,53 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order) {
 			break;
 		}
 		newReport.cost += part->cost;
-
-		
-		
 	}
 
 
-	
-	newReport.harmony = GetHarmonyGrade();
+	newReport.harmony = GetHarmonyGrade(ticket);
 
 
 	//grade is 1 minus the percent difference from requested value
-	newReport.structural = 1.0f - FMath::Abs((currentOrder.structural - newReport.structural) / currentOrder.structural);
-	newReport.firepower = 1.0f - FMath::Abs((currentOrder.firepower - newReport.firepower) / currentOrder.firepower);
-	newReport.thrust = 1.0f - FMath::Abs((currentOrder.thrust - newReport.thrust) / currentOrder.thrust);
-	newReport.energy = 1.0f - FMath::Abs((currentOrder.energy - newReport.energy) / currentOrder.energy);
-	newReport.support = 1.0f - FMath::Abs((currentOrder.support - newReport.support) / currentOrder.support);
+	newReport.structural = FMath::Clamp(
+		1.0f - FMath::Abs((ticket->order.structural - newReport.structural) / ticket->order.structural), 0.0f, 1.0f);
+	newReport.firepower = FMath::Clamp(
+		1.0f - FMath::Abs((ticket->order.firepower - newReport.firepower) / ticket->order.firepower), 0.0f, 1.0f);
+	newReport.thrust = FMath::Clamp(1.0f - FMath::Abs((ticket->order.thrust - newReport.thrust) / ticket->order.thrust),
+	                                0.0f, 1.0f);
+	newReport.energy = FMath::Clamp(1.0f - FMath::Abs((ticket->order.energy - newReport.energy) / ticket->order.energy),
+	                                0.0f, 1.0f);
+	newReport.support = FMath::Clamp(
+		1.0f - FMath::Abs((ticket->order.support - newReport.support) / ticket->order.support), 0.0f, 1.0f);
 
 
-	newReport.cost = 1.0f - FMath::Abs((currentOrder.cost - newReport.cost) / currentOrder.cost);
+	newReport.cost = 1.0f - FMath::Abs((ticket->order.cost - newReport.cost) / ticket->order.cost);
 
 
-	newReport.customerPatience = FMath::Clamp(currentOrder.customerPatience / buildTime, 0.0f, 1.0f);
+	newReport.customerPatience = FMath::Clamp(ticket->order.customerPatience / ticket->ticketTime, 0.0f, 1.0f);
 
 
 	newReport.overall = (newReport.structural + newReport.firepower + newReport.thrust + newReport.energy + newReport.
 		support + newReport.customerPatience) / 6.0f;
 
 
-
 	newReport.overall *= newReport.harmony;
 
-	return newReport;
 
+	if (ticket->order.shipType != ticket->shipChassis->shipType)
+	{
+		newReport.overall *= 0.6f;
+	}
+
+
+	return newReport;
 }
 
 
-float AMyGameMode::GetHarmonyGrade() {
-
-
-	if (!currentShipChassis) {
-
+float AMyGameMode::GetHarmonyGrade(ATicketActor* ticket)
+{
+	if (!ticket->shipChassis)
+	{
 		return 0.0f;
-
 	}
 
 	FVector centerOfMass = FVector::ZeroVector;
@@ -477,64 +456,44 @@ float AMyGameMode::GetHarmonyGrade() {
 	FVector thrustVector = FVector::ZeroVector;
 	FVector centerOfThrust = FVector::ZeroVector;
 	float totalThrustMagnitude = 0.0f;
-	
 
 
-	TArray<AActor*> partsA;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
-	
-
-
-
-
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 
 	//get the total thrust and total mass first
-	for (AActor* partA : partsA)
+	for (APartBase* part : parts)
 	{
-		APartBase* part = Cast<APartBase>(partA);
 		PartType type = part->type;
 
-		if (type == PartType::PT_THRUST) {
-			
+		if (type == PartType::PT_THRUST)
+		{
 			totalThrustMagnitude += part->baseAttribute;
-
-
 		}
 
 		totalMass += part->mass;
-		
-
-
 	}
 
 
-
-
 	//get the center of mass, center of thrust and thrust vector
-	for (AActor* partA : partsA)
+	for (APartBase* part : parts)
 	{
-		APartBase* part = Cast<APartBase>(partA);
 		PartType type = part->type;
-		
-		if (type == PartType::PT_THRUST) {
 
+		if (type == PartType::PT_THRUST)
+		{
 			AEnginePartBase* engine = Cast<AEnginePartBase>(part);
 
 			thrustVector += part->GetActorForwardVector() * part->baseAttribute;
-			
+
 			//DrawDebugDirectionalArrow(GetWorld(), part->GetActorLocation(), GetActorLocation(), 20.0f, FColor::Green);
 
 
 			centerOfThrust += part->GetActorLocation() * (part->baseAttribute / totalThrustMagnitude);
-
-
 		}
-		
-		
+
+
 		centerOfMass += part->GetActorLocation() * (part->mass / totalMass);
-
-
 	}
 
 	thrustVector = thrustVector.GetSafeNormal();
@@ -552,151 +511,98 @@ float AMyGameMode::GetHarmonyGrade() {
 	//DrawDebugDirectionalArrow(GetWorld(), centerOfThrust, centerOfThrust + (-thrustVector * 500.0f), 20.0f, FColor::Yellow);
 
 
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green, "Harmony Grade: " + FString::SanitizeFloat(amountTowardsCOM));
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Green,
+	                                 "Harmony Grade: " + FString::SanitizeFloat(amountTowardsCOM));
 
 	return amountTowardsCOM;
-
-
 }
 
 
-
-FVector AMyGameMode::GetShipCenterOfMass() {
-
-	if (!currentShipChassis) {
-
+FVector AMyGameMode::GetShipCenterOfMass(ATicketActor* ticket)
+{
+	if (!ticket->shipChassis)
+	{
 		return FVector::ZeroVector;
-
 	}
 
 	FVector centerOfMass = FVector::ZeroVector;
 	float totalMass = 0.0f;
 
 
-	TArray<AActor*> partsA;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 
 	//get the total thrust and total mass first
-	for (AActor* partA : partsA)
+	for (APartBase* part : parts)
 	{
-		APartBase* part = Cast<APartBase>(partA);
-		
-
-		
-
 		totalMass += part->mass;
-
-
-
 	}
-
-
 
 
 	//get the center of mass, center of thrust and thrust vector
-	for (AActor* partA : partsA)
+	for (APartBase* part : parts)
 	{
-		APartBase* part = Cast<APartBase>(partA);
-		
-
-		
 		centerOfMass += part->GetActorLocation() * (part->mass / totalMass);
-
-
 	}
-
-	
 
 
 	return centerOfMass;
-
 }
 
 
-
-
-void AMyGameMode::GetShipThrust(FVector& centerOfThrust, FVector& thrustVector) {
-
-
-	if (!currentShipChassis) {
-
+void AMyGameMode::GetShipThrust(FVector& centerOfThrust, FVector& thrustVector, ATicketActor* ticket)
+{
+	if (!ticket->shipChassis)
+	{
 		return;
-
 	}
 
-	
+
 	float totalThrustMagnitude = 0.0f;
 
 
-
-	TArray<AActor*> partsA;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 
 	//get the total thrust and total mass first
-	for (AActor* partA : partsA)
+	for (APartBase* part : parts)
 	{
-		APartBase* part = Cast<APartBase>(partA);
 		PartType type = part->type;
 
-		if (type == PartType::PT_THRUST) {
-
+		if (type == PartType::PT_THRUST)
+		{
 			totalThrustMagnitude += part->baseAttribute;
-
-
 		}
-
-		
-
-
-
 	}
 
 
-
-
 	//get the center of mass, center of thrust and thrust vector
-	for (AActor* partA : partsA)
+	for (APartBase* part : parts)
 	{
-		APartBase* part = Cast<APartBase>(partA);
 		PartType type = part->type;
 
-		if (type == PartType::PT_THRUST) {
-
+		if (type == PartType::PT_THRUST)
+		{
 			AEnginePartBase* engine = Cast<AEnginePartBase>(part);
 
 			thrustVector += part->GetActorForwardVector() * part->baseAttribute;
 
-			
-
 
 			centerOfThrust += part->GetActorLocation() * (part->baseAttribute / totalThrustMagnitude);
-
-
 		}
-
-
-
-
-
 	}
 
 	thrustVector = thrustVector.GetSafeNormal();
+}
 
+bool AMyGameMode::IsOnShift()
+{
+	return bIsOnShift;
 }
 
 
-
-
-
-
-
-
-
-
-FOrder AMyGameMode::GetZeroOrder() {
-
+FOrder AMyGameMode::GetZeroOrder()
+{
 	FOrder blankOrder;
 
 	blankOrder.cost = 0.0f;
@@ -708,5 +614,4 @@ FOrder AMyGameMode::GetZeroOrder() {
 
 
 	return blankOrder;
-
 }

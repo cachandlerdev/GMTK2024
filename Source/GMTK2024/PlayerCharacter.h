@@ -25,6 +25,8 @@ class UWelderComponent;
 class AMyGameMode;
 
 
+class ATicketActor;
+
 UCLASS()
 class GMTK2024_API APlayerCharacter : public ACharacter, public IGameplayTagAssetInterface
 {
@@ -95,6 +97,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float DashCooldown = 5.0f;
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	USoundBase* FootstepSound;
 	
@@ -103,6 +106,11 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	USoundBase* LandingSound;
+
+
+	UPROPERTY(BLueprintReadWrite)
+		ATicketActor* currentlyHeldTicket;
+
 
 private:
 	bool sprinting = false;
@@ -185,6 +193,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 	UInputAction* DashAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
+	UInputAction* InteractAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control Mappings")
 	UInputMappingContext* baseControls;
@@ -252,6 +263,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnMantle();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	float GetDashCooldownTimeRemaining();
+
 	// Inputs
 
 	UFUNCTION()
@@ -296,6 +310,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Dash();
+
+	UFUNCTION(BlueprintCallable)
+	void Interact();
 
 	UFUNCTION()
 	float CalcHillSlideBoost();

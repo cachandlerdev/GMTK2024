@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "FinishOrderActor.generated.h"
 
+class ATicketBoardActor;
+class ATicketActor;
+
 UCLASS()
 class GMTK2024_API AFinishOrderActor : public AActor
 {
@@ -16,6 +19,8 @@ public:
 	AFinishOrderActor();
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		ATicketBoardActor* shipBayTicketBoard;
 
 
 protected:
