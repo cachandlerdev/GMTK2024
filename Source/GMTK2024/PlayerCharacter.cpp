@@ -728,9 +728,12 @@ void APlayerCharacter::fireInput(const FInputActionValue& value)
 				if (!currentlyHeldTicket && ticketBoard->unpluggable) {
 
 					currentlyHeldTicket = ticketBoard->UnplugTicket();
+					currentlyHeldTicket->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "TicketSocket");
 
 				}
 				else if(currentlyHeldTicket && !ticketBoard->GetPluggedTicket()){
+
+					currentlyHeldTicket->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
 					ticketBoard->PlugTicketIn(currentlyHeldTicket);
 					currentlyHeldTicket = nullptr;

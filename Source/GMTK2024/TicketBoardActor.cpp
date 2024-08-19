@@ -39,6 +39,7 @@ void ATicketBoardActor::Tick(float DeltaTime)
 
 void ATicketBoardActor::PlugTicketIn(ATicketActor* ticket) {
 
+	ticket->AttachToComponent(GetSkeletalMeshComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale, "TicketSocket");
 
 	pluggedTicket = ticket;
 
@@ -51,18 +52,23 @@ void ATicketBoardActor::PlugTicketIn(ATicketActor* ticket) {
 
 		gameMode->DoNewShipChassisProcedure(chassisClass, ticket, shipBayActor);
 
+
+
 	}
 
 }
 
 
 ATicketActor* ATicketBoardActor::UnplugTicket() {
-	
+
 	if (!unpluggable) {
 
 		return nullptr;
 
 	}
+
+	pluggedTicket->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
 
 	ATicketActor* temp = pluggedTicket;
 	pluggedTicket = nullptr;

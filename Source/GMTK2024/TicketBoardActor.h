@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Animation/SkeletalMeshActor.h"
 #include "TicketBoardActor.generated.h"
 
 class ATicketActor;
 class AChasisPartBase;
 
 UCLASS()
-class GMTK2024_API ATicketBoardActor : public AActor
+class GMTK2024_API ATicketBoardActor : public ASkeletalMeshActor
 {
 	GENERATED_BODY()
 	
