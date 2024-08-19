@@ -32,6 +32,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "MyGameMode.h"
 
+#include "TicketActor.h"
+#include "TicketBoardActor.h"
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -106,6 +109,18 @@ void APlayerCharacter::BeginPlay()
 
 	GetWorld()->GetTimerManager().SetTimer(WallrunTimerHandle, this, &APlayerCharacter::WallRunUpdate,
 	                                       WallrunUpdateTime, true);
+<<<<<<< Updated upstream
+=======
+
+	// Setup footsteps loop
+	FTimerHandle footstepsHandle;
+	GetWorld()->GetTimerManager().SetTimer(footstepsHandle, this, &APlayerCharacter::CheckFootsteps,
+	                                       FootstepsUpdateTime, true);
+
+	//initialize to nullptr
+	currentlyHeldTicket = nullptr;
+
+>>>>>>> Stashed changes
 }
 
 
@@ -675,6 +690,8 @@ void APlayerCharacter::fireInput(const FInputActionValue& value)
 
 		for (FHitResult hit : hits)
 		{
+
+			/*
 			ASpawnChasisActor* spawnChassisButton = Cast<ASpawnChasisActor>(hit.GetActor());
 			if (spawnChassisButton != nullptr)
 			{
@@ -682,12 +699,31 @@ void APlayerCharacter::fireInput(const FInputActionValue& value)
 
 				spawnChassisButton->SpawnChassis();
 			}
+			*/
+
+
+			ATicketBoardActor* ticketBoard = Cast<ATicketBoardActor>(hit.GetActor());
+			if (ticketBoard) {
+
+				if (!currentlyHeldTicket && ticketBoard->unpluggable) {
+
+					currentlyHeldTicket = ticketBoard->UnplugTicket();
+
+				}
+				else if(currentlyHeldTicket && !ticketBoard->GetPluggedTicket()){
+
+					ticketBoard->PlugTicketIn(currentlyHeldTicket);
+					currentlyHeldTicket = nullptr;
+
+				}
+
+			}
 
 
 			AFinishOrderActor* finishOrderButton = Cast<AFinishOrderActor>(hit.GetActor());
 			if (finishOrderButton != nullptr)
 			{
-				finishOrderButton->FinishOrder(currentlyHeldTicketID);
+				finishOrderButton->FinishOrder();
 			}
 		}
 

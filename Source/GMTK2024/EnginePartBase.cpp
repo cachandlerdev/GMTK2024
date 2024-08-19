@@ -9,6 +9,8 @@
 
 #include "ChasisPartBase.h"
 
+#include "TicketActor.h"
+
 
 
 AEnginePartBase::AEnginePartBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
@@ -46,7 +48,7 @@ void AEnginePartBase::Tick(float DeltaTime) {
 
 	if (launched) {
 
-		gameMode->currentShipChassis[shipID]->physicsBox->AddForceAtLocation(-GetActorForwardVector() * thrust, GetActorLocation());
+		owningTicket->shipChassis->physicsBox->AddForceAtLocation(-GetActorForwardVector() * thrust, GetActorLocation());
 		
 		//gameMode->currentShipChassis->physicsBox->AddForceAtLocation(-thrustVector * thrust, centerOfThrust);
 

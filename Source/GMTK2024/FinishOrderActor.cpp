@@ -6,6 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "MyGameMode.h"
 
+#include "TicketActor.h"
+#include "TicketBoardActor.h"
+
 // Sets default values
 AFinishOrderActor::AFinishOrderActor()
 {
@@ -28,27 +31,23 @@ void AFinishOrderActor::Tick(float DeltaTime)
 
 }
 
-void AFinishOrderActor::FinishOrder(int ticketID) {
+void AFinishOrderActor::FinishOrder() {
+
+	
 
 	AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameMode != nullptr)
 	{
 
-		//make sure the ticket and ship exist
-		if (ticketID >= gameMode->orderSheet->currentOrders.Num() || shipBayShipID >= gameMode->currentShipChassis.Num()) {
-
-			return;
-
-		}
-
-		//make sure ship isnt nullptr
-		if (gameMode->currentShipChassis[shipBayShipID] == nullptr) {
+		if (!shipBayTicketBoard->GetPluggedTicket()) {
 
 			return;
 
 		}
 
 
-		gameMode->DoFinishOrderProcedure(shipBayShipID, ticketID);
+		gameMode->DoFinishOrderProcedure(shipBayTicketBoard->UnplugTicket());
 	}
+
+	
 }

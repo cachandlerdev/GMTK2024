@@ -25,6 +25,8 @@ class UWelderComponent;
 class AMyGameMode;
 
 
+class ATicketActor;
+
 UCLASS()
 class GMTK2024_API APlayerCharacter : public ACharacter, public IGameplayTagAssetInterface
 {
@@ -97,7 +99,7 @@ public:
 
 
 	UPROPERTY(BLueprintReadWrite)
-		int currentlyHeldTicketID = 0;
+		ATicketActor* currentlyHeldTicket;
 
 private:
 	bool sprinting = false;

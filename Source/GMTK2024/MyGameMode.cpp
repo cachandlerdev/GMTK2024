@@ -14,6 +14,9 @@
 #include "SupportPartBase.h"
 
 
+#include "TicketActor.h"
+#include "TicketBoardActor.h"
+
 
 
 
@@ -43,22 +46,10 @@ void AMyGameMode::BeginPlay()
 	nShipsUnderConstruction = 0;
 	
 	
-	//setup the current ship build array
-	currentShipChassis.Empty();
+	//clear ticket array
+	tickets.Empty();
 
-	currentShipChassis.SetNum(4);
 
-	for (AChasisPartBase* chassis : currentShipChassis) {
-
-		if (chassis) {
-
-			chassis->Destroy();
-
-		}
-
-		chassis = nullptr;
-
-	}
 }
 
 
@@ -100,12 +91,19 @@ void AMyGameMode::ShiftStartCallback()
 
 void AMyGameMode::AddOrder(){	
 	
-	if (orderSheet->currentOrders.Num() < 3) {
+	if (tickets.Num() < 3) {
+
+
+
+
 		FRandomStream r;
 
 		r.GenerateNewSeed();
 
+		ATicketActor* newTicket = Cast<ATicketActor>(GetWorld()->SpawnActor<ATicketActor>(ticketSpawnClass));
 
+		newTicket->ticketID = tickets.Num();
+		tickets.Add(newTicket);
 
 		//randomly generate a new order
 		FOrder newOrder;
@@ -118,27 +116,40 @@ void AMyGameMode::AddOrder(){
 
 		newOrder.customerPatience = r.FRandRange(10.0f, 60.0f / difficulty);
 
+		newOrder.companyName = companyNames[((int)r.RandRange(0.0f, ((float)companyNames.Num()) - 0.01f))];
+
+		int orderShipType = (int)(r.FRandRange(0.0f, 3.99f));
+		//newOrder.shipType = static_cast<ShipType>(orderShipType);
+
+
+		newTicket->order = newOrder;
+
+		newTicket->progressOrder = GetZeroOrder();
+
 
 
 		buildTime = 0.01f;
 
 
-		if (orderSheet == nullptr)
-		{
-			// Let's see if this solves my crashing issue
-			return;
+
+
+		TArray<AActor*> boardsA;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATicketBoardActor::StaticClass(), boardsA);
+
+		for (AActor* boardA : boardsA) {
+			ATicketBoardActor* board = Cast<ATicketBoardActor>(boardA);
+			
+			if (board->unpluggable) {
+
+				board->PlugTicketIn(newTicket);
+
+			}
+
 		}
-		orderSheet->orders.Add(newOrder);
-		orderSheet->currentOrders.Add(newOrder);
-
-		orderSheet->currentBuildOrder = GetZeroOrder();
 
 
 
-		if (addOrderTimerHandle.IsValid())
-		{
-			addOrderTimerHandle.Invalidate();
-		}
+		
 
 		AddOrderBP();
 
@@ -146,7 +157,10 @@ void AMyGameMode::AddOrder(){
 	}
 
 	
-
+	if (addOrderTimerHandle.IsValid())
+	{
+		addOrderTimerHandle.Invalidate();
+	}
 	GetWorld()->GetTimerManager().SetTimer(addOrderTimerHandle, this, &AMyGameMode::AddOrder,10.0f * (1.0f / difficulty));
 }
 
@@ -154,17 +168,14 @@ void AMyGameMode::AddOrder(){
 
 
 
-void AMyGameMode::DoNewShipChassisProcedure(int shipID)
+void AMyGameMode::DoNewShipChassisProcedure(TSubclassOf<AChasisPartBase> chassisType, ATicketActor* ticket, AActor* bayTransformActor)
 {
 
 	nShipsUnderConstruction++;
 
-	//currentShipChassis[shipID]->SetActorLocation(shipConstructionLocation);
-	//currentShipChassis[shipID]->SetActorRotation(FVector(0.0f, -1.0f, 0.0f).Rotation());
+	ticket->shipChassis = GetWorld()->SpawnActor<AChasisPartBase>(chassisType, bayTransformActor->GetActorTransform());
+	ticket->shipChassis->owningTicket = ticket;
 	
-	currentShipChassis[shipID]->shipID =  shipID;
-
-	//MoveShipToLocationOverTime(newShipStartLocation, shipConstructionLocation, transitionTime, 0);
 }
 
 void AMyGameMode::MoveShipToLocationOverTime(FVector startLocation, FVector endLocation, float overTime, int nCalls)
@@ -175,9 +186,9 @@ void AMyGameMode::MoveShipToLocationOverTime(FVector startLocation, FVector endL
 
 
 
-void AMyGameMode::DoFinishOrderProcedure(int shipID, int ticketID) {
+void AMyGameMode::DoFinishOrderProcedure(ATicketActor* ticket) {
 
-	if (!currentShipChassis[shipID] || finishingOrder) {
+	if (!ticket->shipChassis || finishingOrder) {
 
 		return;
 
@@ -186,12 +197,16 @@ void AMyGameMode::DoFinishOrderProcedure(int shipID, int ticketID) {
 	finishingOrder = true;
 
 	
-	reportInProgress = EvaluateBuildWithOrder(orderSheet->currentOrders[ticketID], shipID);
+	reportInProgress = EvaluateBuildWithOrder(ticket);
 
 	//once attribute grading is done the ship needs to try and fly
 
 	//NEED TO IMPLEMENT THAT PROCEDURE AND THEN CALLBACK TO ADD REPORT AFTERWARDS AS SHOWN BELOW
-	DoShipFlight(shipID);
+	DoShipFlight(ticket);
+
+
+	
+
 
 
 	
@@ -200,21 +215,21 @@ void AMyGameMode::DoFinishOrderProcedure(int shipID, int ticketID) {
 
 
 
-void AMyGameMode::DoShipFlight(int shipID) {
+void AMyGameMode::DoShipFlight(ATicketActor* ticket) {
 
-	currentShipChassis[shipID]->SetActorLocation(shipLaunchLocation);
+	ticket->shipChassis->SetActorLocation(shipLaunchLocation);
 
 
 	//get the ship thrust vector to pass to the engines
 	FVector shipThrustVector;
 	FVector shipCenterOfThrust;
 
-	GetShipThrust(shipCenterOfThrust, shipThrustVector, shipID);
+	GetShipThrust(shipCenterOfThrust, shipThrustVector, ticket);
 
 
 
 
-	TArray<APartBase*> parts = currentShipChassis[shipID]->childParts;
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 
 
@@ -236,22 +251,22 @@ void AMyGameMode::DoShipFlight(int shipID) {
 
 	}
 
-	FVector currentCOM = currentShipChassis[shipID]->physicsBox->GetCenterOfMass();
-	FVector newCOM = GetShipCenterOfMass(shipID);
-	FVector offsetCOM = currentShipChassis[shipID]->GetActorRotation().UnrotateVector(newCOM - currentCOM);
+	FVector currentCOM = ticket->shipChassis->physicsBox->GetCenterOfMass();
+	FVector newCOM = GetShipCenterOfMass(ticket);
+	FVector offsetCOM = ticket->shipChassis->GetActorRotation().UnrotateVector(newCOM - currentCOM);
 	
 	
 
 	//setup the ship for flight physics
-	currentShipChassis[shipID]->physicsBox->SetCenterOfMass(offsetCOM);
-	currentShipChassis[shipID]->physicsBox->SetSimulatePhysics(true);
-	currentShipChassis[shipID]->physicsBox->SetEnableGravity(false);
+	ticket->shipChassis->physicsBox->SetCenterOfMass(offsetCOM);
+	ticket->shipChassis->physicsBox->SetSimulatePhysics(true);
+	ticket->shipChassis->physicsBox->SetEnableGravity(false);
 
-	currentShipChassis[shipID]->physicsBox->SetCollisionProfileName("BlockAll");
+	ticket->shipChassis->physicsBox->SetCollisionProfileName("BlockAll");
 
-	currentShipChassis[shipID]->physicsBox->SetAngularDamping(baseAngularDamping);
+	ticket->shipChassis->physicsBox->SetAngularDamping(baseAngularDamping);
 
-	currentShipChassis[shipID]->mesh->SetCollisionProfileName("NoCollision");
+	ticket->shipChassis->mesh->SetCollisionProfileName("NoCollision");
 	
 	
 
@@ -260,7 +275,7 @@ void AMyGameMode::DoShipFlight(int shipID) {
 	//this is how to do timers wtih functions that have parameters
 	FTimerDelegate tempDelegate;
 
-	tempDelegate.BindUFunction(this, FName("CompleteGradingAfterFlight"), shipID);
+	tempDelegate.BindUFunction(this, FName("CompleteGradingAfterFlight"), ticket);
 
 	GetWorld()->GetTimerManager().SetTimer(finsihGradingHandle, tempDelegate, maxFlightTime, false);
 
@@ -270,7 +285,7 @@ void AMyGameMode::DoShipFlight(int shipID) {
 
 
 
-void AMyGameMode::CompleteGradingAfterFlight(int shipID) {
+void AMyGameMode::CompleteGradingAfterFlight(ATicketActor* ticket) {
 
 
 	//add new report to order data sheet
@@ -279,7 +294,7 @@ void AMyGameMode::CompleteGradingAfterFlight(int shipID) {
 
 	//calculate average grade
 	float s = 0.0f;
-	for (FReportCard report : orderSheet->reports)
+	for (FReportCard& report : orderSheet->reports)
 	{
 		s += report.overall;
 	}
@@ -287,7 +302,7 @@ void AMyGameMode::CompleteGradingAfterFlight(int shipID) {
 
 	orderSheet->averageGrade = s;
 
-	CleanupShip(shipID);
+	CleanupShip(ticket);
 
 	shiftQuota--;
 	UpdateQuotaBP();
@@ -307,9 +322,9 @@ void AMyGameMode::CompleteGradingAfterFlight(int shipID) {
 
 
 
-void AMyGameMode::CleanupShip(int shipID) {
+void AMyGameMode::CleanupShip(ATicketActor* ticket) {
 
-	TArray<APartBase*> parts = currentShipChassis[shipID]->childParts;
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 	//get the total thrust and total mass first
 	for (APartBase* part : parts)
@@ -319,7 +334,7 @@ void AMyGameMode::CleanupShip(int shipID) {
 	}
 
 	//dont shrink because we want to always be able to access each array element
-	currentShipChassis[shipID] = nullptr;
+	ticket->shipChassis = nullptr;
 	nShipsUnderConstruction--;
 
 }
@@ -354,7 +369,7 @@ void AMyGameMode::EndShiftProcedure() {
 
 
 
-void AMyGameMode::AddPartToBuildOrder(APartBase* part) {
+void AMyGameMode::AddPartToBuild(APartBase* part, ATicketActor* ticket) {
 
 	
 
@@ -365,41 +380,41 @@ void AMyGameMode::AddPartToBuildOrder(APartBase* part) {
 
 		case PartType::PT_STRUCTURAL:
 			
-			orderSheet->currentBuildOrder.structural += part->baseAttribute;
+			ticket->progressOrder.structural += part->baseAttribute;
 
 			break;
 
 
 		case PartType::PT_FIREPOWER:
 			
-			orderSheet->currentBuildOrder.firepower += part->baseAttribute;
+			ticket->progressOrder.firepower += part->baseAttribute;
 
 			break;
 
 
 		case PartType::PT_THRUST:
 			
-			orderSheet->currentBuildOrder.thrust += part->baseAttribute;
+			ticket->progressOrder.thrust += part->baseAttribute;
 
 			break;
 
 
 		case PartType::PT_ENERGY:
 			
-			orderSheet->currentBuildOrder.energy += part->baseAttribute;
+			ticket->progressOrder.energy += part->baseAttribute;
 
 			break;
 
 
 		case PartType::PT_SUPPORT:
 			
-			orderSheet->currentBuildOrder.support += part->baseAttribute;
+			ticket->progressOrder.support += part->baseAttribute;
 
 			break;
 	}
 
 
-	orderSheet->currentBuildOrder.cost += part->cost;
+	ticket->progressOrder.cost += part->cost;
 
 
 
@@ -410,18 +425,21 @@ void AMyGameMode::AddPartToBuildOrder(APartBase* part) {
 
 
 
-FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order, int shipID) {
+FReportCard AMyGameMode::EvaluateBuildWithOrder(ATicketActor* ticket) {
 
 	
 
 
 	//GRADING BELOW
 
-	TArray<APartBase*> parts = currentShipChassis[shipID]->childParts;
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 
-	FOrder currentOrder = orderSheet->orders[orderSheet->orders.Num() - 1];
+	//FOrder currentOrder = orderSheet->orders[orderSheet->orders.Num() - 1];
 	FReportCard newReport;
+
+
+	newReport.companyName = ticket->order.companyName;
 
 	//sum each part attribute into the report card
 	for (APartBase* part : parts)
@@ -458,21 +476,23 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order, int shipID) {
 
 
 	
-	newReport.harmony = GetHarmonyGrade(shipID);
+	newReport.harmony = GetHarmonyGrade(ticket);
 
 
 	//grade is 1 minus the percent difference from requested value
-	newReport.structural = 1.0f - FMath::Abs((currentOrder.structural - newReport.structural) / currentOrder.structural);
-	newReport.firepower = 1.0f - FMath::Abs((currentOrder.firepower - newReport.firepower) / currentOrder.firepower);
-	newReport.thrust = 1.0f - FMath::Abs((currentOrder.thrust - newReport.thrust) / currentOrder.thrust);
-	newReport.energy = 1.0f - FMath::Abs((currentOrder.energy - newReport.energy) / currentOrder.energy);
-	newReport.support = 1.0f - FMath::Abs((currentOrder.support - newReport.support) / currentOrder.support);
+	newReport.structural = FMath::Clamp(1.0f - FMath::Abs((ticket->order.structural - newReport.structural) / ticket->order.structural), 0.0f, 1.0f);
+	newReport.firepower = FMath::Clamp(1.0f - FMath::Abs((ticket->order.firepower - newReport.firepower) / ticket->order.firepower), 0.0f, 1.0f);
+	newReport.thrust = FMath::Clamp(1.0f - FMath::Abs((ticket->order.thrust - newReport.thrust) / ticket->order.thrust), 0.0f, 1.0f);
+	newReport.energy = FMath::Clamp(1.0f - FMath::Abs((ticket->order.energy - newReport.energy) / ticket->order.energy), 0.0f, 1.0f);
+	newReport.support = FMath::Clamp(1.0f - FMath::Abs((ticket->order.support - newReport.support) / ticket->order.support), 0.0f, 1.0f);
 
 
-	newReport.cost = 1.0f - FMath::Abs((currentOrder.cost - newReport.cost) / currentOrder.cost);
+	newReport.cost = 1.0f - FMath::Abs((ticket->order.cost - newReport.cost) / ticket->order.cost);
 
 
-	newReport.customerPatience = FMath::Clamp(currentOrder.customerPatience / buildTime, 0.0f, 1.0f);
+	newReport.customerPatience = FMath::Clamp(ticket->order.customerPatience / ticket->ticketTime, 0.0f, 1.0f);
+
+	
 
 
 	newReport.overall = (newReport.structural + newReport.firepower + newReport.thrust + newReport.energy + newReport.
@@ -481,6 +501,12 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order, int shipID) {
 
 
 	newReport.overall *= newReport.harmony;
+	
+	
+	if (ticket->order.shipType != ticket->shipChassis->shipType) {
+		newReport.overall *= 0.6f;
+	}
+
 
 	return newReport;
 
@@ -490,10 +516,10 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(FOrder order, int shipID) {
 
 
 
-float AMyGameMode::GetHarmonyGrade(int shipID) {
+float AMyGameMode::GetHarmonyGrade(ATicketActor* ticket) {
 
 
-	if (!currentShipChassis[shipID]) {
+	if (!ticket->shipChassis) {
 
 		return 0.0f;
 
@@ -511,7 +537,7 @@ float AMyGameMode::GetHarmonyGrade(int shipID) {
 
 
 
-	TArray<APartBase*> parts = currentShipChassis[shipID]->childParts;
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 	
 
 	//get the total thrust and total mass first
@@ -586,9 +612,9 @@ float AMyGameMode::GetHarmonyGrade(int shipID) {
 
 
 
-FVector AMyGameMode::GetShipCenterOfMass(int shipID) {
+FVector AMyGameMode::GetShipCenterOfMass(ATicketActor* ticket) {
 
-	if (!currentShipChassis[shipID]) {
+	if (!ticket->shipChassis) {
 
 		return FVector::ZeroVector;
 
@@ -598,7 +624,7 @@ FVector AMyGameMode::GetShipCenterOfMass(int shipID) {
 	float totalMass = 0.0f;
 
 
-	TArray<APartBase*> parts = currentShipChassis[shipID]->childParts;
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 
 	//get the total thrust and total mass first
@@ -630,10 +656,10 @@ FVector AMyGameMode::GetShipCenterOfMass(int shipID) {
 
 
 
-void AMyGameMode::GetShipThrust(FVector& centerOfThrust, FVector& thrustVector, int shipID) {
+void AMyGameMode::GetShipThrust(FVector& centerOfThrust, FVector& thrustVector, ATicketActor* ticket) {
 
 
-	if (!currentShipChassis[shipID]) {
+	if (!ticket->shipChassis) {
 
 		return;
 
@@ -644,7 +670,7 @@ void AMyGameMode::GetShipThrust(FVector& centerOfThrust, FVector& thrustVector, 
 
 
 
-	TArray<APartBase*> parts = currentShipChassis[shipID]->childParts;
+	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 
 	//get the total thrust and total mass first
