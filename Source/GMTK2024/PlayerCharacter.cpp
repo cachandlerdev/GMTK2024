@@ -704,7 +704,7 @@ void APlayerCharacter::fireInput(const FInputActionValue& value)
 			AFinishOrderActor* finishOrderButton = Cast<AFinishOrderActor>(hit.GetActor());
 			if (finishOrderButton != nullptr)
 			{
-				finishOrderButton->FinishOrder();
+				finishOrderButton->FinishOrder(currentlyHeldTicketID);
 			}
 		}
 

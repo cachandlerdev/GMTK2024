@@ -7,6 +7,8 @@
 #include "MyGameMode.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "ChasisPartBase.h"
+
 
 
 AEnginePartBase::AEnginePartBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
@@ -44,7 +46,7 @@ void AEnginePartBase::Tick(float DeltaTime) {
 
 	if (launched) {
 
-		gameMode->currentShipChassis->physicsBox->AddForceAtLocation(-GetActorForwardVector() * thrust, GetActorLocation());
+		gameMode->currentShipChassis[shipID]->physicsBox->AddForceAtLocation(-GetActorForwardVector() * thrust, GetActorLocation());
 		
 		//gameMode->currentShipChassis->physicsBox->AddForceAtLocation(-thrustVector * thrust, centerOfThrust);
 

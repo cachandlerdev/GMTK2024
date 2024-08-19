@@ -75,6 +75,9 @@ void APartBase::SolidifyWeld() {
 
 	if (weldTarget) {
 
+		//to keep track of which ship this part is attached to
+		shipID = weldTarget->shipID;
+
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, "Weld Target valid");
 
 		FAttachmentTransformRules attachRules = FAttachmentTransformRules::KeepWorldTransform;

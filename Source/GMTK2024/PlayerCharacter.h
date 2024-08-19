@@ -95,6 +95,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float DashCooldown = 5.0f;
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	USoundBase* FootstepSound;
 	
@@ -103,6 +104,11 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	USoundBase* LandingSound;
+
+
+	UPROPERTY(BLueprintReadWrite)
+		int currentlyHeldTicketID = 0;
+
 
 private:
 	bool sprinting = false;
