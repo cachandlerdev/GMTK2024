@@ -193,6 +193,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 	UInputAction* DashAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
+	UInputAction* InteractAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control Mappings")
 	UInputMappingContext* baseControls;
@@ -307,6 +310,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Dash();
+
+	UFUNCTION(BlueprintCallable)
+	void Interact();
 
 	UFUNCTION()
 	float CalcHillSlideBoost();
