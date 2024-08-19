@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float difficulty = 1.0f;
 
+	UPROPERTY(BlueprintReadWrite)
+		int shiftQuota = 1;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UOrderDataSheet* orderSheet;
@@ -63,6 +66,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 		float buildTime = 0.0f;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float maxFlightTime = 5.0f;
 
 
 
@@ -160,6 +167,10 @@ public:
 	UFUNCTION()
 		void CleanupShip();
 
+
+
+	UFUNCTION()
+		void EndShiftProcedure();
 
 
 	//finds the ship in the world and compares it to the given order
