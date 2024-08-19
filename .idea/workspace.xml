@@ -2,15 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="37f2d12a-7bc6-407e-a8b2-2be732d9c409" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Content/Blueprints/Env/ShipBayLocationMarker.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Blueprints/Env/TransitionStarsActor.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Materials/Cel/Cel2.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Materials/Effect/LightSpeedMat.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Blueprints/Env/TicketActorBP.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Blueprints/Env/TicketBoardActorBP.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/TicketActor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/TicketActor.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/TicketBoardActor.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/GMTK2024/TicketBoardActor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Parts/Chasis/BP_MediumChassis.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Parts/Chasis/BP_MediumChassis.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Levels/GarageMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/GarageMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/ChasisPartBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/ChasisPartBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Models/Parts/TempChassis/Chassis2.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Models/Parts/TempChassis/Chassis2_PhysicsAsset.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Models/Parts/TempChassis/Chassis2_Skeleton.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Models/Parts/TempChassis/Material.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GMTK2024/ChasisPartBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/ChasisPartBase.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GMTK2024/DataTypes.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/DataTypes.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GMTK2024/EnginePartBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/EnginePartBase.cpp" afterDir="false" />
@@ -23,7 +27,7 @@
       <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GMTK2024/SpawnChasisActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/SpawnChasisActor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/SpawnChasisActor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/SpawnChasisActor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/WelderComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/WelderComponent.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

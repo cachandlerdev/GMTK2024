@@ -84,7 +84,7 @@ void UWelderComponent::WeldInput()
 			buildCooldownTimer = 0.0f;
 			inProgressWeld->SolidifyWeld();
 
-			gameMode->AddPartToBuildOrder(inProgressWeld);
+			gameMode->AddPartToBuild(inProgressWeld, inProgressWeld->owningTicket);
 
 			inProgressWeld = nullptr;
 		}

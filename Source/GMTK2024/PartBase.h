@@ -14,6 +14,9 @@
 
 #include "PartBase.generated.h"
 
+class ATicketActor;
+
+
 UCLASS(Blueprintable)
 class GMTK2024_API APartBase : public APawn
 {
@@ -71,6 +74,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 		bool launched = false;
+
+
+	UPROPERTY(BlueprintReadOnly)
+		ATicketActor* owningTicket;
 
 
 protected:
