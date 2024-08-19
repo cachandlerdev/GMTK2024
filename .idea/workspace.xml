@@ -2,32 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="37f2d12a-7bc6-407e-a8b2-2be732d9c409" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Content/BP/BP_ShipSpawnLocation.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/BP/Env/BP_VabLight.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Materials/M_ButtonKiosk.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Materials/Planet/MI_Planet01.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Materials/Planet/M_Planet01.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Models/Env/ButtonKiosk/SM_ButtonKiosk.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Models/Env/Hangar/Light/M_VabLight_E.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Models/Env/Hangar/Light/VABLight.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Models/Env/Hangar/VabPlatform/VABPlatformActual.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Models/Env/MovingPlatforms/Horizontal/PlatformHorizontalFlipped.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Models/Env/MovingPlatforms/Horizontal/SM_PlatformHorizontal.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Models/Env/MovingPlatforms/Vertical/SM_PlatformVertical.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Models/SM_Planet.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Models/SM_Sphere.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Textures/T_ButtonKiosk.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Textures/T_VenusSurface_8k.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Blueprints/Env/ShipBayLocationMarker.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Blueprints/Env/TransitionStarsActor.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Materials/Cel/Cel2.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Materials/Effect/LightSpeedMat.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Env/BP_MovingPlatform.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Env/BP_MovingPlatform.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Env/FinishOrderActorBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Env/FinishOrderActorBP.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Env/PartSelectorKioskBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Env/PartSelectorKioskBP.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Env/SpawnChasisActorBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Env/SpawnChasisActorBP.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Levels/GarageMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/GarageMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Materials/Cel/MI_CelShader.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Materials/Cel/MI_CelShader.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Materials/Cel/M_CelShader.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Materials/Cel/M_CelShader.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Models/Env/Hangar/Vab/SM_Vab.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Models/Env/Hangar/Vab/SM_Vab.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/ChasisPartBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/ChasisPartBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/ChasisPartBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/ChasisPartBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/DataTypes.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/DataTypes.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/EnginePartBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/EnginePartBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/FinishOrderActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/FinishOrderActor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/FinishOrderActor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/FinishOrderActor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/MyGameMode.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PartBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PartBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PartBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PartBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/SpawnChasisActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/SpawnChasisActor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/SpawnChasisActor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/SpawnChasisActor.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
