@@ -73,10 +73,12 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		bool blueprintOn = false;
 
-	UPROPERTY(EditAnywhere)
+	// The minimum amount of time between welds
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float buildCooldown = 2.0f;
 
-	UPROPERTY(BlueprintReadWrite)
+	// The current progress on the weld cooldown
+	UPROPERTY(BlueprintReadOnly)
 		float buildCooldownTimer = 0.0f;
 
 protected:
