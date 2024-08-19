@@ -112,9 +112,9 @@ void APlayerCharacter::BeginPlay()
 
 
 	// Setup footsteps loop
-	FTimerHandle footstepsHandle;
-	GetWorld()->GetTimerManager().SetTimer(footstepsHandle, this, &APlayerCharacter::CheckFootsteps,
-	                                       FootstepsUpdateTime, true);
+	//FTimerHandle footstepsHandle;
+	//GetWorld()->GetTimerManager().SetTimer(footstepsHandle, this, &APlayerCharacter::CheckFootsteps,
+	//                                       FootstepsUpdateTime, true);
 
 	//initialize to nullptr
 	currentlyHeldTicket = nullptr;
