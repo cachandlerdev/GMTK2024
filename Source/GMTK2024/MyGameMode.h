@@ -18,6 +18,9 @@
 
 class AChasisPartBase;
 
+class ATicketActor;
+class ATicketBoardActor;
+
 class APartBase;
 class USoundCue;
 class USoundBase;
@@ -33,8 +36,7 @@ class GMTK2024_API AMyGameMode : public AGameModeBase
 public:
 	AMyGameMode(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> ChasisActorType;
+	
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -64,8 +66,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	int nShipsUnderConstruction = 0;
 
-	UPROPERTY(BlueprintReadOnly)
-	TArray<AChasisPartBase*> currentShipChassis;
+	
 
 
 	UPROPERTY(BlueprintReadWrite)
@@ -109,6 +110,20 @@ public:
 	UPROPERTY()
 		bool finishingOrder = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		TArray<FString> companyNames;
+
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<ATicketActor> ticketSpawnClass;
+
+	UPROPERTY(BlueprintReadWrite)
+		TArray<ATicketActor*> tickets;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		ATicketBoardActor* ticketBoard;
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -149,7 +164,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-		void AddPartToBuildOrder(APartBase* part);
+		void AddPartToBuild(APartBase* part, ATicketActor* ticket);
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void PartAddedBP();
@@ -158,22 +173,22 @@ public:
 	
 
 	UFUNCTION(BlueprintCallable)
-		void DoShipFlight(int shipID);
+		void DoShipFlight(ATicketActor* ticket);
 
 	UFUNCTION()
-	void DoNewShipChassisProcedure(int shipID);
+	void DoNewShipChassisProcedure(TSubclassOf<AChasisPartBase> chassisType, ATicketActor* ticket, AActor* bayTransformActor);
 
 	UFUNCTION()
-	void DoFinishOrderProcedure(int shipID, int ticketID);
+	void DoFinishOrderProcedure(ATicketActor* ticket);
 
 	UFUNCTION()
-		void CompleteGradingAfterFlight(int shipID);
+		void CompleteGradingAfterFlight(ATicketActor* ticket);
 
 
 
 
 	UFUNCTION()
-		void CleanupShip(int shipID);
+		void CleanupShip(ATicketActor* ticket);
 
 
 
@@ -183,19 +198,19 @@ public:
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		FReportCard EvaluateBuildWithOrder(FOrder order, int shipID);
+		FReportCard EvaluateBuildWithOrder(ATicketActor* ticket);
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		float GetHarmonyGrade(int shipID);
+		float GetHarmonyGrade(ATicketActor* ticket);
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		FVector GetShipCenterOfMass(int shipID);
+		FVector GetShipCenterOfMass(ATicketActor* ticket);
 
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
-		void GetShipThrust(FVector& centerOfThrust, FVector& thrustVector, int shipID);
+		void GetShipThrust(FVector& centerOfThrust, FVector& thrustVector, ATicketActor* ticket);
 
 
 

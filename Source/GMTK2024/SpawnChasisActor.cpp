@@ -31,6 +31,7 @@ void ASpawnChasisActor::Tick(float DeltaTime)
 
 void ASpawnChasisActor::SpawnChassis()
 {
+	/*
 	AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameMode->currentShipChassis[shipBayShipID])
 	{
@@ -42,4 +43,6 @@ void ASpawnChasisActor::SpawnChassis()
 
 	gameMode->currentShipChassis[shipBayShipID] = newChassis;
 	gameMode->DoNewShipChassisProcedure(shipBayShipID);
+	*/
+
 }

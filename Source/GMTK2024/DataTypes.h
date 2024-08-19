@@ -4,51 +4,25 @@
 
 #include "CoreMinimal.h"
 
+
+
 #include "DataTypes.generated.h"
 
 #define NUM_PART_TYPES 5
 
 
-USTRUCT(BlueprintType)
-struct GMTK2024_API FOrder
+UENUM(BlueprintType)
+enum class ShipType : uint8
 {
-	GENERATED_BODY()
-
-public:
-
-	UPROPERTY(BlueprintReadWrite)
-		float cost = 200.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-	float structural = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-	float firepower = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-	float thrust = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-	float energy = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-	float support = 100.0f;
-
-
-	UPROPERTY(BlueprintReadWrite)
-	float shield = 100.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-	float powerSurplus = 10.0f;
-
-
-	UPROPERTY(BlueprintReadWrite)
-		float accuracy = 0.0f;
-
-	UPROPERTY(BlueprintReadWrite)
-		float customerPatience = 30.0f;
+	ST_SMALL = 0 UMETA(DisplayName = "SMALL SHIP"),
+	ST_MEDIUM = 1 UMETA(DisplayName = "MEDIUM SHIP"),
+	ST_LARGE = 2 UMETA(DisplayName = "LARGE SHIP"),
+	ST_XL = 3 UMETA(DisplayName = "XL SHIP")
 
 };
+
+
+
 
 
 USTRUCT(BlueprintType)
@@ -62,6 +36,10 @@ public:
 
 
 	UPROPERTY(BlueprintReadWrite)
+		FString companyName = "";
+
+
+	UPROPERTY(BlueprintReadWrite)
 		float cost = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -71,20 +49,20 @@ public:
 	float firepower = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-	float thrust = 100.0f;
+	float thrust = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-	float energy = 100.0f;
+	float energy = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-	float support = 100.0f;
+	float support = 0.0f;
 
 
 	UPROPERTY(BlueprintReadWrite)
-	float shield = 100.0f;
+	float shield = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite)
-	float powerSurplus = 10.0f;
+	float powerSurplus = 0.0f;
 
 
 	UPROPERTY(BlueprintReadWrite)
@@ -95,27 +73,30 @@ public:
 
 
 	UPROPERTY(BlueprintReadWrite)
-		float customerPatience = 30.0f;
+		float customerPatience = 0.0f;
 
 
 	
 };
 
-
+//ordersheet no longer holds orders lmao
 UCLASS(Blueprintable)
 class GMTK2024_API UOrderDataSheet : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadWrite)
-	TArray<FOrder> orders;
+	//UPROPERTY(BlueprintReadWrite)
+	//	TArray<FOrder> orders;
 
-	UPROPERTY(BlueprintReadWrite)
-		TArray<FOrder> currentOrders;
+	//UPROPERTY(BlueprintReadWrite)
+	//	TArray<FOrder> currentOrders;
 
-	UPROPERTY(BlueprintReadWrite)
-		FOrder currentBuildOrder;
+	//UPROPERTY(BlueprintReadWrite)
+	//	TArray<ATicketActor*> tickets;
+
+	//UPROPERTY(BlueprintReadWrite)
+	//	FOrder currentBuildOrder;
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FReportCard> reports;
@@ -139,6 +120,11 @@ enum class PartType : uint8
 	PT_SUPPORT = 4		UMETA(DisplayName = "SUPPORT"),
 	PT_CHASSIS = 5		UMETA(DisplayName = "CHASSIS")
 };
+
+
+
+
+
 
 /*
 PartType operator++(PartType& left) {

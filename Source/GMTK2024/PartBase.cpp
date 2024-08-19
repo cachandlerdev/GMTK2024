@@ -9,6 +9,8 @@
 
 #include "ChasisPartBase.h"
 
+#include "TicketActor.h"
+
 // Sets default values
 APartBase::APartBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -81,10 +83,8 @@ void APartBase::SolidifyWeld() {
 
 		AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
-		//to keep track of which ship this part is attached to
-		shipID = weldTarget->shipID;
-
-		gameMode->currentShipChassis[shipID]->childParts.Add(this);
+		owningTicket = weldTarget->owningTicket;
+		weldTarget->owningTicket->shipChassis->childParts.Add(this);
 		
 
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, "Weld Target valid");

@@ -26,6 +26,10 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 		TArray<APartBase*> childParts;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		ShipType shipType;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
