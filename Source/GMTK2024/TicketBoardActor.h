@@ -53,6 +53,10 @@ public:
 		ATicketActor* UnplugTicket();
 
 	UFUNCTION(BlueprintCallable)
+		void RemoveTicket();
+
+
+	UFUNCTION(BlueprintCallable)
 		ATicketActor* GetPluggedTicket();
 
 };

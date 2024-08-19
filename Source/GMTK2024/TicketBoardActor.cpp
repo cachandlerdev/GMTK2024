@@ -72,6 +72,14 @@ ATicketActor* ATicketBoardActor::UnplugTicket() {
 
 }
 
+void ATicketBoardActor::RemoveTicket() {
+
+	pluggedTicket = nullptr;
+
+
+}
+
+
 
 ATicketActor* ATicketBoardActor::GetPluggedTicket() {
 

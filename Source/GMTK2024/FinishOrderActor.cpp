@@ -46,7 +46,9 @@ void AFinishOrderActor::FinishOrder() {
 		}
 
 
-		gameMode->DoFinishOrderProcedure(shipBayTicketBoard->UnplugTicket());
+		gameMode->DoFinishOrderProcedure(shipBayTicketBoard->GetPluggedTicket());
+		shipBayTicketBoard->RemoveTicket();
+
 	}
 
 	
