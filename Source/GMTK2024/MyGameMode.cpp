@@ -302,6 +302,8 @@ void AMyGameMode::CleanupShip() {
 
 
 void AMyGameMode::EndShiftProcedure() {
+	OnShiftEnd();
+	//orderSheet->reports.Empty();
 
 	if (shiftStatTimerHandle.IsValid()) {
 

@@ -129,8 +129,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnShipChasisBP();
 
-
-
+	// A blueprint event that gets called when the player's shift ends.
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void OnShiftEnd();
 
 	UFUNCTION(BlueprintCallable)
 		FOrder GetZeroOrder();
