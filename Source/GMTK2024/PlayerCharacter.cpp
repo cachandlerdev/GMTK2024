@@ -577,12 +577,10 @@ void APlayerCharacter::PerformDash()
 		float newSpeed = GetVelocity().Length() + (DashStrength * smallifier);
 		if (newSpeed > sprintSpeed)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Clamp boost");
 			launchVelocity *= DashStrength * smallifier;
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Don't clamp boost");
 			launchVelocity *= DashStrength;
 		}
 	}
@@ -669,8 +667,8 @@ void APlayerCharacter::scrollInput(const FInputActionValue& value)
 
 	GetWorld()->LineTraceMultiByChannel(hits, GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
 	                                    ECC_Visibility);
-	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f), 10.0f,
-	                          FColor::Green, false, 1.0f);
+	//DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f), 10.0f,
+	//                          FColor::Green, false, 1.0f);
 
 	bool kioskHit = false;
 
@@ -704,9 +702,9 @@ void APlayerCharacter::fireInput(const FInputActionValue& value)
 		TArray<FHitResult> hits;
 		GetWorld()->LineTraceMultiByChannel(hits, GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
 		                                    ECC_Visibility);
-		DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
-		                          10.0f,
-		                          FColor::Green, false, 1.0f);
+		//DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
+		//                          10.0f,
+		//                          FColor::Green, false, 1.0f);
 
 		for (FHitResult hit : hits)
 		{

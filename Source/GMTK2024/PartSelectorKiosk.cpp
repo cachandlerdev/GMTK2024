@@ -91,7 +91,8 @@ void APartSelectorKiosk::Tick(float DeltaTime)
 
 
 void APartSelectorKiosk::RotateDisplayItem(float value) {
-
+	
+	GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Orange, "Change display item");
 	
 
 	currentItem += (int)value;
