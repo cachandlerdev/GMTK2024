@@ -840,10 +840,13 @@ void APlayerCharacter::Interact()
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Unplug ticket");
 				currentlyHeldTicket = ticketBoard->UnplugTicket();
+				currentlyHeldTicket->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "TicketSocket");
 			}
 			else if (currentlyHeldTicket && !ticketBoard->GetPluggedTicket())
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Plug in ticket");
+				currentlyHeldTicket->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+				
 				ticketBoard->PlugTicketIn(currentlyHeldTicket);
 				currentlyHeldTicket = nullptr;
 			}
