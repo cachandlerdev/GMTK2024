@@ -314,8 +314,8 @@ void AMyGameMode::CompleteGradingAfterFlight(ATicketActor* ticket) {
 	}
 
 
-	ATicketActor* temp;
-	tickets.Remove(temp);
+	ATicketActor* temp = ticket;
+	tickets.Remove(ticket);
 
 	temp->Destroy();
 
