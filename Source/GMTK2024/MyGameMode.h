@@ -120,8 +120,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		TArray<ATicketActor*> tickets;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		ATicketBoardActor* ticketBoard;
+	
 
 
 protected:
