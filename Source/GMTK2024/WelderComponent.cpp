@@ -123,7 +123,7 @@ void UWelderComponent::BlueprintInput()
 	TArray<FHitResult> hits;
 
 	GetWorld()->LineTraceMultiByChannel(hits, eyeLoc, eyeLoc + (eyeRot.Vector() * 1000.0f), ECC_Visibility);
-
+	
 	bool anyPartHit = false;
 
 	for (FHitResult& hit : hits)
