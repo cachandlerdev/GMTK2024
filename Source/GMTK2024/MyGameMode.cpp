@@ -135,6 +135,7 @@ void AMyGameMode::AddOrder()
 			if (board->unpluggable && !board->GetPluggedTicket())
 			{
 				board->PlugTicketIn(newTicket);
+				break;
 			}
 		}
 

@@ -813,19 +813,19 @@ void APlayerCharacter::Dash()
 
 void APlayerCharacter::Interact()
 {
-
 	// Switching display items
 	
 	FVector eyeLoc;
 	FRotator eyeDir;
 	GetActorEyesViewPoint(eyeLoc, eyeDir);
+	// Eye is too high
+	eyeLoc -= FVector(0.0f, 0.0f, 4.0f);
 	TArray<FHitResult> hits;
-	GetWorld()->LineTraceMultiByChannel(hits, GetActorLocation(), GetActorLocation() + (eyeDir.Vector() * 10000.0f),
+	GetWorld()->LineTraceMultiByChannel(hits, eyeLoc, eyeLoc + (eyeDir.Vector() * 10000.0f),
 	                                    ECC_Visibility);
 	bool kioskHit = false;
 	for (FHitResult hit : hits)
 	{
-		
 		APartSelectorKiosk* kiosk = Cast<APartSelectorKiosk>(hit.GetActor());
 		if (kiosk)
 		{
@@ -838,13 +838,15 @@ void APlayerCharacter::Interact()
 		{
 			if (!currentlyHeldTicket && ticketBoard->unpluggable)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Unplug ticket");
 				currentlyHeldTicket = ticketBoard->UnplugTicket();
+				if (currentlyHeldTicket == nullptr)
+				{
+					continue;
+				}
 				currentlyHeldTicket->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "TicketSocket");
 			}
 			else if (currentlyHeldTicket && !ticketBoard->GetPluggedTicket())
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Plug in ticket");
 				currentlyHeldTicket->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 				
 				ticketBoard->PlugTicketIn(currentlyHeldTicket);
