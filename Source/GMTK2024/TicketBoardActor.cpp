@@ -45,6 +45,7 @@ void ATicketBoardActor::PlugTicketIn(ATicketActor* ticket) {
 	PlugTicketInBP();
 
 	if (shipBayActor) {
+		ticket->TicketBoard = this;
 
 		AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 

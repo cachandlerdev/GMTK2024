@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 
 #include "DataTypes.h"
+#include "TicketBoardActor.h"
 
 #include "TicketActor.generated.h"
 
@@ -69,10 +70,6 @@ public:
 	// Sets default values for this actor's properties
 	ATicketActor();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int ticketID = 0;
-
-
 	UPROPERTY()
 		float ticketTime = 0.0f;
 
@@ -85,6 +82,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 		AChasisPartBase* shipChassis;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ATicketBoardActor* TicketBoard;
 
 
 protected:

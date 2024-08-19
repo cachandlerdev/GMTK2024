@@ -102,7 +102,6 @@ void AMyGameMode::AddOrder(){
 
 		ATicketActor* newTicket = Cast<ATicketActor>(GetWorld()->SpawnActor<ATicketActor>(ticketSpawnClass));
 
-		newTicket->ticketID = tickets.Num();
 		tickets.Add(newTicket);
 
 		//randomly generate a new order
@@ -116,7 +115,11 @@ void AMyGameMode::AddOrder(){
 
 		newOrder.customerPatience = r.FRandRange(10.0f, 60.0f / difficulty);
 
-		newOrder.companyName = companyNames[((int)r.RandRange(0.0f, ((float)companyNames.Num()) - 0.01f))];
+		int companyNameIndex = r.RandRange(0.0f, ((float)companyNames.Num()) - 0.01f);
+		if (companyNameIndex >= 0 && companyNames.Num() > 0)
+		{
+			newOrder.companyName = companyNames[companyNameIndex];
+		}
 
 		int orderShipType = (int)(r.FRandRange(0.0f, 3.99f));
 		//newOrder.shipType = static_cast<ShipType>(orderShipType);
@@ -430,7 +433,7 @@ void AMyGameMode::AddPartToBuild(APartBase* part, ATicketActor* ticket) {
 
 
 
-	PartAddedBP();
+	PartAddedBP(ticket);
 	
 
 }

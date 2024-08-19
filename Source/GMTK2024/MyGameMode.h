@@ -166,7 +166,7 @@ public:
 		void AddPartToBuild(APartBase* part, ATicketActor* ticket);
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void PartAddedBP();
+		void PartAddedBP(ATicketActor* Ticket);
 
 
 	
