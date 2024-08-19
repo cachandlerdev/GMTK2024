@@ -20,3 +20,19 @@ void AChasisPartBase::BeginPlay() {
 
 
 }
+
+
+void AChasisPartBase::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+
+	if (launched) {
+
+		physicsBox->SetAngularDamping(physicsBox->GetAngularDamping() * (1.0f - (0.1f * DeltaTime)));
+
+	}
+
+
+
+
+}

@@ -57,6 +57,14 @@ void AMyGameMode::ShiftStartCallback()
 	                                      GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation(), 1.0f,
 	                                      1.0f, 0.0f);
 
+
+
+	FRandomStream r;
+	r.GenerateNewSeed();
+
+	shiftQuota = (int)r.FRandRange(1.0f, 2.0f);
+
+
 	if (shiftStatTimerHandle.IsValid())
 	{
 		shiftStatTimerHandle.Invalidate();
@@ -179,13 +187,15 @@ void AMyGameMode::DoShipFlight() {
 	currentShipChassis->physicsBox->SetSimulatePhysics(true);
 	currentShipChassis->physicsBox->SetEnableGravity(false);
 
-	currentShipChassis->physicsBox->SetAngularDamping(10.0f);
+	currentShipChassis->physicsBox->SetCollisionProfileName("BlockAll");
+
+	currentShipChassis->physicsBox->SetAngularDamping(30.0f);
 
 	currentShipChassis->mesh->SetCollisionProfileName("NoCollision");
 	
 
 
-	GetWorld()->GetTimerManager().SetTimer(finsihGradingHandle, this, &AMyGameMode::CompleteGradingAfterFlight, 10.0f);
+	GetWorld()->GetTimerManager().SetTimer(finsihGradingHandle, this, &AMyGameMode::CompleteGradingAfterFlight, maxFlightTime);
 
 }
 
@@ -209,6 +219,14 @@ void AMyGameMode::CompleteGradingAfterFlight() {
 	orderSheet->averageGrade = s;
 
 	CleanupShip();
+
+	shiftQuota--;
+
+	if (shiftQuota < 1) {
+
+		EndShiftProcedure();
+
+	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "ORDER GRADE: " + FString::SanitizeFloat(s));
 
@@ -237,6 +255,19 @@ void AMyGameMode::CleanupShip() {
 }
 
 
+
+
+void AMyGameMode::EndShiftProcedure() {
+
+	if (shiftStatTimerHandle.IsValid()) {
+
+		shiftStatTimerHandle.Invalidate();
+
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(shiftStatTimerHandle, this, &AMyGameMode::ShiftStartCallback, 3.0f);
+
+}
 
 
 

@@ -33,6 +33,8 @@ void AEnginePartBase::BeginPlay() {
 
 	thrust = baseAttribute;
 
+	
+
 }
 
 
