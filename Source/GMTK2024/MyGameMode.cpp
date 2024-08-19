@@ -14,6 +14,9 @@
 #include "SupportPartBase.h"
 
 
+
+
+
 AMyGameMode::AMyGameMode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -45,7 +48,16 @@ void AMyGameMode::Tick(float DeltaTime)
 
 	//float temp = GetHarmonyGrade();
 
+	DrawDebugSphere(GetWorld(), FVector::ZeroVector, 50.0f, 32, FColor::Blue);
 	
+	
+	DrawDebugSphere(GetWorld(), GetShipCenterOfMass(), 50.0f, 32, FColor::Yellow);
+
+	if (currentShipChassis) {
+
+		DrawDebugSphere(GetWorld(), GetShipCenterOfMass() - currentShipChassis->GetActorLocation(), 50.0f, 32, FColor::Orange);
+
+	}
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Purple, FString::SanitizeFloat(temp));
 }
@@ -56,6 +68,15 @@ void AMyGameMode::ShiftStartCallback()
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShiftStartAlarm,
 	                                      GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation(), 1.0f,
 	                                      1.0f, 0.0f);
+
+
+
+	FRandomStream r;
+	r.GenerateNewSeed();
+
+	shiftQuota = (int)r.FRandRange(1.0f, 2.0f);
+	UpdateQuotaBP();
+
 
 	if (shiftStatTimerHandle.IsValid())
 	{
@@ -120,6 +141,7 @@ void AMyGameMode::SpawnShipChasis()
 void AMyGameMode::DoNewShipChassisProcedure()
 {
 	currentShipChassis->SetActorLocation(shipConstructionLocation);
+	currentShipChassis->SetActorRotation(FVector(0.0f, -1.0f, 0.0f).Rotation());
 	shipUnderConstruction = true;
 	//MoveShipToLocationOverTime(newShipStartLocation, shipConstructionLocation, transitionTime, 0);
 }
@@ -134,13 +156,13 @@ void AMyGameMode::MoveShipToLocationOverTime(FVector startLocation, FVector endL
 
 void AMyGameMode::DoFinishOrderProcedure() {
 
-	if (!currentShipChassis) {
+	if (!currentShipChassis || finishingOrder) {
 
 		return;
 
 	}
 
-	
+	finishingOrder = true;
 
 	
 	reportInProgress = EvaluateBuildWithOrder(orderSheet->currentOrder);
@@ -162,30 +184,59 @@ void AMyGameMode::DoShipFlight() {
 	currentShipChassis->SetActorLocation(shipLaunchLocation);
 
 
+	//get the ship thrust vector to pass to the engines
+	FVector shipThrustVector;
+	FVector shipCenterOfThrust;
+
+	GetShipThrust(shipCenterOfThrust, shipThrustVector);
+
+
+
+
 	//activate all of the parts
 	TArray<AActor*> partsA;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
 
+
+
 	for (AActor* partA : partsA)
 	{
 		APartBase* part = Cast<APartBase>(partA);
+		PartType type = part->type;
+
+		if (type == PartType::PT_THRUST) {
+
+			Cast<AEnginePartBase>(part)->thrustVector = shipThrustVector;
+			Cast<AEnginePartBase>(part)->centerOfThrust = shipCenterOfThrust;
+
+		}
 
 		part->ActivatePart();
 		part->launched = true;
+
+
 	}
 
+	FVector currentCOM = currentShipChassis->physicsBox->GetCenterOfMass();
+	FVector newCOM = GetShipCenterOfMass();
+	FVector offsetCOM = currentShipChassis->GetActorRotation().UnrotateVector(newCOM - currentCOM);
+	
+	
 
-	currentShipChassis->physicsBox->SetCenterOfMass(GetShipCenterOfMass() - currentShipChassis->GetActorLocation());
+
+	currentShipChassis->physicsBox->SetCenterOfMass(offsetCOM);
 	currentShipChassis->physicsBox->SetSimulatePhysics(true);
 	currentShipChassis->physicsBox->SetEnableGravity(false);
 
-	currentShipChassis->physicsBox->SetAngularDamping(10.0f);
+	currentShipChassis->physicsBox->SetCollisionProfileName("BlockAll");
+
+	currentShipChassis->physicsBox->SetAngularDamping(baseAngularDamping);
 
 	currentShipChassis->mesh->SetCollisionProfileName("NoCollision");
 	
 
 
-	GetWorld()->GetTimerManager().SetTimer(finsihGradingHandle, this, &AMyGameMode::CompleteGradingAfterFlight, 10.0f);
+	GetWorld()->GetTimerManager().SetTimer(finsihGradingHandle, this, &AMyGameMode::CompleteGradingAfterFlight, maxFlightTime);
 
 }
 
@@ -209,6 +260,17 @@ void AMyGameMode::CompleteGradingAfterFlight() {
 	orderSheet->averageGrade = s;
 
 	CleanupShip();
+
+	shiftQuota--;
+	UpdateQuotaBP();
+
+	if (shiftQuota < 1) {
+
+		EndShiftProcedure();
+
+	}
+
+	finishingOrder = false;
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "ORDER GRADE: " + FString::SanitizeFloat(s));
 
@@ -237,6 +299,19 @@ void AMyGameMode::CleanupShip() {
 }
 
 
+
+
+void AMyGameMode::EndShiftProcedure() {
+
+	if (shiftStatTimerHandle.IsValid()) {
+
+		shiftStatTimerHandle.Invalidate();
+
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(shiftStatTimerHandle, this, &AMyGameMode::ShiftStartCallback, 3.0f);
+
+}
 
 
 
@@ -539,7 +614,75 @@ FVector AMyGameMode::GetShipCenterOfMass() {
 
 
 
+void AMyGameMode::GetShipThrust(FVector& centerOfThrust, FVector& thrustVector) {
 
+
+	if (!currentShipChassis) {
+
+		return;
+
+	}
+
+	
+	float totalThrustMagnitude = 0.0f;
+
+
+
+	TArray<AActor*> partsA;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APartBase::StaticClass(), partsA);
+
+
+	//get the total thrust and total mass first
+	for (AActor* partA : partsA)
+	{
+		APartBase* part = Cast<APartBase>(partA);
+		PartType type = part->type;
+
+		if (type == PartType::PT_THRUST) {
+
+			totalThrustMagnitude += part->baseAttribute;
+
+
+		}
+
+		
+
+
+
+	}
+
+
+
+
+	//get the center of mass, center of thrust and thrust vector
+	for (AActor* partA : partsA)
+	{
+		APartBase* part = Cast<APartBase>(partA);
+		PartType type = part->type;
+
+		if (type == PartType::PT_THRUST) {
+
+			AEnginePartBase* engine = Cast<AEnginePartBase>(part);
+
+			thrustVector += part->GetActorForwardVector() * part->baseAttribute;
+
+			
+
+
+			centerOfThrust += part->GetActorLocation() * (part->baseAttribute / totalThrustMagnitude);
+
+
+		}
+
+
+
+
+
+	}
+
+	thrustVector = thrustVector.GetSafeNormal();
+
+}
 
 
 

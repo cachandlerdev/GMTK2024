@@ -18,9 +18,16 @@ public:
 	// Sets default values for this actor's properties
 	AChasisPartBase(const FObjectInitializer& ObjectInitializer);
 
+
+	UPROPERTY(EditAnywhere)
+		float angularDampingDecay = 0.2f;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+public:
+	virtual void Tick(float deltaTime) override;
 
 	
 };

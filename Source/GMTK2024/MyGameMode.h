@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float difficulty = 1.0f;
 
+	UPROPERTY(BlueprintReadWrite)
+		int shiftQuota = 1;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UOrderDataSheet* orderSheet;
@@ -65,6 +68,13 @@ public:
 		float buildTime = 0.0f;
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float maxFlightTime = 5.0f;
+
+
+	UPROPERTY(EditAnywhere)
+		float baseAngularDamping = 50.0f;
+
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ship Pathing")
@@ -90,6 +100,10 @@ public:
 
 	UPROPERTY()
 		FTimerHandle finsihGradingHandle;
+
+
+	UPROPERTY()
+		bool finishingOrder = false;
 
 protected:
 	// Called when the game starts or when spawned
@@ -162,6 +176,10 @@ public:
 
 
 
+	UFUNCTION()
+		void EndShiftProcedure();
+
+
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
 		FReportCard EvaluateBuildWithOrder(FOrder order);
@@ -173,5 +191,14 @@ public:
 	//finds the ship in the world and compares it to the given order
 	UFUNCTION(BlueprintCallable)
 		FVector GetShipCenterOfMass();
+
+	//finds the ship in the world and compares it to the given order
+	UFUNCTION(BlueprintCallable)
+		void GetShipThrust(FVector& centerOfThrust, FVector& thrustVector);
+
+
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void UpdateQuotaBP();
 	
 };
