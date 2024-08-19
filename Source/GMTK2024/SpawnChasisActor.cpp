@@ -32,10 +32,14 @@ void ASpawnChasisActor::Tick(float DeltaTime)
 void ASpawnChasisActor::SpawnChassis()
 {
 	AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (gameMode->nShipsUnderConstruction < 4)
+	if (gameMode->currentShipChassis[shipBayShipID])
 	{
 		return;
 	}
-	gameMode->currentShipChassis.Add(GetWorld()->SpawnActor<AChasisPartBase>(chassisClass, shipBayLocationActor->GetActorTransform()));
+
+	AChasisPartBase* newChassis = GetWorld()->SpawnActor<AChasisPartBase>(chassisClass, shipBayLocationActor->GetActorTransform());
+
+
+	gameMode->currentShipChassis[shipBayShipID] = newChassis;
 	gameMode->DoNewShipChassisProcedure(shipBayShipID);
 }
