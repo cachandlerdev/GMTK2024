@@ -260,6 +260,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnMantle();
 
+	UFUNCTION(BlueprintCallable)
+	float GetDashCooldownTimeRemaining();
+
 	// Inputs
 
 	UFUNCTION()
