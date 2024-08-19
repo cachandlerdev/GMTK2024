@@ -46,6 +46,9 @@ void AEnginePartBase::Tick(float DeltaTime) {
 
 		gameMode->currentShipChassis->physicsBox->AddForceAtLocation(-GetActorForwardVector() * thrust, GetActorLocation());
 		
+		//gameMode->currentShipChassis->physicsBox->AddForceAtLocation(-thrustVector * thrust, centerOfThrust);
+
+
 		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, "Engine Firing");
 
 	}

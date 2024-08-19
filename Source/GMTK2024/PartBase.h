@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/BoxComponent.h"
@@ -15,7 +15,7 @@
 #include "PartBase.generated.h"
 
 UCLASS(Blueprintable)
-class GMTK2024_API APartBase : public AActor
+class GMTK2024_API APartBase : public APawn
 {
 	GENERATED_BODY()
 	
@@ -62,6 +62,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		PartType type;
 
+
+	
 
 
 	UPROPERTY(BlueprintReadWrite)

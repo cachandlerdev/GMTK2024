@@ -27,6 +27,13 @@ public:
 	UPROPERTY()
 		AMyGameMode* gameMode;
 
+
+	UPROPERTY()
+		FVector centerOfThrust;
+
+	UPROPERTY()
+		FVector thrustVector;
+
 	virtual void ActivatePart() override;
 
 
