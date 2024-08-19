@@ -59,13 +59,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Controls")
 	float lookSensitivity = 0.5f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float sprintSpeed = 800.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float jogSpeed = 400.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float slideJumpBoost = 0.2f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
@@ -94,6 +94,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float DashCooldown = 5.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundBase* FootstepSound;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundBase* WallrunSound;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundBase* LandingSound;
 
 private:
 	bool sprinting = false;
@@ -138,6 +147,9 @@ private:
 
 	// Keeps track of whether the player can mantle
 	bool bCanMantle = true;
+
+	// How often we run the footsteps check
+	float FootstepsUpdateTime = 0.3f;
 
 public:
 	//INPUT STUFF
@@ -342,4 +354,8 @@ private:
 
 	// Performs a mantle.
 	void Mantle();
+
+	// Used to determine whether the player has gone far enough to play a footstep.
+	void CheckFootsteps();
+	
 };
