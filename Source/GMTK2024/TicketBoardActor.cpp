@@ -14,59 +14,56 @@
 // Sets default values
 ATicketBoardActor::ATicketBoardActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
 void ATicketBoardActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	pluggedTicket = nullptr;
 
+	pluggedTicket = nullptr;
 }
 
 // Called every frame
 void ATicketBoardActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 
-
-void ATicketBoardActor::PlugTicketIn(ATicketActor* ticket) {
-
-	ticket->AttachToComponent(GetSkeletalMeshComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale, "TicketSocket");
+void ATicketBoardActor::PlugTicketIn(ATicketActor* ticket)
+{
+	ticket->AttachToComponent(GetSkeletalMeshComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale,
+	                          "TicketSocket");
 
 	pluggedTicket = ticket;
 
 	PlugTicketInBP();
 
-	if (shipBayActor) {
+	if (shipBayActor)
+	{
 		ticket->TicketBoard = this;
 
 		AMyGameMode* gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 		gameMode->DoNewShipChassisProcedure(chassisClass, ticket, shipBayActor);
-
-
-
 	}
-
 }
 
 
-ATicketActor* ATicketBoardActor::UnplugTicket() {
-
-	if (!unpluggable) {
-
+ATicketActor* ATicketBoardActor::UnplugTicket()
+{
+	if (!unpluggable)
+	{
 		return nullptr;
-
 	}
 
+	if (pluggedTicket == nullptr)
+	{
+		return nullptr;
+	}
 	pluggedTicket->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
 
@@ -74,21 +71,15 @@ ATicketActor* ATicketBoardActor::UnplugTicket() {
 	pluggedTicket = nullptr;
 
 	return temp;
-
-
 }
 
-void ATicketBoardActor::RemoveTicket() {
-
+void ATicketBoardActor::RemoveTicket()
+{
 	pluggedTicket = nullptr;
-
-
 }
 
 
-
-ATicketActor* ATicketBoardActor::GetPluggedTicket() {
-
+ATicketActor* ATicketBoardActor::GetPluggedTicket()
+{
 	return pluggedTicket;
-
 }
