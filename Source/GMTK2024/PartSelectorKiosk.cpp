@@ -5,6 +5,10 @@
 
 #include "Kismet/GameplayStatics.h"
 
+#include "PlayerCharacter.h"
+
+#include "WelderComponent.h"
+
 // Sets default values
 APartSelectorKiosk::APartSelectorKiosk()
 {
@@ -25,6 +29,16 @@ APartSelectorKiosk::APartSelectorKiosk()
 void APartSelectorKiosk::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Prevent crashing in simulate mode (rip still happens anyway)
+	APawn* playerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(playerPawn);
+	if (PlayerCharacter == nullptr)
+	{
+		return;
+	}
+	
+	playerWelder = PlayerCharacter->Welder;
 
 
 	kioskMesh->SetWorldLocation(GetActorLocation() - FVector(0.0f, 0.0f, 40.0f));
@@ -95,6 +109,14 @@ void APartSelectorKiosk::RotateDisplayItem(float value) {
 
 	currentDisplay->SetSkeletalMesh(parts[currentItem].GetDefaultObject()->mesh->GetSkeletalMeshAsset());
 
+	//set the welder to this item
+	if (!playerWelder) {
+
+		playerWelder = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->Welder;
+
+	}
+
+	playerWelder->SetPartTypePart(partType, parts[currentItem]);
 
 
 	//set the display item to only have the holo material
@@ -107,7 +129,7 @@ void APartSelectorKiosk::RotateDisplayItem(float value) {
 
 	}
 
-	//currentDisplayItem->GetMesh()->SetSkeletalMesh(parts[currentItem].GetDefaultObject()->mesh->GetSkeletalMeshAsset());
+	
 	
 
 }
