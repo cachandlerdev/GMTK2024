@@ -51,6 +51,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		ATicketActor* UnplugTicket();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+		void UnplugTicketBP();
 
 	UFUNCTION(BlueprintCallable)
 		void RemoveTicket();

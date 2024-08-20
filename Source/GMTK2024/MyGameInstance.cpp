@@ -49,6 +49,10 @@ void UMyGameInstance::PlayMusicTrack(USoundBase* Track)
 	CurrentAudioComponent = UGameplayStatics::CreateSound2D(GetWorld(), Track,
 		volume, 1, 0.0, nullptr, true);
 	TrackFinished.BindUFunction(this, "GoToNextMusicTrack");
+	if (CurrentAudioComponent == nullptr)
+	{
+		return;
+	}
 	CurrentAudioComponent->OnAudioFinished.Add(TrackFinished);
 
 	CurrentAudioComponent->Activate();

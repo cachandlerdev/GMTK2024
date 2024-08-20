@@ -11,7 +11,6 @@
 #include "DataTypes.h"
 
 
-
 #include "PartBase.generated.h"
 
 class ATicketActor;
@@ -21,8 +20,8 @@ UCLASS(Blueprintable)
 class GMTK2024_API APartBase : public APawn
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	APartBase(const FObjectInitializer& ObjectInitializer);
 
@@ -30,79 +29,75 @@ public:
 	FText PartName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USkeletalMeshComponent* mesh;
+	USkeletalMeshComponent* mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UBoxComponent* physicsBox;
+	UBoxComponent* physicsBox;
 
 	UPROPERTY(BlueprintReadOnly)
-		APartBase* weldTarget;
+	APartBase* weldTarget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float weldTimeRequirement;
-
-	UPROPERTY(BlueprintReadWrite)
-		float weldTime;
+	float weldTimeRequirement = 0.33f;
 
 	UPROPERTY(BlueprintReadOnly)
-		float localTimeAtLastWeldCheckin;
+	float weldTime;
+
+	UPROPERTY(BlueprintReadOnly)
+	float localTimeAtLastWeldCheckin;
 
 
 	//the attribute of the part abstracted away from the part type
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		float baseAttribute = 25.0f;
+	float baseAttribute = 25.0f;
 
 	//the cost of the part
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		float cost = 25.0f;
+	float cost = 25.0f;
 
 
 	//the mass of the part
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		float mass = 25.0f;
+	float mass = 25.0f;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		PartType type;
+	PartType type;
 
 
-	
 	UPROPERTY(BlueprintReadOnly)
-		int shipID = -1;
-
+	int shipID = -1;
 
 
 	UPROPERTY(BlueprintReadWrite)
-		bool launched = false;
+	bool launched = false;
 
 
 	UPROPERTY(BlueprintReadOnly)
-		ATicketActor* owningTicket;
-
+	ATicketActor* owningTicket;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadOnly)
-		float localTime;
+	float localTime;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 
 	//returns true if weld has completed, false if weld is still incomplete.
 	UFUNCTION(BlueprintCallable)
-		bool ProgressWeld();
+	bool ProgressWeld();
 
 	UFUNCTION(BlueprintCallable)
-		void SolidifyWeld();
+	void SolidifyWeld();
 
 	UFUNCTION(BlueprintCallable)
-		virtual void ActivatePart();
+	virtual void ActivatePart();
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void ActivatePartBP();
-
+	void ActivatePartBP();
 };

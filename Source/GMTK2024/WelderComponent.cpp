@@ -17,6 +17,7 @@ UWelderComponent::UWelderComponent(const FObjectInitializer& ObjectInitializer) 
 
 void UWelderComponent::BeginPlay()
 {
+	Super::BeginPlay();
 	blueprintActor = GetWorld()->SpawnActor<ASkeletalMeshActor>();
 
 	SetBlueprintActorVisible(false);

@@ -83,7 +83,13 @@ void APlayerCharacter::BeginPlay()
 	GetMesh()->SetVisibility(false, false);
 
 
-	Welder = Cast<UWelderComponent>(AddComponentByClass(welderClass, true, GetActorTransform(), false));
+	
+	UActorComponent* welderComponent = AddComponentByClass(welderClass, true, GetActorTransform(), false);
+	if (welderComponent == nullptr)
+	{
+		return;
+	}
+	Welder = Cast<UWelderComponent>(welderComponent);
 
 
 	if (Welder)
