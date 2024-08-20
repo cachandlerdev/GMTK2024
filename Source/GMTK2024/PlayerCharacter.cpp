@@ -665,6 +665,7 @@ void APlayerCharacter::CheckFootsteps()
 
 void APlayerCharacter::scrollInput(const FInputActionValue& value)
 {
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SwitchPartSound, GetActorLocation());
 	Welder->ScrollPartType(value.Get<float>());
 }
 
@@ -835,6 +836,7 @@ void APlayerCharacter::Interact()
 		APartSelectorKiosk* kiosk = Cast<APartSelectorKiosk>(hit.GetActor());
 		if (kiosk)
 		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), InteractSound, GetActorLocation());
 			kioskHit = true;
 			kiosk->RotateDisplayItem(1);
 			continue;
@@ -842,6 +844,7 @@ void APlayerCharacter::Interact()
 		ATicketBoardActor* ticketBoard = Cast<ATicketBoardActor>(hit.GetActor());
 		if (ticketBoard)
 		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), InteractSound, GetActorLocation());
 			if (!currentlyHeldTicket && ticketBoard->unpluggable)
 			{
 				currentlyHeldTicket = ticketBoard->UnplugTicket();
@@ -863,6 +866,7 @@ void APlayerCharacter::Interact()
 		AFinishOrderActor* finishOrderButton = Cast<AFinishOrderActor>(hit.GetActor());
 		if (finishOrderButton != nullptr)
 		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), InteractSound, GetActorLocation());
 			GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Orange, "Finish order");
 			finishOrderButton->FinishOrder();
 		}
