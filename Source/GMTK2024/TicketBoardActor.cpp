@@ -65,7 +65,7 @@ ATicketActor* ATicketBoardActor::UnplugTicket()
 		return nullptr;
 	}
 	pluggedTicket->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
+	UnplugTicketBP();
 
 	ATicketActor* temp = pluggedTicket;
 	pluggedTicket = nullptr;
