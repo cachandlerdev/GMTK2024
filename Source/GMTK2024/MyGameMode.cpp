@@ -211,6 +211,8 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 			Cast<AEnginePartBase>(part)->centerOfThrust = shipCenterOfThrust;
 		}
 
+		
+
 		part->ActivatePart();
 		part->launched = true;
 	}

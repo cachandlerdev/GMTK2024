@@ -101,6 +101,7 @@ void APartBase::SolidifyWeld() {
 
 void APartBase::ActivatePart() {
 
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Orange, GetName() + " Launched");
 
 	ActivatePartBP();
 }
