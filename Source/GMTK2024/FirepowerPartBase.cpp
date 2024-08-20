@@ -24,7 +24,7 @@ void AFirepowerPartBase::BeginPlay() {
 }
 
 void AFirepowerPartBase::ActivatePart() {
-
+	Super::ActivatePart();
 
 
 }

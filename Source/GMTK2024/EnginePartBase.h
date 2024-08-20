@@ -18,32 +18,29 @@ class GMTK2024_API AEnginePartBase : public APartBase
 
 public:
 	AEnginePartBase(const FObjectInitializer& ObjectInitializer);
-	
+
 
 	UPROPERTY(BlueprintReadOnly)
-		float thrust = 100.0f;
+	float thrust = 100.0f;
 
 
 	UPROPERTY()
-		AMyGameMode* gameMode;
+	AMyGameMode* gameMode;
 
 
 	UPROPERTY()
-		FVector centerOfThrust;
+	FVector centerOfThrust;
 
 	UPROPERTY()
-		FVector thrustVector;
+	FVector thrustVector;
 
 	virtual void ActivatePart() override;
-
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };

@@ -68,10 +68,10 @@ void AMyGameMode::ShiftStartCallback()
 	bIsOnShift = true;
 
 
-	FRandomStream r;
-	r.GenerateNewSeed();
+	//FRandomStream r;
+	//r.GenerateNewSeed();
 
-	shiftQuota = (int)r.FRandRange(1.0f, 2.0f);
+	//shiftQuota = (int)r.FRandRange(1.0f, 2.0f);
 	UpdateQuotaBP();
 
 
@@ -98,13 +98,12 @@ void AMyGameMode::AddOrder()
 
 		//randomly generate a new order
 		FOrder newOrder;
-		newOrder.cost = r.FRandRange(0.0f, 300.0f) * difficulty;
+		newOrder.cost = r.FRandRange(150.0f, 300.0f) / difficulty;
 		newOrder.structural = r.FRandRange(0.0f, 100.0f) * difficulty;
 		newOrder.firepower = r.FRandRange(0.0f, 100.0f) * difficulty;
 		newOrder.thrust = r.FRandRange(0.0f, 100.0f) * difficulty;
 		newOrder.energy = r.FRandRange(0.0f, 100.0f) * difficulty;
 		newOrder.support = r.FRandRange(0.0f, 100.0f) * difficulty;
-
 		newOrder.customerPatience = r.FRandRange(10.0f, 60.0f / difficulty);
 
 		int companyNameIndex = r.RandRange(0.0f, ((float)companyNames.Num()) - 0.01f);
@@ -210,6 +209,8 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 			Cast<AEnginePartBase>(part)->thrustVector = shipThrustVector;
 			Cast<AEnginePartBase>(part)->centerOfThrust = shipCenterOfThrust;
 		}
+
+		
 
 		part->ActivatePart();
 		part->launched = true;
