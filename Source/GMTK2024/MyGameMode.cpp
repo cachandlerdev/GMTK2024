@@ -103,7 +103,7 @@ void AMyGameMode::AddOrder()
 		newOrder.cost = r.FRandRange(150.0f, 300.0f) / difficulty;
 		newOrder.structural = r.FRandRange(0.0f, 100.0f) * difficulty;
 		newOrder.firepower = r.FRandRange(0.0f, 100.0f) * difficulty;
-		newOrder.thrust = r.FRandRange(0.0f, 100.0f) * difficulty;
+		newOrder.thrust = r.FRandRange(10.1f, 100.0f) * difficulty * 1000.0f;
 		newOrder.energy = r.FRandRange(0.0f, 100.0f) * difficulty;
 		newOrder.support = r.FRandRange(0.0f, 100.0f) * difficulty;
 		newOrder.customerPatience = r.FRandRange(10.0f, 60.0f / difficulty);
@@ -492,11 +492,13 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(ATicketActor* ticket)
 	newReport.cost = 1.0f - FMath::Abs((ticket->order.cost - newReport.cost) / ticket->order.cost);
 
 
-	newReport.customerPatience = FMath::Clamp(ticket->order.customerPatience / ticket->ticketTime, 0.0f, 1.0f);
+	//newReport.customerPatience = FMath::Clamp(ticket->order.customerPatience / ticket->ticketTime, 0.0f, 1.0f);
+
+	newReport.customerPatience = 1.0f;
 
 
 	newReport.overall = (newReport.structural + newReport.firepower + newReport.thrust + newReport.energy + newReport.
-		support + newReport.customerPatience) / 6.0f;
+		support) / 5.0f;
 
 
 	newReport.overall *= newReport.harmony;
@@ -504,7 +506,7 @@ FReportCard AMyGameMode::EvaluateBuildWithOrder(ATicketActor* ticket)
 
 	if (ticket->order.shipType != ticket->shipChassis->shipType)
 	{
-		newReport.overall *= 0.6f;
+		//newReport.overall *= 0.6f;
 	}
 
 
