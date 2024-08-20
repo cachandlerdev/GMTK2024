@@ -88,7 +88,7 @@ void AMyGameMode::ShiftStartCallback()
 
 void AMyGameMode::AddOrder()
 {
-	if (tickets.Num() < shiftQuota)
+	if (tickets.Num() < 3)
 	{
 		FRandomStream r;
 
