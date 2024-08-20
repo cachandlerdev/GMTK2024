@@ -62,7 +62,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer) 
 	InitialFov = Camera->FieldOfView;
 	MaxFov = Camera->FieldOfView + SprintFovIncrease;
 
-	GetCharacterMovement()->AirControl = 0.25f;
+	//GetCharacterMovement()->AirControl = 0.25f;
 	JumpMaxCount = 2;
 }
 
@@ -252,11 +252,11 @@ void APlayerCharacter::moveInput(const FInputActionValue& value)
 		{
 			passValue.X = 0.0f;
 			passValue.Y *= 0.01f;
-			GetCharacterMovement()->AirControl = 0.05f;
+			//GetCharacterMovement()->AirControl = 0.05f;
 		}
 		else
 		{
-			GetCharacterMovement()->AirControl = 0.9f;
+			//GetCharacterMovement()->AirControl = 0.9f;
 			passValue.X *= 1.05f;
 			passValue.Y *= 1.1f;
 		}
@@ -756,7 +756,7 @@ void APlayerCharacter::SetSliding(bool val)
 		GetCharacterMovement()->GroundFriction = 8.0f;
 
 
-		GetCharacterMovement()->AirControl = 0.05f;
+		//GetCharacterMovement()->AirControl = 0.05f;
 	}
 }
 

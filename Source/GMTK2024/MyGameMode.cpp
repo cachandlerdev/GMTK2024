@@ -68,10 +68,10 @@ void AMyGameMode::ShiftStartCallback()
 	bIsOnShift = true;
 
 
-	FRandomStream r;
-	r.GenerateNewSeed();
+	//FRandomStream r;
+	//r.GenerateNewSeed();
 
-	shiftQuota = (int)r.FRandRange(1.0f, 2.0f);
+	//shiftQuota = (int)r.FRandRange(1.0f, 2.0f);
 	UpdateQuotaBP();
 
 
