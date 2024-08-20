@@ -101,11 +101,11 @@ void AMyGameMode::AddOrder()
 		//randomly generate a new order
 		FOrder newOrder;
 		newOrder.cost = r.FRandRange(150.0f, 300.0f) / difficulty;
-		newOrder.structural = r.FRandRange(0.0f, 100.0f) * difficulty;
-		newOrder.firepower = r.FRandRange(0.0f, 100.0f) * difficulty;
+		newOrder.structural = r.FRandRange(50.0f, 100.0f) * difficulty;
+		newOrder.firepower = r.FRandRange(50.0f, 100.0f) * difficulty;
 		newOrder.thrust = r.FRandRange(10.1f, 100.0f) * difficulty * 1000.0f;
-		newOrder.energy = r.FRandRange(0.0f, 100.0f) * difficulty;
-		newOrder.support = r.FRandRange(0.0f, 100.0f) * difficulty;
+		newOrder.energy = r.FRandRange(50.0f, 100.0f) * difficulty;
+		newOrder.support = r.FRandRange(50.0f, 100.0f) * difficulty;
 		newOrder.customerPatience = r.FRandRange(10.0f, 60.0f / difficulty);
 
 		int companyNameIndex = r.RandRange(0.0f, ((float)companyNames.Num()) - 0.01f);
