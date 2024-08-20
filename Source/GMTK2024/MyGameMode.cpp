@@ -203,6 +203,7 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 
 	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
+	bool bHasThrust = false;
 
 	for (APartBase* part : parts)
 	{
@@ -212,6 +213,8 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 		{
 			Cast<AEnginePartBase>(part)->thrustVector = shipThrustVector;
 			Cast<AEnginePartBase>(part)->centerOfThrust = shipCenterOfThrust;
+
+			bHasThrust = true;
 		}
 
 		
@@ -219,6 +222,9 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 		part->ActivatePart();
 		part->launched = true;
 	}
+
+	
+
 
 	FVector currentCOM = ticket->shipChassis->physicsBox->GetCenterOfMass();
 	FVector newCOM = GetShipCenterOfMass(ticket);
@@ -228,7 +234,13 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 	//setup the ship for flight physics
 	ticket->shipChassis->physicsBox->SetCenterOfMass(offsetCOM);
 	ticket->shipChassis->physicsBox->SetSimulatePhysics(true);
-	ticket->shipChassis->physicsBox->SetEnableGravity(false);
+
+	if (bHasThrust) {
+
+		ticket->shipChassis->physicsBox->SetEnableGravity(false);
+
+	}
+	
 
 	ticket->shipChassis->physicsBox->SetCollisionProfileName("BlockAll");
 
