@@ -38,13 +38,16 @@ public:
 	APartBase* weldTarget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float weldTimeRequirement = 0.33f;
+	float weldTimeRequirement = 1.0f;
 
 	UPROPERTY(BlueprintReadOnly)
 	float weldTime;
 
 	UPROPERTY(BlueprintReadOnly)
 	float localTimeAtLastWeldCheckin;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* BuildSound;
 
 
 	//the attribute of the part abstracted away from the part type

@@ -105,6 +105,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void BlueprintReleased();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnStartWeld();
+
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnEndWeld();
 
 
 	UFUNCTION(BlueprintCallable)

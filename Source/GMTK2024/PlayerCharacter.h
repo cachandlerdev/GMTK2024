@@ -107,9 +107,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	USoundBase* LandingSound;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundBase* InteractSound;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundBase* SwitchPartSound;
 
 	UPROPERTY(BLueprintReadWrite)
 		ATicketActor* currentlyHeldTicket;
+
+	
 
 
 private:
