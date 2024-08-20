@@ -10,6 +10,7 @@
 
 #include "TicketActor.generated.h"
 
+class AMyGameMode;
 class AChasisPartBase;
 
 USTRUCT(BlueprintType)
@@ -85,6 +86,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ATicketBoardActor* TicketBoard;
+
+
+	UPROPERTY()
+		AMyGameMode* gameMode;
 
 
 protected:
