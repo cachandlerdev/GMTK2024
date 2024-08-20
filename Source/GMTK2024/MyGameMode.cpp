@@ -316,7 +316,7 @@ void AMyGameMode::EndShiftProcedure()
 void AMyGameMode::AddPartToBuild(APartBase* part, ATicketActor* ticket)
 {
 	PartType type = part->type;
-
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), part->BuildSound, part->GetActorLocation());
 	switch (type)
 	{
 	case PartType::PT_STRUCTURAL:

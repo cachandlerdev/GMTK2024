@@ -64,9 +64,10 @@ void UWelderComponent::WeldInput()
 				APartBase* partFromHit = Cast<APartBase>(hit.GetActor());
 
 
-				//if the player is bleuprinting and firing at any of the ship parts
+				//if the player is blueprinting and firing at any of the ship parts
 				if (partFromHit)
 				{
+					OnStartWeld();
 					inProgressWeld = GetWorld()->SpawnActor<APartBase>(equippedPart);
 					inProgressWeld->SetActorTransform(blueprintActor->GetActorTransform());
 
@@ -82,6 +83,7 @@ void UWelderComponent::WeldInput()
 
 		if (weldDone)
 		{
+			OnEndWeld();
 			buildCooldownTimer = 0.0f;
 			inProgressWeld->SolidifyWeld();
 
