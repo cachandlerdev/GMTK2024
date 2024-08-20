@@ -9,16 +9,11 @@
 // Sets default values
 AStructuralPartBase::AStructuralPartBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	
 	type = PartType::PT_STRUCTURAL;
-
 }
 
 
-void AStructuralPartBase::BeginPlay() {
+void AStructuralPartBase::BeginPlay()
+{
 	Super::BeginPlay();
-
-	
-
-
 }

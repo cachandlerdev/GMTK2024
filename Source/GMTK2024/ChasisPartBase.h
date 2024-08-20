@@ -20,15 +20,15 @@ public:
 
 
 	UPROPERTY(EditAnywhere)
-		float angularDampingDecay = 0.2f;
+	float angularDampingDecay = 0.2f;
 
 	//include self
 	UPROPERTY(BlueprintReadOnly)
-		TArray<APartBase*> childParts;
+	TArray<APartBase*> childParts;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		ShipType shipType;
+	ShipType shipType;
 
 protected:
 	// Called when the game starts or when spawned
@@ -36,6 +36,4 @@ protected:
 
 public:
 	virtual void Tick(float deltaTime) override;
-
-	
 };

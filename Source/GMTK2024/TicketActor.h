@@ -70,7 +70,7 @@ public:
 	// Sets default values for this actor's properties
 	ATicketActor();
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 		float ticketTime = 0.0f;
 
 	UPROPERTY(BlueprintReadWrite)
