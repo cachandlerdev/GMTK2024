@@ -74,6 +74,8 @@ void AMyGameMode::ShiftStartCallback()
 	//shiftQuota = (int)r.FRandRange(1.0f, 2.0f);
 	UpdateQuotaBP();
 
+	
+
 
 	if (shiftStatTimerHandle.IsValid())
 	{
@@ -119,6 +121,8 @@ void AMyGameMode::AddOrder()
 		newTicket->order = newOrder;
 
 		newTicket->progressOrder = GetZeroOrder();
+
+		newTicket->ticketTime = (60.0f * 1.0f) / difficulty;
 
 
 		buildTime = 0.01f;
@@ -242,6 +246,27 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 }
 
 
+void AMyGameMode::ForceEndShift() {
+
+	for (ATicketActor* ticket : tickets) {
+
+		
+
+		if (ticket) {
+			CleanupShip(ticket);
+			ticket->Destroy();
+		}
+		
+
+	}
+
+	tickets.Empty();
+
+	EndShiftProcedure();
+
+}
+
+
 void AMyGameMode::CompleteGradingAfterFlight(ATicketActor* ticket)
 {
 	//add new report to order data sheet
@@ -284,6 +309,12 @@ void AMyGameMode::CompleteGradingAfterFlight(ATicketActor* ticket)
 
 void AMyGameMode::CleanupShip(ATicketActor* ticket)
 {
+
+	if (!ticket->shipChassis) {
+
+		return;
+
+	}
 	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 	//get the total thrust and total mass first

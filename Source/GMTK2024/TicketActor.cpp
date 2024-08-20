@@ -3,6 +3,10 @@
 
 #include "TicketActor.h"
 
+#include "Kismet/GameplayStatics.h"
+
+#include "MyGameMode.h"
+
 // Sets default values
 ATicketActor::ATicketActor()
 {
@@ -18,6 +22,8 @@ void ATicketActor::BeginPlay()
 	
 	ticketTime = 0.0f;
 
+	gameMode = Cast<AMyGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
 }
 
 // Called every frame
@@ -25,7 +31,13 @@ void ATicketActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ticketTime += DeltaTime;
+	ticketTime -= DeltaTime;
+
+	if (ticketTime <= 0.0f) {
+
+		gameMode->ForceEndShift();
+
+	}
 
 }
 
