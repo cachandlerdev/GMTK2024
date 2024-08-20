@@ -22,7 +22,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		bool unpluggable = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		AActor* shipBayActor;
 
 	UPROPERTY(EditAnywhere)
@@ -57,6 +57,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void RemoveTicket();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void RemoveTicketBP();
 
 
 	UFUNCTION(BlueprintCallable)
