@@ -122,7 +122,7 @@ void AMyGameMode::AddOrder()
 
 		newTicket->progressOrder = GetZeroOrder();
 
-		newTicket->ticketTime = (60.0f * 4.0f) / difficulty;
+		newTicket->ticketTime = (60.0f * 3.0f) / difficulty;
 
 
 		buildTime = 0.01f;
