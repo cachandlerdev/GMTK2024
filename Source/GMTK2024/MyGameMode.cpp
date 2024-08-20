@@ -248,6 +248,8 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket) {
 
 		}
 
+		
+
 		part->ActivatePart();
 		part->launched = true;
 
