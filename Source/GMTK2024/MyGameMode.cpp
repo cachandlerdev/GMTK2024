@@ -122,7 +122,7 @@ void AMyGameMode::AddOrder()
 
 		newTicket->progressOrder = GetZeroOrder();
 
-		newTicket->ticketTime = (60.0f * 1.0f) / difficulty;
+		newTicket->ticketTime = (60.0f * 2.0f) / difficulty;
 
 
 		buildTime = 0.01f;
@@ -248,6 +248,10 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 
 void AMyGameMode::ForceEndShift() {
 
+	
+
+	FReportCard emptyReport;
+
 	for (ATicketActor* ticket : tickets) {
 
 		
@@ -255,12 +259,18 @@ void AMyGameMode::ForceEndShift() {
 		if (ticket) {
 			CleanupShip(ticket);
 			ticket->Destroy();
+
+			orderSheet->reports.Add(emptyReport);
+
 		}
 		
 
 	}
 
 	tickets.Empty();
+
+
+	
 
 	EndShiftProcedure();
 
@@ -339,6 +349,21 @@ void AMyGameMode::EndShiftProcedure()
 	{
 		shiftStatTimerHandle.Invalidate();
 	}
+
+
+	//make sure all tickets are destroyed
+	for (ATicketActor* ticket : tickets) {
+
+		if (ticket) {
+			CleanupShip(ticket);
+			ticket->Destroy();
+		}
+
+	}
+
+	tickets.Empty();
+
+
 
 	GetWorld()->GetTimerManager().SetTimer(shiftStatTimerHandle, this, &AMyGameMode::ShiftStartCallback, 3.0f);
 }
