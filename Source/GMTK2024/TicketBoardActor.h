@@ -19,7 +19,7 @@ public:
 	ATicketBoardActor();
 
 	//can the player click this board to unplug the ticket
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool unpluggable = false;
 
 	UPROPERTY(EditAnywhere)
@@ -59,7 +59,7 @@ public:
 		void RemoveTicket();
 
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 		ATicketActor* GetPluggedTicket();
 
 };
