@@ -74,6 +74,8 @@ void AMyGameMode::ShiftStartCallback()
 	//shiftQuota = (int)r.FRandRange(1.0f, 2.0f);
 	UpdateQuotaBP();
 
+	
+
 
 	if (shiftStatTimerHandle.IsValid())
 	{
@@ -119,6 +121,8 @@ void AMyGameMode::AddOrder()
 		newTicket->order = newOrder;
 
 		newTicket->progressOrder = GetZeroOrder();
+
+		newTicket->ticketTime = (60.0f * 2.0f) / difficulty;
 
 
 		buildTime = 0.01f;
@@ -199,6 +203,7 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 
 	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
+	bool bHasThrust = false;
 
 	for (APartBase* part : parts)
 	{
@@ -208,6 +213,8 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 		{
 			Cast<AEnginePartBase>(part)->thrustVector = shipThrustVector;
 			Cast<AEnginePartBase>(part)->centerOfThrust = shipCenterOfThrust;
+
+			bHasThrust = true;
 		}
 
 		
@@ -215,6 +222,9 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 		part->ActivatePart();
 		part->launched = true;
 	}
+
+	
+
 
 	FVector currentCOM = ticket->shipChassis->physicsBox->GetCenterOfMass();
 	FVector newCOM = GetShipCenterOfMass(ticket);
@@ -224,7 +234,13 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 	//setup the ship for flight physics
 	ticket->shipChassis->physicsBox->SetCenterOfMass(offsetCOM);
 	ticket->shipChassis->physicsBox->SetSimulatePhysics(true);
-	ticket->shipChassis->physicsBox->SetEnableGravity(false);
+
+	if (bHasThrust) {
+
+		ticket->shipChassis->physicsBox->SetEnableGravity(false);
+
+	}
+	
 
 	ticket->shipChassis->physicsBox->SetCollisionProfileName("BlockAll");
 
@@ -239,6 +255,37 @@ void AMyGameMode::DoShipFlight(ATicketActor* ticket)
 	tempDelegate.BindUFunction(this, FName("CompleteGradingAfterFlight"), ticket);
 
 	GetWorld()->GetTimerManager().SetTimer(finsihGradingHandle, tempDelegate, maxFlightTime, false);
+}
+
+
+void AMyGameMode::ForceEndShift() {
+
+	
+
+	FReportCard emptyReport;
+
+	for (ATicketActor* ticket : tickets) {
+
+		
+
+		if (ticket) {
+			CleanupShip(ticket);
+			ticket->Destroy();
+
+			orderSheet->reports.Add(emptyReport);
+
+		}
+		
+
+	}
+
+	tickets.Empty();
+
+
+	
+
+	EndShiftProcedure();
+
 }
 
 
@@ -284,6 +331,12 @@ void AMyGameMode::CompleteGradingAfterFlight(ATicketActor* ticket)
 
 void AMyGameMode::CleanupShip(ATicketActor* ticket)
 {
+
+	if (!ticket->shipChassis) {
+
+		return;
+
+	}
 	TArray<APartBase*> parts = ticket->shipChassis->childParts;
 
 	//get the total thrust and total mass first
@@ -308,6 +361,21 @@ void AMyGameMode::EndShiftProcedure()
 	{
 		shiftStatTimerHandle.Invalidate();
 	}
+
+
+	//make sure all tickets are destroyed
+	for (ATicketActor* ticket : tickets) {
+
+		if (ticket) {
+			CleanupShip(ticket);
+			ticket->Destroy();
+		}
+
+	}
+
+	tickets.Empty();
+
+
 
 	GetWorld()->GetTimerManager().SetTimer(shiftStatTimerHandle, this, &AMyGameMode::ShiftStartCallback, 3.0f);
 }

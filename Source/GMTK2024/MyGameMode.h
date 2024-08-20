@@ -201,4 +201,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsOnShift();
+
+	UFUNCTION(BlueprintCallable)
+		void ForceEndShift();
+
 };
