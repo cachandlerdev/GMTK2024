@@ -134,7 +134,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void AddOrderBP();
 
-
 	// A blueprint event that gets called when the player's shift ends.
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void OnShiftEnd();
@@ -202,4 +201,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsOnShift();
+
+	UFUNCTION(BlueprintCallable)
+		void ForceEndShift();
+
 };
