@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="37f2d12a-7bc6-407e-a8b2-2be732d9c409" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Content/Textures/T_WeldIcon.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BP/UI/UI_AbilityIcon.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/UI/UI_AbilityIcon.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/BP/UI/UI_Cooldowns.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/BP/UI/UI_Cooldowns.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Models/Env/TicketBoard/TicketScreen/M_TicketScreen_Screen.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Models/Env/TicketBoard/TicketScreen/M_TicketScreen_Screen.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Particles/P_Explosion.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Particles/P_Explosion.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/PlayerCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GMTK2024/WelderComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GMTK2024/WelderComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Levels/LN_Level2.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/LN_Level2.umap" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
