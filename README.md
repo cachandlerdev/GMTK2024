@@ -1,7 +1,8 @@
-# GMTK2024
-The repo for our GMTK 2024 game jam entry.
+# BSI Industries: Ship Builder
+The GitHub repo for our GMTK 2024 game jam entry that incorporated fast-paced Titanfall-esque movement with a spaceship builder experience.
+See our Itch.io page for more details.
 
-Itch.io page: www.addlinkhere.com
+Itch.io page: [BSI Industries: Ship Builder](https://cachandlerdev.itch.io/bsi-industries-ship-builder)
 
 ## Useful Links
 - [Game Design Document](https://docs.google.com/document/d/1gpuhbiSXJeEFI-H-C2UZCeF2XPdo1_A4pfXmaoTYj6s/edit?usp=sharing)
