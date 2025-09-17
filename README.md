@@ -1,19 +1,24 @@
 # BSI Industries: Ship Builder
-The GitHub repo for our GMTK 2024 game jam entry that incorporated fast-paced Titanfall-esque movement with a spaceship builder experience.
-See our Itch.io page for more details.
+![Banner](https://github.com/user-attachments/assets/3cce2e7c-aba3-4c99-b161-1375a07120ea)
 
-Itch.io page: [BSI Industries: Ship Builder](https://cachandlerdev.itch.io/bsi-industries-ship-builder)
+The GitHub repo for our GMTK 2024 game jam entry that incorporates fast-paced Titanfall-esque movement with a spaceship builder experience.
+See our [Itch.io page](https://cachandlerdev.itch.io/bsi-industries-ship-builder) for more details.
 
-## Useful Links
-- [Game Design Document](https://docs.google.com/document/d/1gpuhbiSXJeEFI-H-C2UZCeF2XPdo1_A4pfXmaoTYj6s/edit?usp=sharing)
-- [Trello Board](https://trello.com/invite/5ff35f77158a668e8364c67b/ATTI1f76c8c0185a8c301b52f22874d6de977BFC9577)
-- [Miro Whiteboard](https://miro.com/welcomeonboard/blk5eHdGWFVUU2VFTERMWGN3UUNvejhPMGlWRmhHTWV0NjdVa1hSM1VTdFQ3QlJwRTlBS2UycjJCZmRCM3JwNnwzNDU4NzY0NTc3NTM2NzYwNzk5fDI=?share_link_id=132862650043)
+## Screenshots
 
-## Style Conventions
-- [Unreal Engine Project Structure and Naming Conventions](https://dev.epicgames.com/community/learning/tutorials/mX6b/unreal-engine-project-structure-naming-conventions)
-- [Unreal Engine Coding Standard](https://dev.epicgames.com/documentation/en-us/unreal-engine/coding-standard)
+<img width="2559" height="1353" alt="bsi_screenshot2" src="https://github.com/user-attachments/assets/a9f3343b-629b-426c-9121-561dbdcd4971" />
 
-## About
-Game created for the GMTK Game Jam 2024 in 96 hours. 
+<img width="2559" height="1353" alt="bsi_screenshot3" src="https://github.com/user-attachments/assets/43435927-6e9c-4c51-a155-257448733f10" />
 
-Credits: Name Name Name Name
+<img width="2559" height="1356" alt="bsi_screenshot4" src="https://github.com/user-attachments/assets/8e0b9464-1382-4644-9eac-903b54fcd78a" />
+
+<img width="2558" height="1356" alt="bsi_screenshot5" src="https://github.com/user-attachments/assets/b01bcca0-b74b-4bfa-b853-66072ccf81e7" />
+
+<img width="2559" height="1348" alt="bsi_screenshot1" src="https://github.com/user-attachments/assets/1c96038e-aedb-4304-9984-191d40241c60" />
+
+## Team
+- **Braden:** Code & Level Design
+- **Brandon:** Sound Design
+- **Christopher:** Code & Level Design
+- **Julian:** Art
+- **Melonenstrauch:** Music
